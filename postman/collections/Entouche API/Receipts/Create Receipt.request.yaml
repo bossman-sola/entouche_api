@@ -1,0 +1,23 @@
+$kind: http-request
+name: Create Receipt
+order: 2000
+method: POST
+url: '{{base_url}}/v1/receipts'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "supplier_id": 1,
+      "warehouse_id": 1,
+      "receiving_location_id": null,
+      "receipt_date": "2026-06-29",
+      "notes": "Initial stock receipt",
+      "items": [
+        {"item_id": 1, "warehouse_location_id": null, "quantity": 100, "unit_cost": 10.00}
+      ]
+    }

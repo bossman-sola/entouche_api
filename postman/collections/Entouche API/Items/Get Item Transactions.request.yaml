@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Item Transactions
+order: 8000
+method: GET
+url: '{{base_url}}/v1/items/{{item_id}}/transactions'
+headers:
+  - key: Accept
+    value: application/json

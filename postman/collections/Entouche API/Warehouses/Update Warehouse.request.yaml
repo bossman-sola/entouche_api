@@ -1,0 +1,19 @@
+$kind: http-request
+name: Update Warehouse
+order: 4000
+method: PUT
+url: '{{base_url}}/v1/warehouses/{{warehouse_id}}'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Main Warehouse Updated",
+      "code": "WH-001",
+      "address": "123 Main St",
+      "status": "active"
+    }

@@ -1,0 +1,8 @@
+$kind: http-request
+name: List Warehouses
+order: 1000
+method: GET
+url: '{{base_url}}/v1/warehouses'
+headers:
+  - key: Accept
+    value: application/json

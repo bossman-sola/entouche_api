@@ -1,0 +1,27 @@
+$kind: http-request
+name: Create Item
+order: 2000
+method: POST
+url: '{{base_url}}/v1/items'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Widget A",
+      "unit_of_measure_id": 1,
+      "category_id": 1,
+      "supplier_id": 1,
+      "barcode": "1234567890",
+      "item_type": "product",
+      "brand": "BrandX",
+      "description": "A sample widget",
+      "unit_cost": 10.00,
+      "selling_price": 15.00,
+      "reorder_level": 10,
+      "status": "active"
+    }

@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create Supplier
+order: 2000
+method: POST
+url: '{{base_url}}/v1/suppliers'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Acme Corp",
+      "code": "ACME",
+      "email": "contact@acme.com",
+      "phone": "+1234567890",
+      "address": "456 Supplier Ave",
+      "status": "active"
+    }

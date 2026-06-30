@@ -1,0 +1,8 @@
+$kind: http-request
+name: Download Import Template
+order: 4000
+method: GET
+url: '{{base_url}}/v1/imports/templates/{{type}}'
+headers:
+  - key: Accept
+    value: application/json

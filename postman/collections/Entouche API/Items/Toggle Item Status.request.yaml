@@ -1,0 +1,8 @@
+$kind: http-request
+name: Toggle Item Status
+order: 10000
+method: POST
+url: '{{base_url}}/v1/items/{{item_id}}/toggle-status'
+headers:
+  - key: Accept
+    value: application/json

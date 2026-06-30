@@ -1,0 +1,22 @@
+$kind: http-request
+name: Create Adjustment
+order: 2000
+method: POST
+url: '{{base_url}}/v1/adjustments'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,
+      "warehouse_location_id": null,
+      "adjustment_type": "increase",
+      "reason": "Found extra stock during audit",
+      "items": [
+        {"item_id": 1, "adjustment_quantity": 10, "quantity_before": 90, "quantity_after": 100}
+      ]
+    }

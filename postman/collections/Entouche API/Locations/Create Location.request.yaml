@@ -1,0 +1,20 @@
+$kind: http-request
+name: Create Location
+order: 2000
+method: POST
+url: '{{base_url}}/v1/warehouses/{{warehouse_id}}/locations'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,
+      "name": "Shelf A1",
+      "code": "A1",
+      "type": "shelf",
+      "status": "active"
+    }

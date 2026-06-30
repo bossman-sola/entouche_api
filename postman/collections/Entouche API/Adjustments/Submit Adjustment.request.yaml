@@ -1,0 +1,8 @@
+$kind: http-request
+name: Submit Adjustment
+order: 6000
+method: POST
+url: '{{base_url}}/v1/adjustments/{{adjustment_id}}/submit'
+headers:
+  - key: Accept
+    value: application/json

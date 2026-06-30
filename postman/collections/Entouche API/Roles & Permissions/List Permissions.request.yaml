@@ -1,0 +1,8 @@
+$kind: http-request
+name: List Permissions
+order: 3000
+method: GET
+url: '{{base_url}}/v1/permissions'
+headers:
+  - key: Accept
+    value: application/json

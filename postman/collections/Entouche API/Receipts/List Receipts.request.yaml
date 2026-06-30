@@ -1,0 +1,8 @@
+$kind: http-request
+name: List Receipts
+order: 1000
+method: GET
+url: '{{base_url}}/v1/receipts'
+headers:
+  - key: Accept
+    value: application/json

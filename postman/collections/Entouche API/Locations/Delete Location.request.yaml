@@ -1,0 +1,8 @@
+$kind: http-request
+name: Delete Location
+order: 5000
+method: DELETE
+url: '{{base_url}}/v1/locations/{{location_id}}'
+headers:
+  - key: Accept
+    value: application/json

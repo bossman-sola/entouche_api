@@ -1,0 +1,8 @@
+$kind: http-request
+name: Logout
+order: 2000
+method: POST
+url: '{{base_url}}/v1/auth/logout'
+headers:
+  - key: Accept
+    value: application/json

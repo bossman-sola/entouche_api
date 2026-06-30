@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Current User
+order: 3000
+method: GET
+url: '{{base_url}}/v1/auth/me'
+headers:
+  - key: Accept
+    value: application/json

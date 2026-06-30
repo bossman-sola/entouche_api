@@ -1,0 +1,8 @@
+$kind: http-request
+name: Refresh Token
+order: 4000
+method: POST
+url: '{{base_url}}/v1/auth/refresh'
+headers:
+  - key: Accept
+    value: application/json

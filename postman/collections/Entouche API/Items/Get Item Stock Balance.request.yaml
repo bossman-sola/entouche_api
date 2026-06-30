@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Item Stock Balance
+order: 9000
+method: GET
+url: '{{base_url}}/v1/items/{{item_id}}/stock-balance'
+headers:
+  - key: Accept
+    value: application/json

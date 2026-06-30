@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Warehouse Locations
+order: 7000
+method: GET
+url: '{{base_url}}/v1/warehouses/{{warehouse_id}}/locations'
+headers:
+  - key: Accept
+    value: application/json

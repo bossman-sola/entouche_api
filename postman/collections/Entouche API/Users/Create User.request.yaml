@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create User
+order: 2000
+method: POST
+url: '{{base_url}}/v1/users'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "password": "password123",
+      "status": "active",
+      "roles": ["staff"]
+    }

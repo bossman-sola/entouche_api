@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Item
+order: 3000
+method: GET
+url: '{{base_url}}/v1/items/{{item_id}}'
+headers:
+  - key: Accept
+    value: application/json

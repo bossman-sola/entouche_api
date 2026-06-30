@@ -1,0 +1,8 @@
+$kind: http-request
+name: Toggle Supplier Status
+order: 6000
+method: POST
+url: '{{base_url}}/v1/suppliers/{{supplier_id}}/toggle-status'
+headers:
+  - key: Accept
+    value: application/json

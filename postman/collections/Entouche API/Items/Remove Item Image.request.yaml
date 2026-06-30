@@ -1,0 +1,8 @@
+$kind: http-request
+name: Remove Item Image
+order: 7000
+method: DELETE
+url: '{{base_url}}/v1/items/{{item_id}}/image'
+headers:
+  - key: Accept
+    value: application/json

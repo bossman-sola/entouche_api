@@ -1,0 +1,17 @@
+$kind: http-request
+name: Update Receipt
+order: 4000
+method: PUT
+url: '{{base_url}}/v1/receipts/{{receipt_id}}'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "notes": "Updated notes",
+      "receipt_date": "2026-06-29"
+    }

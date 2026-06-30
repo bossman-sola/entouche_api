@@ -1,0 +1,18 @@
+$kind: http-request
+name: Create Unit
+order: 2000
+method: POST
+url: '{{base_url}}/v1/units'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Kilogram",
+      "abbreviation": "kg",
+      "status": "active"
+    }

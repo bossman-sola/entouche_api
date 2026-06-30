@@ -1,0 +1,8 @@
+$kind: http-request
+name: Toggle User Status
+order: 8000
+method: POST
+url: '{{base_url}}/v1/users/{{user_id}}/toggle-status'
+headers:
+  - key: Accept
+    value: application/json

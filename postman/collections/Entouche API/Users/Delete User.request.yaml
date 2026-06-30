@@ -1,0 +1,8 @@
+$kind: http-request
+name: Delete User
+order: 5000
+method: DELETE
+url: '{{base_url}}/v1/users/{{user_id}}'
+headers:
+  - key: Accept
+    value: application/json

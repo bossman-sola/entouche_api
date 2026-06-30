@@ -1,0 +1,30 @@
+$kind: http-request
+name: Login
+order: 1000
+method: POST
+url: '{{base_url}}/v1/auth/login'
+auth:
+  type: noauth
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "admin@example.com",
+      "password": "password"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Login successful", function() {
+        pm.response.to.have.status(200);
+        var json = pm.response.json();
+        if (json.data && json.data.access_token) {
+          pm.collectionVariables.set("access_token", json.data.access_token);
+        }
+      });

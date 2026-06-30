@@ -1,0 +1,8 @@
+$kind: http-request
+name: Toggle Warehouse Status
+order: 6000
+method: POST
+url: '{{base_url}}/v1/warehouses/{{warehouse_id}}/toggle-status'
+headers:
+  - key: Accept
+    value: application/json

@@ -1,0 +1,15 @@
+$kind: http-request
+name: List Items
+order: 1000
+method: GET
+url: '{{base_url}}/v1/items'
+headers:
+  - key: Accept
+    value: application/json
+queryParams:
+  - key: search
+    value: ''
+    disabled: true
+  - key: per_page
+    value: '15'
+    disabled: true

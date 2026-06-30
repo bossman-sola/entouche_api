@@ -1,0 +1,4 @@
+$kind: collection
+name: Entouche API
+variables:
+  base_url: ""

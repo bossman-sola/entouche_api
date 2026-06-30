@@ -1,0 +1,19 @@
+$kind: http-request
+name: Create Warehouse
+order: 2000
+method: POST
+url: '{{base_url}}/v1/warehouses'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Main Warehouse",
+      "code": "WH-001",
+      "address": "123 Main St",
+      "status": "active"
+    }
