@@ -1,13 +1,15 @@
 $kind: http-request
-name: Update Supplier
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Supplier.resources/examples
 order: 4000
 method: PUT
-url: '{{base_url}}/v1/suppliers/{{supplier_id}}'
+url: "{{base_url}}/api/v1/suppliers/{{supplier_id}}"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
@@ -17,5 +19,5 @@ body:
       "email": "contact@acme.com",
       "phone": "+1234567890",
       "address": "456 Supplier Ave",
-      "status": "active"
+      "status": "inactive"
     }

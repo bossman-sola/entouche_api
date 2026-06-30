@@ -1,15 +1,11 @@
 $kind: http-request
-name: List Categories
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/List Categories.resources/examples
 order: 1000
 method: GET
-url: '{{base_url}}/v1/categories'
+url: "{{base_url}}/api/v1/categories"
 headers:
-  - key: Accept
-    value: application/json
-queryParams:
-  - key: search
-    value: ''
-    disabled: true
-  - key: per_page
-    value: '15'
-    disabled: true
+  Accept: application/json

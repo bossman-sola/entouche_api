@@ -1,8 +1,11 @@
 $kind: http-request
-name: Get Supplier
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Supplier.resources/examples
 order: 3000
 method: GET
-url: '{{base_url}}/v1/suppliers/{{supplier_id}}'
+url: "{{base_url}}/api/v1/suppliers/{{supplier_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

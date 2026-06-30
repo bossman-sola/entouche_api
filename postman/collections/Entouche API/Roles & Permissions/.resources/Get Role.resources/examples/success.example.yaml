@@ -1,0 +1,242 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/roles/{{role_id}}"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 20:36:39 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": {
+          "id": 2,
+          "name": "warehouse_manager",
+          "guard_name": "api",
+          "created_at": "2026-06-30T03:38:09.000000Z",
+          "updated_at": "2026-06-30T03:38:09.000000Z",
+          "permissions": [
+            {
+              "id": 1,
+              "name": "items.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 1
+              }
+            },
+            {
+              "id": 2,
+              "name": "items.create",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 2
+              }
+            },
+            {
+              "id": 3,
+              "name": "items.edit",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 3
+              }
+            },
+            {
+              "id": 5,
+              "name": "receipts.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 5
+              }
+            },
+            {
+              "id": 6,
+              "name": "receipts.create",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 6
+              }
+            },
+            {
+              "id": 7,
+              "name": "receipts.approve",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 7
+              }
+            },
+            {
+              "id": 8,
+              "name": "transfers.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 8
+              }
+            },
+            {
+              "id": 9,
+              "name": "transfers.create",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 9
+              }
+            },
+            {
+              "id": 10,
+              "name": "transfers.approve",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 10
+              }
+            },
+            {
+              "id": 11,
+              "name": "adjustments.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 11
+              }
+            },
+            {
+              "id": 12,
+              "name": "adjustments.create",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 12
+              }
+            },
+            {
+              "id": 13,
+              "name": "adjustments.approve",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 13
+              }
+            },
+            {
+              "id": 14,
+              "name": "stock_counts.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 14
+              }
+            },
+            {
+              "id": 15,
+              "name": "stock_counts.create",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 15
+              }
+            },
+            {
+              "id": 16,
+              "name": "stock_counts.approve",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 16
+              }
+            },
+            {
+              "id": 17,
+              "name": "reports.view",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 17
+              }
+            },
+            {
+              "id": 18,
+              "name": "data_import.manage",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 18
+              }
+            },
+            {
+              "id": 22,
+              "name": "master-data.manage",
+              "guard_name": "api",
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T03:38:09.000000Z",
+              "pivot": {
+                "role_id": 2,
+                "permission_id": 22
+              }
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1782851806825
+name: success

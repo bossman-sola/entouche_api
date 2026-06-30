@@ -1,8 +1,11 @@
 $kind: http-request
-name: List Roles
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/List Roles.resources/examples
 order: 1000
 method: GET
-url: '{{base_url}}/v1/roles'
+url: "{{base_url}}/api/v1/roles"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

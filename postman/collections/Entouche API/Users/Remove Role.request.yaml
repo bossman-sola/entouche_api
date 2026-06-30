@@ -1,16 +1,18 @@
 $kind: http-request
-name: Remove Role
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Remove Role.resources/examples
 order: 7000
 method: POST
-url: '{{base_url}}/v1/users/{{user_id}}/remove-role'
+url: "{{base_url}}/api/v1/users/{{user_id}}/remove-role"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "role": "staff"
+      "role": "inventory_officer"
     }

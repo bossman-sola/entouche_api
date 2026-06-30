@@ -1,8 +1,11 @@
 $kind: http-request
-name: Delete Unit
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Delete Unit.resources/examples
 order: 5000
 method: DELETE
-url: '{{base_url}}/v1/units/{{unit_id}}'
+url: "{{base_url}}/api/v1/units/{{unit_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

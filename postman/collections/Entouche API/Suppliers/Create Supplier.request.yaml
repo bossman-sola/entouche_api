@@ -1,13 +1,15 @@
 $kind: http-request
-name: Create Supplier
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Supplier.resources/examples
 order: 2000
 method: POST
-url: '{{base_url}}/v1/suppliers'
+url: "{{base_url}}/api/v1/suppliers"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

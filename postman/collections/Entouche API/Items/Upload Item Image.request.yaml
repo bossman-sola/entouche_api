@@ -1,14 +1,20 @@
 $kind: http-request
 name: Upload Item Image
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Upload Item Image.resources/examples
 order: 6000
 method: POST
-url: '{{base_url}}/v1/items/{{item_id}}/image'
+url: "{{base_url}}/api/v1/items/{{item_id}}/image"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json
 body:
   type: formdata
   content:
-    - key: image
-      type: file
-      src: ''
+    - type: file
+      key: image
+      src: []
+      description: ""
+      disabled: false

@@ -1,21 +1,23 @@
 $kind: http-request
-name: Create User
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create User.resources/examples
 order: 2000
 method: POST
-url: '{{base_url}}/v1/users'
+url: "{{base_url}}/api/v1/users"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "name": "John Doe",
-      "email": "john@example.com",
+      "name": "Jackson Bello",
+      "email": "jcko@example.com",
       "phone": "+1234567890",
       "password": "password123",
       "status": "active",
-      "roles": ["staff"]
+      "roles": ["management_viewer"]
     }

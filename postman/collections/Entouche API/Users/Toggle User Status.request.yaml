@@ -1,8 +1,17 @@
 $kind: http-request
-name: Toggle User Status
+body:
+  type: json
+  content: |-
+    {
+      "status": "inactive"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Toggle User Status.resources/examples
 order: 8000
 method: POST
-url: '{{base_url}}/v1/users/{{user_id}}/toggle-status'
+url: "{{base_url}}/api/v1/users/{{user_id}}/toggle-status"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

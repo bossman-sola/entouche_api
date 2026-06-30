@@ -1,18 +1,20 @@
 $kind: http-request
-name: Update Unit
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Unit.resources/examples
 order: 4000
 method: PUT
-url: '{{base_url}}/v1/units/{{unit_id}}'
+url: "{{base_url}}/api/v1/units/{{unit_id}}"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
       "name": "Kilogram",
       "abbreviation": "kg",
-      "status": "active"
+      "status": "inactive"
     }

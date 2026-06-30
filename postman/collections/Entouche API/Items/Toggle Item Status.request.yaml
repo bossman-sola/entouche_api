@@ -1,8 +1,11 @@
 $kind: http-request
-name: Toggle Item Status
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Toggle Item Status.resources/examples
 order: 10000
 method: POST
-url: '{{base_url}}/v1/items/{{item_id}}/toggle-status'
+url: "{{base_url}}/api/v1/items/{{item_id}}/toggle-status"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

@@ -1,0 +1,59 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/suppliers"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Acme Corp",
+        "code": "ACME",
+        "email": "contact@acme.com",
+        "phone": "+1234567890",
+        "address": "456 Supplier Ave",
+        "status": "active"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 17:57:35 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Created successfully",
+        "data": {
+          "name": "Acme Corp",
+          "code": "ACME",
+          "email": "contact@acme.com",
+          "phone": "+1234567890",
+          "address": "456 Supplier Ave",
+          "status": "active",
+          "updated_at": "2026-06-30T17:57:35.000000Z",
+          "created_at": "2026-06-30T17:57:35.000000Z",
+          "id": 1
+        },
+        "errors": null
+      }
+order: 1782842257602
+name: success

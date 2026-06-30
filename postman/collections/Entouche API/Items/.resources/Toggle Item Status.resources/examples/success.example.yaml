@@ -1,0 +1,56 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items/{{item_id}}/toggle-status"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 20:25:18 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Status updated",
+        "data": {
+          "id": 3,
+          "category_id": 1,
+          "unit_of_measure_id": 1,
+          "supplier_id": 1,
+          "sku": "ITM-000001",
+          "barcode": "1234567890",
+          "name": "Widget A Updated",
+          "item_type": "product",
+          "brand": "BrandX",
+          "description": "A sample widget",
+          "unit_cost": "12.00",
+          "selling_price": "18.00",
+          "reorder_level": "15.000",
+          "image_path": null,
+          "status": "inactive",
+          "created_by": 2,
+          "created_at": "2026-06-30T19:51:14.000000Z",
+          "updated_at": "2026-06-30T20:25:18.000000Z",
+          "deleted_at": null
+        },
+        "errors": null
+      }
+order: 1782851120478
+name: success

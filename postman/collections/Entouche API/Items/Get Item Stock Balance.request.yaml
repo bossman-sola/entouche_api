@@ -1,8 +1,11 @@
 $kind: http-request
-name: Get Item Stock Balance
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Item Stock Balance.resources/examples
 order: 9000
 method: GET
-url: '{{base_url}}/v1/items/{{item_id}}/stock-balance'
+url: "{{base_url}}/api/v1/items/{{item_id}}/stock-balance"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json
