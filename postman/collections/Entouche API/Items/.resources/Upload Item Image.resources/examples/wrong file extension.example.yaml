@@ -1,0 +1,48 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items/{{item_id}}/image"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: image
+        src:
+          - postman-cloud:///1f174be2-08e2-41f0-bc5c-84dbbf04efb0
+        disabled: false
+response:
+  statusCode: 422
+  statusText: Unprocessable Content
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 20:01:52 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "Validation failed.",
+        "data": null,
+        "errors": {
+          "image": [
+            "The image field must be an image."
+          ]
+        }
+      }
+order: 1782849723456
+name: wrong file extension

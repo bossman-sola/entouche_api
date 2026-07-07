@@ -1,0 +1,8 @@
+$kind: http-request
+name: Start Stock Count
+order: 6000
+method: POST
+url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}/start'
+headers:
+  - key: Accept
+    value: application/json

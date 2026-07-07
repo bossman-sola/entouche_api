@@ -1,0 +1,8 @@
+$kind: http-request
+name: Submit Transfer
+order: 6000
+method: POST
+url: '{{base_url}}/v1/transfers/{{transfer_id}}/submit'
+headers:
+  - key: Accept
+    value: application/json

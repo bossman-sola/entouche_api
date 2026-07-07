@@ -1,0 +1,17 @@
+$kind: http-request
+body:
+  type: json
+  content: |-
+    {
+        "status": "active"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Toggle Category Status.resources/examples
+order: 6000
+method: POST
+url: "{{base_url}}/api/v1/categories/{{category_id}}/toggle-status"
+headers:
+  Accept: application/json

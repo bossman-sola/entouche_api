@@ -1,0 +1,23 @@
+$kind: http-request
+name: Update Location
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Location.resources/examples
+order: 4000
+method: PUT
+url: "{{base_url}}/api/v1/locations/{{location_id}}"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,  
+      "name": "Storage Area",
+      "code": "STR",
+      "type": "Storage",
+      "status": "active"
+    }

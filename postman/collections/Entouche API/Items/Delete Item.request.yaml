@@ -1,0 +1,11 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Delete Item.resources/examples
+order: 5000
+method: DELETE
+url: "{{base_url}}/api/v1/items/{{item_id}}"
+headers:
+  Accept: application/json

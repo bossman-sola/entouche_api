@@ -1,0 +1,15 @@
+$kind: http-request
+name: Stock Summary
+order: 2000
+method: GET
+url: '{{base_url}}/v1/reports/stock-summary'
+headers:
+  - key: Accept
+    value: application/json
+queryParams:
+  - key: warehouse_id
+    value: ''
+    disabled: true
+  - key: item_id
+    value: ''
+    disabled: true

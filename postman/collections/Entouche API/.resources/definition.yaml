@@ -1,0 +1,15 @@
+$kind: collection
+name: Entouche API
+variables:
+  - key: base_url
+    value: ""
+    secret: false
+  - key: access_token
+    value: ""
+    secret: false
+  - key: json_web_token_143m
+    secret: true
+  - key: auth_secret_134v
+    secret: true
+  - key: json_web_token_0scg
+    secret: true

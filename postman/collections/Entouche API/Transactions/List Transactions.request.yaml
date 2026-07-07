@@ -1,0 +1,12 @@
+$kind: http-request
+name: List Transactions
+order: 1000
+method: GET
+url: '{{base_url}}/v1/transactions'
+headers:
+  - key: Accept
+    value: application/json
+queryParams:
+  - key: per_page
+    value: '15'
+    disabled: true

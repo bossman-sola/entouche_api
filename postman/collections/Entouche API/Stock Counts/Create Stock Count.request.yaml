@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create Stock Count
+order: 2000
+method: POST
+url: '{{base_url}}/v1/stock-counts'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,
+      "warehouse_location_id": null,
+      "count_date": "2026-06-29",
+      "items": [
+        {"item_id": 1, "system_quantity": 100, "counted_quantity": 98}
+      ]
+    }

@@ -1,0 +1,11 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Warehouse Locations.resources/examples
+order: 7000
+method: GET
+url: "{{base_url}}/api/v1/warehouses/{{warehouse_id}}/locations"
+headers:
+  Accept: application/json

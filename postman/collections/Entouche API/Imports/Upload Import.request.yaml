@@ -1,0 +1,26 @@
+$kind: http-request
+name: Upload Import
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Upload Import.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/imports"
+headers:
+  Accept: application/json
+body:
+  type: formdata
+  content:
+    - type: file
+      key: file
+      src:
+        - postman-cloud:///1f17a0ee-6ca8-4980-ba96-2aa3670bea43
+      description: CSV/XLSX/XLS file to import
+      disabled: false
+    - type: text
+      key: import_type
+      value: items
+      description: "Type of import: items or inventory"
+      disabled: false

@@ -1,0 +1,8 @@
+$kind: http-request
+name: Complete Transfer
+order: 9000
+method: POST
+url: '{{base_url}}/v1/transfers/{{transfer_id}}/complete'
+headers:
+  - key: Accept
+    value: application/json

@@ -1,0 +1,42 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/suppliers/{{supplier_id}}/toggle-status"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+          "status": "inactive"
+      }
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 18:00:33 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "No query results for model [App\\Models\\Supplier] 1",
+        "data": null,
+        "errors": null
+      }
+order: 1782842466009
+name: supplier does not exist

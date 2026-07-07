@@ -62,8 +62,41 @@ class ReceiptController extends BaseApiController
         if ($receipt->status !== 'draft') {
             return $this->error('Only draft receipts can be updated.', null, 422);
         }
-        $receipt->update($request->only(['supplier_id', 'warehouse_id', 'receiving_location_id', 'receipt_date', 'notes']));
-        return $this->success($receipt->fresh('items'), 'Receipt updated');
+
+        $data = $request->validate([
+            'supplier_id'           => ['nullable', 'exists:suppliers,id'],
+            'warehouse_id'          => ['nullable', 'exists:warehouses,id'],
+            'receiving_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+            'receipt_date'          => ['nullable', 'date'],
+            'notes'                 => ['nullable', 'string'],
+            'items'                 => ['nullable', 'array', 'min:1'],
+            'items.*.item_id'       => ['required', 'exists:items,id'],
+            'items.*.warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+            'items.*.quantity'      => ['required', 'numeric', 'min:0.001'],
+            'items.*.unit_cost'     => ['sometimes', 'numeric', 'min:0'],
+        ]);
+
+        // Update header fields
+        $receipt->update(collect($data)->except('items')->toArray());
+
+        // Update items if provided
+        if (!empty($data['items'])) {
+            // Remove existing items and replace with new ones
+            $receipt->items()->delete();
+
+            foreach ($data['items'] as $row) {
+                ReceiptItem::create([
+                    'receipt_id'            => $receipt->id,
+                    'item_id'               => $row['item_id'],
+                    'warehouse_location_id' => $row['warehouse_location_id'] ?? $receipt->receiving_location_id,
+                    'quantity'              => $row['quantity'],
+                    'unit_cost'             => $row['unit_cost'] ?? 0,
+                    'total_cost'            => $row['quantity'] * ($row['unit_cost'] ?? 0),
+                ]);
+            }
+        }
+
+        return $this->success($receipt->fresh('items.item'), 'Receipt updated');
     }
 
     public function destroy(Receipt $receipt)
