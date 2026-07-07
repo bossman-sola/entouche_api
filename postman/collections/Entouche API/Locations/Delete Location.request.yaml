@@ -1,8 +1,11 @@
 $kind: http-request
-name: Delete Location
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Delete Location.resources/examples
 order: 5000
 method: DELETE
-url: '{{base_url}}/v1/locations/{{location_id}}'
+url: "{{base_url}}/api/v1/locations/{{location_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

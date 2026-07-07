@@ -1,8 +1,11 @@
 $kind: http-request
-name: Get Audit Log
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Audit Log.resources/examples
 order: 2000
 method: GET
-url: '{{base_url}}/v1/audit-logs/{{log_id}}'
+url: "{{base_url}}/api/v1/audit-logs/{{log_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

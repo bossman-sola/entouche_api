@@ -1,4 +1,5 @@
 $kind: http-request
+name: Create Item
 auth:
   type: bearer
   credentials:
@@ -18,10 +19,10 @@ body:
       "unit_of_measure_id": 1,
       "category_id": 1,
       "supplier_id": 1,
-      "barcode": "1234567890",
+      "barcode": null,
       "item_type": "product",
-      "brand": "BrandX",
-      "description": "A sample widget",
+      "brand": null,
+      "description": null,
       "unit_cost": 10.00,
       "selling_price": 15.00,
       "reorder_level": 10,

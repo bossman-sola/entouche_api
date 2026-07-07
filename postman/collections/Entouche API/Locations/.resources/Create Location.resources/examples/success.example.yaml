@@ -1,0 +1,61 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/warehouses/{{warehouse_id}}/locations"
+  method: POST
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "warehouse_id": 1,
+        "name": "Receiving Area",
+        "code": "RCV",
+        "type": "Receiving",
+        "status": "active"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 19:28:14 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=7%2B38QGsGhvW8gjrB%2FzJjsfEeysuUW8yxnW34NExzRw8%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783452494"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=7%2B38QGsGhvW8gjrB%2FzJjsfEeysuUW8yxnW34NExzRw8%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783452494"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "463"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Created successfully",
+        "data": {
+          "warehouse_id": 1,
+          "name": "Receiving Area",
+          "code": "RCV",
+          "type": "Receiving",
+          "status": "active",
+          "updated_at": "2026-07-07T19:28:14.000000Z",
+          "created_at": "2026-07-07T19:28:14.000000Z",
+          "id": 2,
+          "warehouse": {
+            "id": 1,
+            "name": "Main Warehouse",
+            "code": "WH-001",
+            "address": "123 Main St",
+            "status": "active",
+            "created_at": "2026-07-01T22:00:26.000000Z",
+            "updated_at": "2026-07-07T17:23:11.000000Z",
+            "deleted_at": null
+          }
+        },
+        "errors": null
+      }
+order: 1783452583595

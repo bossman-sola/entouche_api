@@ -1,8 +1,11 @@
 $kind: http-request
-name: Delete Adjustment
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Delete Adjustment.resources/examples
 order: 5000
 method: DELETE
-url: '{{base_url}}/v1/adjustments/{{adjustment_id}}'
+url: "{{base_url}}/api/v1/adjustments/{{adjustment_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

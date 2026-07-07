@@ -1,8 +1,11 @@
 $kind: http-request
-name: Get Receipt
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Receipt.resources/examples
 order: 3000
 method: GET
-url: '{{base_url}}/v1/receipts/{{receipt_id}}'
+url: "{{base_url}}/api/v1/receipts/{{receipt_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

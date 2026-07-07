@@ -1,13 +1,16 @@
 $kind: http-request
 name: Create Adjustment
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Adjustment.resources/examples
 order: 2000
 method: POST
-url: '{{base_url}}/v1/adjustments'
+url: "{{base_url}}/api/v1/adjustments"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

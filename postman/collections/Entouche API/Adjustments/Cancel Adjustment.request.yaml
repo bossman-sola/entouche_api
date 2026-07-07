@@ -1,8 +1,11 @@
 $kind: http-request
-name: Cancel Adjustment
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Cancel Adjustment.resources/examples
 order: 9000
 method: POST
-url: '{{base_url}}/v1/adjustments/{{adjustment_id}}/cancel'
+url: "{{base_url}}/api/v1/adjustments/{{adjustment_id}}/cancel"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

@@ -1,0 +1,44 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/audit-logs/{{log_id}}"
+  method: GET
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 15:04:03 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=tq7tcbxgj3j1gAOhcvDCfGhXXIPfSS1fqqIb%2FYfjfSU%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783436643"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=tq7tcbxgj3j1gAOhcvDCfGhXXIPfSS1fqqIb%2FYfjfSU%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783436643"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "357"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": {
+          "id": 4,
+          "log_name": "default",
+          "description": "item.created",
+          "subject_type": "App\\Models\\Item",
+          "subject_id": 4,
+          "causer_type": "App\\Models\\User",
+          "causer_id": 1,
+          "attribute_changes": [],
+          "properties": [],
+          "batch_uuid": null,
+          "created_at": "2026-07-06T19:55:39.000000Z",
+          "updated_at": "2026-07-06T19:55:39.000000Z"
+        },
+        "errors": null
+      }
+order: 1783436648304

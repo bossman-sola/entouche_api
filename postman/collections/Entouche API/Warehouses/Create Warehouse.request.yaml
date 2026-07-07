@@ -1,19 +1,21 @@
 $kind: http-request
-name: Create Warehouse
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Warehouse.resources/examples
 order: 2000
 method: POST
-url: '{{base_url}}/v1/warehouses'
+url: "{{base_url}}/api/v1/warehouses"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "name": "Main Warehouse",
-      "code": "WH-001",
+      "name": "Secondary Warehouse",
+      "code": "WH-002",
       "address": "123 Main St",
       "status": "active"
     }

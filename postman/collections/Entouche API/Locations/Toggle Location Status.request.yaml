@@ -1,8 +1,11 @@
 $kind: http-request
-name: Toggle Location Status
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Toggle Location Status.resources/examples
 order: 6000
 method: POST
-url: '{{base_url}}/v1/locations/{{location_id}}/toggle-status'
+url: "{{base_url}}/api/v1/locations/{{location_id}}/toggle-status"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

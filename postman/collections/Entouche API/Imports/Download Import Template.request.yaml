@@ -1,8 +1,11 @@
 $kind: http-request
-name: Download Import Template
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Download Import Template.resources/examples
 order: 4000
 method: GET
-url: '{{base_url}}/v1/imports/templates/{{type}}'
+url: "{{base_url}}/api/v1/imports/templates/{{type}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json
