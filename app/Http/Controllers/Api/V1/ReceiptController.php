@@ -8,6 +8,7 @@ use App\Models\ReceiptItem;
 use App\Models\Setting;
 use App\Services\BaseService;
 use App\Services\StockMovementService;
+
 use Illuminate\Http\Request;
 
 class ReceiptController extends BaseApiController
