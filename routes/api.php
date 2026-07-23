@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ImportController;
 use App\Http\Controllers\Api\V1\ItemController;
 use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ReceiptController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\RoleController;
@@ -36,6 +37,12 @@ Route::prefix('v1')->group(function (): void {
         Route::post('users/{user}/assign-role', [UserController::class, 'assignRole'])->middleware('permission:users.manage');
         Route::post('users/{user}/remove-role', [UserController::class, 'removeRole'])->middleware('permission:users.manage');
         Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->middleware('permission:users.manage');
+
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
 
         Route::get('roles', [RoleController::class, 'index'])->middleware('permission:users.manage');
         Route::get('roles/{role}', [RoleController::class, 'show'])->middleware('permission:users.manage');

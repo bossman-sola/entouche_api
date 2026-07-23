@@ -7,13 +7,16 @@ use App\Models\Setting;
 use App\Models\Transfer;
 use App\Models\TransferItem;
 use App\Services\BaseService;
+use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
 
 class TransferController extends BaseApiController
 {
-    public function __construct(private readonly StockMovementService $stock)
-    {
+    public function __construct(
+        private readonly StockMovementService $stock,
+        private readonly NotificationService $notifications,
+    ) {
     }
 
     public function index(Request $request)
@@ -67,6 +70,12 @@ class TransferController extends BaseApiController
     {
         if (! in_array($transfer->status, ['draft', 'pending_approval'], true)) return $this->error('Transfer cannot be approved.', null, 422);
         $transfer->update(['status' => 'approved', 'approved_by' => auth()->id(), 'approved_at' => now()]);
+        $this->notifications->notifyAdmins(
+            'transfer_approved',
+            'Transfer Approved',
+            "Transfer {$transfer->transfer_number} has been approved and is ready for completion.",
+            ['transfer_id' => $transfer->id],
+        );
         return $this->success($transfer->fresh('items'), 'Transfer approved');
     }
 
@@ -78,6 +87,12 @@ class TransferController extends BaseApiController
             $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $transfer->to_warehouse_id, 'warehouse_location_id' => $transfer->to_location_id, 'transaction_type' => 'transfer_in', 'direction' => 'in', 'quantity' => $item->quantity, 'reference_type' => Transfer::class, 'reference_id' => $transfer->id]);
         }
         $transfer->update(['status' => 'completed', 'completed_at' => now()]);
+        $this->notifications->notifyAdmins(
+            'transfer_completed',
+            'Transfer Completed',
+            "Transfer {$transfer->transfer_number} has been completed successfully.",
+            ['transfer_id' => $transfer->id],
+        );
         return $this->success($transfer, 'Transfer completed');
     }
 }

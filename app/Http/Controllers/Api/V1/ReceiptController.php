@@ -7,13 +7,16 @@ use App\Models\Receipt;
 use App\Models\ReceiptItem;
 use App\Models\Setting;
 use App\Services\BaseService;
+use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
 
 class ReceiptController extends BaseApiController
 {
-    public function __construct(private readonly StockMovementService $stock)
-    {
+    public function __construct(
+        private readonly StockMovementService $stock,
+        private readonly NotificationService $notifications,
+    ) {
     }
 
     public function index(Request $request)
@@ -62,8 +65,39 @@ class ReceiptController extends BaseApiController
         if ($receipt->status !== 'draft') {
             return $this->error('Only draft receipts can be updated.', null, 422);
         }
-        $receipt->update($request->only(['supplier_id', 'warehouse_id', 'receiving_location_id', 'receipt_date', 'notes']));
-        return $this->success($receipt->fresh('items'), 'Receipt updated');
+
+        $data = $request->validate([
+            'supplier_id'           => ['nullable', 'exists:suppliers,id'],
+            'warehouse_id'          => ['nullable', 'exists:warehouses,id'],
+            'receiving_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+            'receipt_date'          => ['nullable', 'date'],
+            'notes'                 => ['nullable', 'string'],
+            'items'                 => ['nullable', 'array', 'min:1'],
+            'items.*.item_id'       => ['required', 'exists:items,id'],
+            'items.*.warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+            'items.*.quantity'      => ['required', 'numeric', 'min:0.001'],
+            'items.*.unit_cost'     => ['sometimes', 'numeric', 'min:0'],
+        ]);
+
+        
+        $receipt->update(collect($data)->except('items')->toArray());
+        if (!empty($data['items'])) {
+            
+            $receipt->items()->delete();
+
+            foreach ($data['items'] as $row) {
+                ReceiptItem::create([
+                    'receipt_id'            => $receipt->id,
+                    'item_id'               => $row['item_id'],
+                    'warehouse_location_id' => $row['warehouse_location_id'] ?? $receipt->receiving_location_id,
+                    'quantity'              => $row['quantity'],
+                    'unit_cost'             => $row['unit_cost'] ?? 0,
+                    'total_cost'            => $row['quantity'] * ($row['unit_cost'] ?? 0),
+                ]);
+            }
+        }
+
+        return $this->success($receipt->fresh('items.item'), 'Receipt updated');
     }
 
     public function destroy(Receipt $receipt)
@@ -95,6 +129,14 @@ class ReceiptController extends BaseApiController
             ]);
         }
         $receipt->update(['status' => 'received', 'received_by' => auth()->id(), 'received_at' => now()]);
+
+        $this->notifications->notifyAdmins(
+            'receipt_completed',
+            'Receipt Completed',
+            "Receipt {$receipt->receipt_number} has been completed and added to inventory.",
+            ['receipt_id' => $receipt->id],
+        );
+
         return $this->success($receipt->fresh('items'), 'Receipt received');
     }
 
