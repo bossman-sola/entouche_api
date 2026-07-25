@@ -1,0 +1,8 @@
+$kind: http-request
+name: Delete Stock Count
+order: 5000
+method: DELETE
+url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}'
+headers:
+  - key: Accept
+    value: application/json

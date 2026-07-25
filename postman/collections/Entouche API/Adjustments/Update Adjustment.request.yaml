@@ -1,0 +1,19 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Adjustment.resources/examples
+order: 4000
+method: PUT
+url: "{{base_url}}/api/v1/adjustments/{{adjustment_id}}"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "reason": "Updated reason",
+      "adjustment_type": "decrease"
+    }

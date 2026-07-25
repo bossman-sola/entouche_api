@@ -1,0 +1,12 @@
+$kind: http-request
+name: List Users
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/List Users.resources/examples
+order: 1000
+method: GET
+url: "{{base_url}}/api/v1/users"
+headers:
+  Accept: application/json

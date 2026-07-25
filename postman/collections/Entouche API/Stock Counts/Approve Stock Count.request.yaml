@@ -1,0 +1,8 @@
+$kind: http-request
+name: Approve Stock Count
+order: 8000
+method: POST
+url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}/approve'
+headers:
+  - key: Accept
+    value: application/json

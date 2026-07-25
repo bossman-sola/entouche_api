@@ -1,0 +1,8 @@
+$kind: http-request
+name: Dashboard Stats
+order: 1000
+method: GET
+url: '{{base_url}}/v1/reports/dashboard-stats'
+headers:
+  - key: Accept
+    value: application/json

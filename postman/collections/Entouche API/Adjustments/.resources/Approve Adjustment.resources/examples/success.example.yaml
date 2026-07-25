@@ -1,0 +1,63 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/adjustments/{{adjustment_id}}/approve"
+  method: POST
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 17:52:55 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=9O9muO1Qaj2bmSGtmtrtp4mGqQrz4v%2FTYzXsf26XkC0%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783446774"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=9O9muO1Qaj2bmSGtmtrtp4mGqQrz4v%2FTYzXsf26XkC0%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783446774"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "796"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Adjustment approved",
+        "data": {
+          "id": 2,
+          "adjustment_number": "ADJ-000002",
+          "warehouse_id": 1,
+          "warehouse_location_id": null,
+          "adjustment_type": "increase",
+          "reason": "Found extra stock during audit",
+          "adjusted_by": 1,
+          "approved_by": 1,
+          "created_by": 1,
+          "adjustment_date": "2026-07-07T00:00:00.000000Z",
+          "approved_at": "2026-07-07T17:52:55.000000Z",
+          "status": "approved",
+          "notes": null,
+          "rejection_reason": null,
+          "created_at": "2026-07-07T17:39:17.000000Z",
+          "updated_at": "2026-07-07T17:52:55.000000Z",
+          "deleted_at": null,
+          "items": [
+            {
+              "id": 2,
+              "adjustment_id": 2,
+              "item_id": 1,
+              "warehouse_location_id": null,
+              "quantity_before": "90.000",
+              "adjustment_quantity": "10.000",
+              "quantity_after": "100.000",
+              "unit_cost": "0.00",
+              "created_at": "2026-07-07T17:39:17.000000Z",
+              "updated_at": "2026-07-07T17:39:17.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783446778120

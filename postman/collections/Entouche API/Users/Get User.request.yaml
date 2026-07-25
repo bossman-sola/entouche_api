@@ -1,0 +1,11 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get User.resources/examples
+order: 3000
+method: GET
+url: "{{base_url}}/api/v1/users/{{user_id}}"
+headers:
+  Accept: application/json

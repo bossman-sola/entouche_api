@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create Unit
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Unit.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/units"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Kilogram",
+      "abbreviation": "kg",
+      "status": "active"
+    }

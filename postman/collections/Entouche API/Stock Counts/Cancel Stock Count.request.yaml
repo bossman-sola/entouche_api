@@ -1,0 +1,8 @@
+$kind: http-request
+name: Cancel Stock Count
+order: 9000
+method: POST
+url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}/cancel'
+headers:
+  - key: Accept
+    value: application/json

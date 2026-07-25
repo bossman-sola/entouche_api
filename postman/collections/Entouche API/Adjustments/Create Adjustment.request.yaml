@@ -1,0 +1,25 @@
+$kind: http-request
+name: Create Adjustment
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Adjustment.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/adjustments"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,
+      "warehouse_location_id": null,
+      "adjustment_type": "increase",
+      "reason": "Found extra stock during audit",
+      "items": [
+        {"item_id": 1, "adjustment_quantity": 10, "quantity_before": 90, "quantity_after": 100}
+      ]
+    }

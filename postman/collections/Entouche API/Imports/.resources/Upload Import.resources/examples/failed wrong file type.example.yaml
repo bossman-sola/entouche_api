@@ -1,0 +1,49 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/imports"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: file
+        src:
+          - postman-cloud:///1f17a0e2-cb7c-4d50-a587-a45e048029a1
+        description: CSV/XLSX/XLS file to import
+        disabled: false
+      - type: text
+        key: import_type
+        value: items
+        description: "Type of import: items or inventory"
+        disabled: false
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 14:18:07 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=Tf9wFdu3bL0XO6PB3pXw1GcAuwu1aTaWu4ln8%2FyC%2Bwg%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783433887"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=Tf9wFdu3bL0XO6PB3pXw1GcAuwu1aTaWu4ln8%2FyC%2Bwg%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783433887"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "137"
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "Validation failed.",
+        "data": null,
+        "errors": {
+          "file": [
+            "The file field must be a file of type: csv, xlsx, xls."
+          ]
+        }
+      }
+order: 1647579379242647

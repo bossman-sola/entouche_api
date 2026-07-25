@@ -1,0 +1,36 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items/{{item_id}}"
+  method: DELETE
+  headers:
+    - key: Accept
+      value: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 19:53:46 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Item deleted",
+        "data": null,
+        "errors": null
+      }
+order: 1782849228739
+name: success

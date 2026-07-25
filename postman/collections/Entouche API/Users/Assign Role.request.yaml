@@ -1,0 +1,18 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Assign Role.resources/examples
+order: 6000
+method: POST
+url: "{{base_url}}/api/v1/users/{{user_id}}/assign-role"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "roles": ["inventory_officer"]
+    }

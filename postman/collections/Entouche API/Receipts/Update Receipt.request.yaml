@@ -1,0 +1,23 @@
+$kind: http-request
+name: Update Receipt
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Receipt.resources/examples
+order: 4000
+method: PUT
+url: "{{base_url}}/api/v1/receipts/{{receipt_id}}"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "notes": "Updated notes",
+      "receipt_date": "2026-06-29",
+      "items": [
+        {"item_id": 2, "warehouse_location_id": 2, "quantity": 50, "unit_cost": 25.00}
+      ]
+    }

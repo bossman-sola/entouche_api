@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/auth/refresh"
+  method: POST
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Tue, 30 Jun 2026 22:11:32 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Token refreshed",
+        "data": {
+          "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMTlmMTY4Ny05NWNmLTcwMzMtYmFlMy00ODk0Zjc1MDZhOWYiLCJqdGkiOiJlZjQ3OWQxYmU1OTEyNmNlZTlhZjA3YzQxMjI4NGI3YmMyY2E5YTU2YTVhZDhmMGMzOWRmZDk2ZTg4ZTQxMTkzZDc1OTdjYTEyZjg4ODUwYSIsImlhdCI6MTc4Mjg1NzQ5Mi44NjExNTUsIm5iZiI6MTc4Mjg1NzQ5Mi44NjExNTgsImV4cCI6MTc5ODY2ODY5Mi44MzQxNTIsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.khyIv1w_teZSrR8p4sZNkDBRkKj32FwicUjB14eO_hbtbnqHj1YwjumFfgb4pTg0QVdIE4Yf5STeV0fSJhKYNn3eoqqwdBRbdMp6GbHyL7wh9LPkZN0KXBCeYDnueXKr-jfupJ1gAyft2n0abLkwr8jw1pUKwP-vTeG6hk4KT6xzHRgwofPHugnKJoXdLT43XpBphPQeHK5nqyUtyUM_OWOA0qI-ogbs7MF24M7SexcQlUHjB5DGV3oFHVmGUUsyYfZAXvt9bJEaCZOkOrW7CMi6wg-FzfVRb_vSj3ByiUmOu5d4ixxE-6GTSlFKmYMH_mtxEoD1ZSOTwVuriQ_FiqcBju6xD2TgpthczjCebfnV02oMYI5dwTfgvBgQaDbHUNDTiASphUIVwCypwaNayeeqBeTY_3CIZB_jKV0aLVhw-t1h3fmEJAraGUZ8ER2n71ZSpkF7kWFb14U4TymdmjT1FRt0OIpR008rks9PRApocrs31oBVPCcJjU_nrgntYopJfM4MhJTcA1NwPx_O3TAG_h5SfIbx0YFh1yq1MtnFlgh968jTDom5tfcZ6Gq-iYfghrffGeIA985hoyujV7Az8_Cbj6m9jFqTUox5QUfRtU5FbPmPARMD8lhILouUBRWf_E9j_03y_QWMgsij99gfm20gk9Lb0E45WdKlPoI",
+          "token_type": "Bearer"
+        },
+        "errors": null
+      }
+order: 1782857499595

@@ -1,0 +1,23 @@
+$kind: http-request
+name: Create Transfer
+order: 2000
+method: POST
+url: '{{base_url}}/v1/transfers'
+headers:
+  - key: Accept
+    value: application/json
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "from_warehouse_id": 1,
+      "from_location_id": null,
+      "to_warehouse_id": 2,
+      "to_location_id": null,
+      "notes": "Transfer to secondary warehouse",
+      "items": [
+        {"item_id": 1, "quantity": 50}
+      ]
+    }

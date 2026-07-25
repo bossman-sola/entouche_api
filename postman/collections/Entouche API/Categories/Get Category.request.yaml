@@ -1,0 +1,12 @@
+$kind: http-request
+name: Get Category
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Category.resources/examples
+order: 3000
+method: GET
+url: "{{base_url}}/api/v1/categories/{{category_id}}"
+headers:
+  Accept: application/json
