@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class UserController extends BaseApiController
 {
+    public function __construct(private readonly NotificationService $notifications)
+    {
+    }
+
     public function index(Request $request)
     {
         $users = User::with('roles')
@@ -32,6 +37,14 @@ class UserController extends BaseApiController
         $roles = $data['roles'] ?? [];
         unset($data['roles']);
         $user = User::create($data);
+
+        $this->notifications->notifyAdmins(
+            'user_created',
+            'User Created',
+            "A new user account was created for {$user->name} ({$user->email}).",
+            ['user_id' => $user->id],
+        );
+
         if ($roles) {
             $user->syncRoles($roles);
         }
