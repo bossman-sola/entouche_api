@@ -7,14 +7,17 @@ use App\Models\Receipt;
 use App\Models\ReceiptItem;
 use App\Models\Setting;
 use App\Services\BaseService;
+use App\Services\NotificationService;
 use App\Services\StockMovementService;
 
 use Illuminate\Http\Request;
 
 class ReceiptController extends BaseApiController
 {
-    public function __construct(private readonly StockMovementService $stock)
-    {
+    public function __construct(
+        private readonly StockMovementService $stock,
+        private readonly NotificationService $notifications,
+    ) {
     }
 
     public function index(Request $request)
@@ -77,12 +80,10 @@ class ReceiptController extends BaseApiController
             'items.*.unit_cost'     => ['sometimes', 'numeric', 'min:0'],
         ]);
 
-        // Update header fields
+        
         $receipt->update(collect($data)->except('items')->toArray());
-
-        // Update items if provided
         if (!empty($data['items'])) {
-            // Remove existing items and replace with new ones
+            
             $receipt->items()->delete();
 
             foreach ($data['items'] as $row) {
@@ -129,6 +130,14 @@ class ReceiptController extends BaseApiController
             ]);
         }
         $receipt->update(['status' => 'received', 'received_by' => auth()->id(), 'received_at' => now()]);
+
+        $this->notifications->notifyAdmins(
+            'receipt_completed',
+            'Receipt Completed',
+            "Receipt {$receipt->receipt_number} has been completed and added to inventory.",
+            ['receipt_id' => $receipt->id],
+        );
+
         return $this->success($receipt->fresh('items'), 'Receipt received');
     }
 

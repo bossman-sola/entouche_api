@@ -7,13 +7,16 @@ use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
 use App\Models\Setting;
 use App\Services\BaseService;
+use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
 
 class AdjustmentController extends BaseApiController
 {
-    public function __construct(private readonly StockMovementService $stock)
-    {
+    public function __construct(
+        private readonly StockMovementService $stock,
+        private readonly NotificationService $notifications,
+    ) {
     }
 
     public function index(Request $request) { return $this->paginated(Adjustment::with('items')->latest()->paginate($request->integer('per_page', 15))); }
@@ -53,7 +56,17 @@ class AdjustmentController extends BaseApiController
         return $this->success(null, 'Adjustment deleted');
     }
 
-    public function submit(Adjustment $adjustment) { $adjustment->update(['status' => 'pending_approval']); return $this->success($adjustment, 'Adjustment submitted'); }
+    public function submit(Adjustment $adjustment)
+    {
+        $adjustment->update(['status' => 'pending_approval']);
+        $this->notifications->notifyAdmins(
+            'adjustment_pending',
+            'Adjustment Pending',
+            "Adjustment {$adjustment->adjustment_number} has been submitted and is awaiting approval.",
+            ['adjustment_id' => $adjustment->id],
+        );
+        return $this->success($adjustment, 'Adjustment submitted');
+    }
     public function reject(Request $request, Adjustment $adjustment) { $adjustment->update(['status' => 'rejected', 'rejection_reason' => $request->reason]); return $this->success($adjustment, 'Adjustment rejected'); }
     public function cancel(Adjustment $adjustment) { $adjustment->update(['status' => 'cancelled']); return $this->success($adjustment, 'Adjustment cancelled'); }
 
