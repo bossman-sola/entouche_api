@@ -10,6 +10,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportService extends BaseService
 {
+    public function __construct(private readonly NotificationService $notifications)
+    {
+    }
+
     public function upload(UploadedFile $file, string $importType): Import
     {
         $path = $file->store("imports/{$importType}", 'local');
@@ -44,12 +48,35 @@ class ImportService extends BaseService
                 'status' => $import->failed_rows > 0 ? 'partial' : 'completed',
                 'completed_at' => now(),
             ]);
+
+            if ($import->status === 'completed') {
+                $this->notifications->notifyAdmins(
+                    'import_completed',
+                    'Import Completed',
+                    "Import of {$import->import_type} completed successfully — {$import->successful_rows} row(s) imported.",
+                    ['import_id' => $import->id],
+                );
+            } else {
+                $this->notifications->notifyAdmins(
+                    'import_failed',
+                    'Import Failed',
+                    "Import of {$import->import_type} finished with {$import->failed_rows} failed row(s) out of {$import->total_rows}.",
+                    ['import_id' => $import->id],
+                );
+            }
         } catch (\Throwable $e) {
             $import->update([
                 'status' => 'failed',
                 'error_summary' => $e->getMessage(),
                 'completed_at' => now(),
             ]);
+
+            $this->notifications->notifyAdmins(
+                'import_failed',
+                'Import Failed',
+                "Import of {$import->import_type} failed: {$e->getMessage()}",
+                ['import_id' => $import->id],
+            );
         }
     }
 

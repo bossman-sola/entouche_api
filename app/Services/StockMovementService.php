@@ -3,11 +3,18 @@
 namespace App\Services;
 
 use App\Models\InventoryTransaction;
+use App\Models\Item;
+use App\Models\Location;
 use App\Models\Setting;
 use App\Models\StockBalance;
+use App\Models\Warehouse;
 
 class StockMovementService extends BaseService
 {
+    public function __construct(private readonly NotificationService $notifications)
+    {
+    }
+
     public function move(array $data): InventoryTransaction
     {
         return $this->transaction(function () use ($data): InventoryTransaction {
@@ -30,6 +37,8 @@ class StockMovementService extends BaseService
             $balance->quantity_available = $after - (float) $balance->quantity_reserved;
             $balance->last_transaction_at = now();
             $balance->save();
+
+            $this->maybeNotifyStockThreshold($before, $after, $data);
 
             return InventoryTransaction::create([
                 'transaction_number' => $this->generateNumber(
@@ -55,5 +64,53 @@ class StockMovementService extends BaseService
                 'transaction_date' => now(),
             ]);
         });
+    }
+    private function maybeNotifyStockThreshold(float $before, float $after, array $data): void
+    {
+        if (! Setting::get('inventory.low_stock_alerts', true)) {
+            return;
+        }
+
+        $item = Item::find($data['item_id']);
+        $reorderLevel = (float) ($item->reorder_level ?? 0);
+
+        if (! $item || $reorderLevel <= 0) {
+            return;
+        }
+
+        $wasAboveThreshold = $before > $reorderLevel;
+        $isAtOrBelowNow = $after <= $reorderLevel;
+
+        if (! $wasAboveThreshold || ! $isAtOrBelowNow) {
+            return;
+        }
+
+        $warehouse = Warehouse::find($data['warehouse_id']);
+        $location = ! empty($data['warehouse_location_id']) ? Location::find($data['warehouse_location_id']) : null;
+        $place = $location ? "{$warehouse?->name} ({$location->name})" : ($warehouse->name ?? 'a warehouse');
+
+        $notificationData = [
+            'item_id' => $item->id,
+            'warehouse_id' => $data['warehouse_id'],
+            'warehouse_location_id' => $data['warehouse_location_id'] ?? null,
+            'current_stock' => $after,
+            'reorder_level' => $reorderLevel,
+        ];
+
+        if ($after == $reorderLevel) {
+            $this->notifications->notifyAdmins(
+                'reorder_level_reached',
+                'Reorder Level Reached',
+                "{$item->name} has reached reorder level at {$place}.",
+                $notificationData,
+            );
+        } else {
+            $this->notifications->notifyAdmins(
+                'low_stock_alert',
+                'Low Stock Alert',
+                "{$item->name} is low on stock at {$place}.",
+                $notificationData,
+            );
+        }
     }
 }

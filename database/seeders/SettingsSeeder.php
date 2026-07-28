@@ -20,6 +20,8 @@ class SettingsSeeder extends Seeder
             ['group' => 'numbering', 'key' => 'numbering.transaction_prefix', 'value' => 'TXN', 'type' => 'string'],
             ['group' => 'inventory', 'key' => 'inventory.low_stock_alerts', 'value' => '1', 'type' => 'boolean'],
             ['group' => 'inventory', 'key' => 'inventory.allow_negative_stock', 'value' => '0', 'type' => 'boolean'],
+            ['group' => 'system', 'key' => 'system.maintenance_mode', 'value' => '0', 'type' => 'boolean'],
+            ['group' => 'system', 'key' => 'system.maintenance_message', 'value' => '', 'type' => 'string'],
         ];
 
         foreach ($settings as $setting) {
