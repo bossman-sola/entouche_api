@@ -1,0 +1,56 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/transfers/{{transfer_id}}/approve"
+  method: POST
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 21:08:56 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+          "success": true,
+          "message": "Transfer approved",
+          "data": {
+              "id": 6,
+              "transfer_number": "TRF-000006",
+              "from_warehouse_id": 1,
+              "from_location_id": 2,
+              "to_warehouse_id": 2,
+              "to_location_id": 2,
+              "requested_by": 2,
+              "approved_by": 2,
+              "created_by": 2,
+              "transfer_date": null,
+              "approved_at": "2026-07-10T03:29:15.000000Z",
+              "completed_at": null,
+              "status": "approved",
+              "notes": "Transfer to secondary warehouse",
+              "rejection_reason": null,
+              "created_at": "2026-07-10T03:27:44.000000Z",
+              "updated_at": "2026-07-10T03:29:15.000000Z",
+              "deleted_at": null,
+              "items": [
+                  {
+                      "id": 14,
+                      "transfer_id": 6,
+                      "item_id": 3,
+                      "quantity": "50.000",
+                      "created_at": "2026-07-10T03:27:44.000000Z",
+                      "updated_at": "2026-07-10T03:27:44.000000Z"
+                  }
+              ]
+          },
+          "errors": null
+      }
+order: 1783631338150

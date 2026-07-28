@@ -1,0 +1,28 @@
+# This is a Workflow metadata file for defining entity relationships in this workspace.
+# Each workflow defines relations between entities and may include optional behavior/settings.
+# The Paths are relative to the .postman directory (avoid absolute paths).
+# Keep relation entries explicit and avoid duplicate pairs within the same workflow.
+# This file is declarative metadata and does not execute workflows by itself.
+workflows:
+  syncSpecToCollection:
+    - spec: >-
+        ../postman/specs/Entouche API tested endpoints/Entouche API tested
+        endpoints.yaml
+      collection: ../postman/collections/Entouche API
+      options:
+        syncExamples: false
+    - spec: ../postman/specs/Entouche Endpoints/Entouche Endpoints.json
+      collection: ../postman/collections/Entouche API
+      options:
+        syncExamples: false
+  syncCollectionToSpec:
+    - spec: >-
+        ../postman/specs/Entouche API tested endpoints/Entouche API tested
+        endpoints.yaml
+      collection: ../postman/collections/Entouche API
+      options:
+        syncExamples: false
+    - spec: ../postman/specs/Entouche Endpoints/Entouche Endpoints.json
+      collection: ../postman/collections/Entouche API
+      options:
+        syncExamples: false

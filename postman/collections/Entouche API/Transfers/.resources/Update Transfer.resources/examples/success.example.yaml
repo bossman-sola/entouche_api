@@ -1,0 +1,74 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/transfers/{{transfer_id}}"
+  method: PUT
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "notes": "Updated transfer notes",
+        "items": [
+          {"item_id": 6, "warehouse_location_id": 2, "quantity": 60, "unit_cost": 25.00}
+        ]
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 21:06:54 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Transfer updated",
+        "data": {
+          "id": 1,
+          "transfer_number": "TRF-000001",
+          "from_warehouse_id": 1,
+          "from_location_id": null,
+          "to_warehouse_id": 2,
+          "to_location_id": null,
+          "requested_by": 2,
+          "approved_by": null,
+          "created_by": 2,
+          "transfer_date": null,
+          "approved_at": null,
+          "completed_at": null,
+          "status": "draft",
+          "notes": "Updated transfer notes",
+          "rejection_reason": null,
+          "created_at": "2026-07-09T20:43:03.000000Z",
+          "updated_at": "2026-07-09T20:45:41.000000Z",
+          "deleted_at": null,
+          "items": [
+            {
+              "id": 8,
+              "transfer_id": 1,
+              "item_id": 5,
+              "quantity": "50.000",
+              "created_at": "2026-07-09T21:02:28.000000Z",
+              "updated_at": "2026-07-09T21:06:32.000000Z"
+            },
+            {
+              "id": 9,
+              "transfer_id": 1,
+              "item_id": 6,
+              "quantity": "60.000",
+              "created_at": "2026-07-09T21:06:40.000000Z",
+              "updated_at": "2026-07-09T21:06:54.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783631217666

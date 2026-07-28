@@ -21,6 +21,6 @@ body:
       "receipt_date": "2026-06-29",
       "notes": "Initial stock receipt",
       "items": [
-        {"item_id": 1, "warehouse_location_id": 2, "quantity": 100, "unit_cost": 10.00}
+        {"item_id": 3, "quantity": 100, "unit_cost": 10.00}
       ]
     }

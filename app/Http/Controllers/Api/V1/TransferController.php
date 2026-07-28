@@ -37,7 +37,15 @@ class TransferController extends BaseApiController
         $items = $data['items'];
         unset($data['items']);
         $number = (new class extends BaseService {})->generateNumber('transfers', 'transfer_number', Setting::get('numbering.transfer_prefix', 'TRF'), 6);
-        $transfer = Transfer::create($data + ['transfer_number' => $number, 'requested_by' => auth()->id(), 'created_by' => auth()->id(), 'status' => 'draft']);
+        $transfer = Transfer::create(
+            $data + 
+            [
+                'transfer_number' => $number, 
+                'transfer_date'   => $data['transfer_date'] ?? now()->toDateString(),
+                'requested_by' => auth()->id(), 
+                'created_by' => auth()->id(), 
+                'status' => 'draft'
+            ]);
 
         foreach ($items as $row) {
             TransferItem::create($row + ['transfer_id' => $transfer->id]);
@@ -47,12 +55,43 @@ class TransferController extends BaseApiController
     }
 
     public function show(Transfer $transfer) { return $this->success($transfer->load('items')); }
+    
     public function update(Request $request, Transfer $transfer)
     {
-        if ($transfer->status !== 'draft') return $this->error('Only draft transfers can be updated.', null, 422);
-        $transfer->update($request->only(['from_warehouse_id', 'from_location_id', 'to_warehouse_id', 'to_location_id', 'notes']));
+        if ($transfer->status !== 'draft') {
+            return $this->error('Only draft transfers can be updated.', null, 422);
+        }
+
+        $data = $request->validate([
+            'from_warehouse_id' => ['nullable', 'exists:warehouses,id'],
+            'from_location_id'  => ['nullable', 'exists:warehouse_locations,id'],
+            'to_warehouse_id'   => ['nullable', 'exists:warehouses,id'],
+            'to_location_id'    => ['nullable', 'exists:warehouse_locations,id'],
+            'notes'             => ['nullable', 'string'],
+            'items'             => ['nullable', 'array', 'min:1'],
+            'items.*.item_id'   => ['required', 'exists:items,id'],
+            'items.*.quantity'  => ['required', 'numeric', 'min:0.001'],
+        ]);
+
+        $transfer->update(collect($data)->except('items')->toArray());
+
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as $row) {
+                TransferItem::updateOrCreate(
+                    [
+                        'transfer_id' => $transfer->id,
+                        'item_id'     => $row['item_id'],
+                    ],
+                    [
+                        'quantity' => $row['quantity'],
+                    ]
+                );
+            }
+        }
+
         return $this->success($transfer->fresh('items'), 'Transfer updated');
     }
+
     public function destroy(Transfer $transfer)
     {
         if ($transfer->status !== 'draft') return $this->error('Only draft transfers can be deleted.', null, 422);

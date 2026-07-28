@@ -1,0 +1,252 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/reports/movement-report"
+  method: GET
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Thu, 09 Jul 2026 15:31:29 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=ESgDu3ZbDnD6JfsuuEwkNHiElaEwx4SzK4jvyINkTwA%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783611089"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=ESgDu3ZbDnD6JfsuuEwkNHiElaEwx4SzK4jvyINkTwA%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783611089"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    transfer-encoding: chunked
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": {
+          "totals": {
+            "total_in": "210.000",
+            "total_out": 0,
+            "total_value_in": "2000.00",
+            "total_value_out": 0
+          },
+          "transactions": {
+            "current_page": 1,
+            "data": [
+              {
+                "id": 3,
+                "transaction_number": "TXN-000003",
+                "item_id": 1,
+                "warehouse_id": 1,
+                "warehouse_location_id": 2,
+                "transaction_type": "receipt",
+                "direction": "in",
+                "quantity": "100.000",
+                "balance_before": "100.000",
+                "balance_after": "200.000",
+                "unit_cost": "10.00",
+                "total_value": "1000.00",
+                "reference_type": "App\\Models\\Receipt",
+                "reference_id": 3,
+                "remarks": null,
+                "performed_by": 1,
+                "transaction_date": "2026-07-08T22:17:23.000000Z",
+                "created_at": "2026-07-08T22:17:23.000000Z",
+                "updated_at": "2026-07-08T22:17:23.000000Z",
+                "item": {
+                  "id": 1,
+                  "category_id": 1,
+                  "unit_of_measure_id": 1,
+                  "supplier_id": 1,
+                  "sku": "ITM-000001",
+                  "barcode": null,
+                  "name": "load-blog.js",
+                  "item_type": "stock_item",
+                  "brand": null,
+                  "description": null,
+                  "unit_cost": "30.00",
+                  "selling_price": "10.00",
+                  "reorder_level": "38.000",
+                  "image_path": "items/1/ZlXW8z7trdj5GcPjSr4XtHwH92FpwXr6CzwdxSWi.png",
+                  "status": "active",
+                  "created_by": 1,
+                  "created_at": "2026-07-05T09:20:00.000000Z",
+                  "updated_at": "2026-07-05T09:20:19.000000Z",
+                  "deleted_at": null
+                },
+                "warehouse": {
+                  "id": 1,
+                  "name": "Main Warehouse",
+                  "code": "WH-001",
+                  "address": "123 Main St",
+                  "status": "active",
+                  "created_at": "2026-07-01T22:00:26.000000Z",
+                  "updated_at": "2026-07-07T17:23:11.000000Z",
+                  "deleted_at": null
+                },
+                "location": {
+                  "id": 2,
+                  "warehouse_id": 1,
+                  "name": "Receiving Area",
+                  "code": "RCV",
+                  "type": "Receiving",
+                  "status": "inactive",
+                  "created_at": "2026-07-07T19:28:14.000000Z",
+                  "updated_at": "2026-07-07T19:47:14.000000Z",
+                  "deleted_at": null
+                }
+              },
+              {
+                "id": 2,
+                "transaction_number": "TXN-000002",
+                "item_id": 1,
+                "warehouse_id": 1,
+                "warehouse_location_id": 2,
+                "transaction_type": "receipt",
+                "direction": "in",
+                "quantity": "100.000",
+                "balance_before": "0.000",
+                "balance_after": "100.000",
+                "unit_cost": "10.00",
+                "total_value": "1000.00",
+                "reference_type": "App\\Models\\Receipt",
+                "reference_id": 4,
+                "remarks": null,
+                "performed_by": 1,
+                "transaction_date": "2026-07-08T21:44:12.000000Z",
+                "created_at": "2026-07-08T21:44:12.000000Z",
+                "updated_at": "2026-07-08T21:44:12.000000Z",
+                "item": {
+                  "id": 1,
+                  "category_id": 1,
+                  "unit_of_measure_id": 1,
+                  "supplier_id": 1,
+                  "sku": "ITM-000001",
+                  "barcode": null,
+                  "name": "load-blog.js",
+                  "item_type": "stock_item",
+                  "brand": null,
+                  "description": null,
+                  "unit_cost": "30.00",
+                  "selling_price": "10.00",
+                  "reorder_level": "38.000",
+                  "image_path": "items/1/ZlXW8z7trdj5GcPjSr4XtHwH92FpwXr6CzwdxSWi.png",
+                  "status": "active",
+                  "created_by": 1,
+                  "created_at": "2026-07-05T09:20:00.000000Z",
+                  "updated_at": "2026-07-05T09:20:19.000000Z",
+                  "deleted_at": null
+                },
+                "warehouse": {
+                  "id": 1,
+                  "name": "Main Warehouse",
+                  "code": "WH-001",
+                  "address": "123 Main St",
+                  "status": "active",
+                  "created_at": "2026-07-01T22:00:26.000000Z",
+                  "updated_at": "2026-07-07T17:23:11.000000Z",
+                  "deleted_at": null
+                },
+                "location": {
+                  "id": 2,
+                  "warehouse_id": 1,
+                  "name": "Receiving Area",
+                  "code": "RCV",
+                  "type": "Receiving",
+                  "status": "inactive",
+                  "created_at": "2026-07-07T19:28:14.000000Z",
+                  "updated_at": "2026-07-07T19:47:14.000000Z",
+                  "deleted_at": null
+                }
+              },
+              {
+                "id": 1,
+                "transaction_number": "TXN-000001",
+                "item_id": 1,
+                "warehouse_id": 1,
+                "warehouse_location_id": null,
+                "transaction_type": "adjustment_in",
+                "direction": "in",
+                "quantity": "10.000",
+                "balance_before": "0.000",
+                "balance_after": "10.000",
+                "unit_cost": "0.00",
+                "total_value": "0.00",
+                "reference_type": "App\\Models\\Adjustment",
+                "reference_id": 2,
+                "remarks": null,
+                "performed_by": 1,
+                "transaction_date": "2026-07-07T17:52:54.000000Z",
+                "created_at": "2026-07-07T17:52:54.000000Z",
+                "updated_at": "2026-07-07T17:52:54.000000Z",
+                "item": {
+                  "id": 1,
+                  "category_id": 1,
+                  "unit_of_measure_id": 1,
+                  "supplier_id": 1,
+                  "sku": "ITM-000001",
+                  "barcode": null,
+                  "name": "load-blog.js",
+                  "item_type": "stock_item",
+                  "brand": null,
+                  "description": null,
+                  "unit_cost": "30.00",
+                  "selling_price": "10.00",
+                  "reorder_level": "38.000",
+                  "image_path": "items/1/ZlXW8z7trdj5GcPjSr4XtHwH92FpwXr6CzwdxSWi.png",
+                  "status": "active",
+                  "created_by": 1,
+                  "created_at": "2026-07-05T09:20:00.000000Z",
+                  "updated_at": "2026-07-05T09:20:19.000000Z",
+                  "deleted_at": null
+                },
+                "warehouse": {
+                  "id": 1,
+                  "name": "Main Warehouse",
+                  "code": "WH-001",
+                  "address": "123 Main St",
+                  "status": "active",
+                  "created_at": "2026-07-01T22:00:26.000000Z",
+                  "updated_at": "2026-07-07T17:23:11.000000Z",
+                  "deleted_at": null
+                },
+                "location": null
+              }
+            ],
+            "first_page_url": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/reports/movement-report?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/reports/movement-report?page=1",
+            "links": [
+              {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+              },
+              {
+                "url": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/reports/movement-report?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+              },
+              {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+              }
+            ],
+            "next_page_url": null,
+            "path": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/reports/movement-report",
+            "per_page": 20,
+            "prev_page_url": null,
+            "to": 3,
+            "total": 3
+          }
+        },
+        "errors": null
+      }
+order: 1783611196594

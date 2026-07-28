@@ -1,5 +1,4 @@
 $kind: http-request
-name: Update Receipt
 auth:
   type: bearer
   credentials:

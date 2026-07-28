@@ -1,16 +1,23 @@
 $kind: http-request
 name: Update Transfer
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Transfer.resources/examples
 order: 4000
 method: PUT
-url: '{{base_url}}/v1/transfers/{{transfer_id}}'
+url: "{{base_url}}/api/v1/transfers/{{transfer_id}}"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "notes": "Updated transfer notes"
+      "notes": "Updated transfer notes",
+      "from_location_id": 1,
+      "items": [
+        {"item_id": 6, "warehouse_location_id": 2, "quantity": 60, "unit_cost": 25.00}
+      ]
     }

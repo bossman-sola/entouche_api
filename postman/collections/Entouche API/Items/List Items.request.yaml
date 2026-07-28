@@ -1,5 +1,4 @@
 $kind: http-request
-name: List Items
 auth:
   type: bearer
   credentials:

@@ -1,13 +1,15 @@
 $kind: http-request
-name: Update Stock Count
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Stock Count.resources/examples
 order: 4000
 method: PUT
-url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}'
+url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

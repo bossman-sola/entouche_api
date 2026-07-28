@@ -1,0 +1,27 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}"
+  method: DELETE
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 16:58:45 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Stock count deleted",
+        "data": null,
+        "errors": null
+      }
+order: 1783616327751

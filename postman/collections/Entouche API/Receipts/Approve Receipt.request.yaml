@@ -1,8 +1,11 @@
 $kind: http-request
-name: Approve Receipt
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Approve Receipt.resources/examples
 order: 6000
 method: POST
-url: '{{base_url}}/v1/receipts/{{receipt_id}}/approve'
+url: "{{base_url}}/api/v1/receipts/{{receipt_id}}/approve"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

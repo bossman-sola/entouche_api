@@ -1,8 +1,11 @@
 $kind: http-request
-name: Submit Transfer
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Submit Transfer.resources/examples
 order: 6000
 method: POST
-url: '{{base_url}}/v1/transfers/{{transfer_id}}/submit'
+url: "{{base_url}}/api/v1/transfers/{{transfer_id}}/submit"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

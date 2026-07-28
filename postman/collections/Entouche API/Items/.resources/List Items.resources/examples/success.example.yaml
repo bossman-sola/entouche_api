@@ -1,0 +1,252 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items"
+  method: GET
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 20:47:02 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": [
+          {
+            "id": 6,
+            "category_id": 1,
+            "unit_of_measure_id": 1,
+            "supplier_id": 1,
+            "sku": "ITM-000004",
+            "barcode": null,
+            "name": "Widget A",
+            "item_type": "product",
+            "brand": null,
+            "description": null,
+            "unit_cost": "10.00",
+            "selling_price": "15.00",
+            "reorder_level": "10.000",
+            "image_path": null,
+            "status": "active",
+            "created_by": 2,
+            "created_at": "2026-07-09T16:50:55.000000Z",
+            "updated_at": "2026-07-09T16:50:55.000000Z",
+            "deleted_at": null,
+            "total_stock": null,
+            "category": {
+              "id": 1,
+              "parent_id": null,
+              "name": "Electronics",
+              "code": "ELEC",
+              "status": "inactive",
+              "created_at": "2026-06-30T14:28:13.000000Z",
+              "updated_at": "2026-06-30T15:00:46.000000Z",
+              "deleted_at": null
+            },
+            "unit": {
+              "id": 1,
+              "name": "Kilogram",
+              "abbreviation": "kg",
+              "status": "active",
+              "created_at": "2026-06-30T16:53:31.000000Z",
+              "updated_at": "2026-06-30T20:35:28.000000Z",
+              "deleted_at": null
+            },
+            "supplier": {
+              "id": 1,
+              "name": "Acme Corp Updated",
+              "code": "ACME",
+              "phone": "+1234567890",
+              "email": "contact@acme.com",
+              "address": "456 Supplier Ave",
+              "status": "inactive",
+              "created_at": "2026-06-30T17:57:35.000000Z",
+              "updated_at": "2026-06-30T18:05:57.000000Z",
+              "deleted_at": null
+            }
+          },
+          {
+            "id": 5,
+            "category_id": 1,
+            "unit_of_measure_id": 1,
+            "supplier_id": 1,
+            "sku": "ITM-000003",
+            "barcode": null,
+            "name": "Widget A",
+            "item_type": "product",
+            "brand": null,
+            "description": null,
+            "unit_cost": "10.00",
+            "selling_price": "15.00",
+            "reorder_level": "10.000",
+            "image_path": null,
+            "status": "active",
+            "created_by": 2,
+            "created_at": "2026-07-09T16:50:07.000000Z",
+            "updated_at": "2026-07-09T16:50:07.000000Z",
+            "deleted_at": null,
+            "total_stock": "98.000",
+            "category": {
+              "id": 1,
+              "parent_id": null,
+              "name": "Electronics",
+              "code": "ELEC",
+              "status": "inactive",
+              "created_at": "2026-06-30T14:28:13.000000Z",
+              "updated_at": "2026-06-30T15:00:46.000000Z",
+              "deleted_at": null
+            },
+            "unit": {
+              "id": 1,
+              "name": "Kilogram",
+              "abbreviation": "kg",
+              "status": "active",
+              "created_at": "2026-06-30T16:53:31.000000Z",
+              "updated_at": "2026-06-30T20:35:28.000000Z",
+              "deleted_at": null
+            },
+            "supplier": {
+              "id": 1,
+              "name": "Acme Corp Updated",
+              "code": "ACME",
+              "phone": "+1234567890",
+              "email": "contact@acme.com",
+              "address": "456 Supplier Ave",
+              "status": "inactive",
+              "created_at": "2026-06-30T17:57:35.000000Z",
+              "updated_at": "2026-06-30T18:05:57.000000Z",
+              "deleted_at": null
+            }
+          },
+          {
+            "id": 4,
+            "category_id": 1,
+            "unit_of_measure_id": 1,
+            "supplier_id": 1,
+            "sku": "ITM-000002",
+            "barcode": null,
+            "name": "Widget A",
+            "item_type": "product",
+            "brand": null,
+            "description": null,
+            "unit_cost": "10.00",
+            "selling_price": "15.00",
+            "reorder_level": "10.000",
+            "image_path": null,
+            "status": "active",
+            "created_by": 2,
+            "created_at": "2026-07-09T16:49:24.000000Z",
+            "updated_at": "2026-07-09T16:49:24.000000Z",
+            "deleted_at": null,
+            "total_stock": null,
+            "category": {
+              "id": 1,
+              "parent_id": null,
+              "name": "Electronics",
+              "code": "ELEC",
+              "status": "inactive",
+              "created_at": "2026-06-30T14:28:13.000000Z",
+              "updated_at": "2026-06-30T15:00:46.000000Z",
+              "deleted_at": null
+            },
+            "unit": {
+              "id": 1,
+              "name": "Kilogram",
+              "abbreviation": "kg",
+              "status": "active",
+              "created_at": "2026-06-30T16:53:31.000000Z",
+              "updated_at": "2026-06-30T20:35:28.000000Z",
+              "deleted_at": null
+            },
+            "supplier": {
+              "id": 1,
+              "name": "Acme Corp Updated",
+              "code": "ACME",
+              "phone": "+1234567890",
+              "email": "contact@acme.com",
+              "address": "456 Supplier Ave",
+              "status": "inactive",
+              "created_at": "2026-06-30T17:57:35.000000Z",
+              "updated_at": "2026-06-30T18:05:57.000000Z",
+              "deleted_at": null
+            }
+          },
+          {
+            "id": 3,
+            "category_id": 1,
+            "unit_of_measure_id": 1,
+            "supplier_id": 1,
+            "sku": "ITM-000001",
+            "barcode": "1234567890",
+            "name": "Widget A Updated",
+            "item_type": "product",
+            "brand": "BrandX",
+            "description": "A sample widget",
+            "unit_cost": "12.00",
+            "selling_price": "18.00",
+            "reorder_level": "15.000",
+            "image_path": null,
+            "status": "active",
+            "created_by": 2,
+            "created_at": "2026-06-30T19:51:14.000000Z",
+            "updated_at": "2026-06-30T20:26:09.000000Z",
+            "deleted_at": null,
+            "total_stock": null,
+            "category": {
+              "id": 1,
+              "parent_id": null,
+              "name": "Electronics",
+              "code": "ELEC",
+              "status": "inactive",
+              "created_at": "2026-06-30T14:28:13.000000Z",
+              "updated_at": "2026-06-30T15:00:46.000000Z",
+              "deleted_at": null
+            },
+            "unit": {
+              "id": 1,
+              "name": "Kilogram",
+              "abbreviation": "kg",
+              "status": "active",
+              "created_at": "2026-06-30T16:53:31.000000Z",
+              "updated_at": "2026-06-30T20:35:28.000000Z",
+              "deleted_at": null
+            },
+            "supplier": {
+              "id": 1,
+              "name": "Acme Corp Updated",
+              "code": "ACME",
+              "phone": "+1234567890",
+              "email": "contact@acme.com",
+              "address": "456 Supplier Ave",
+              "status": "inactive",
+              "created_at": "2026-06-30T17:57:35.000000Z",
+              "updated_at": "2026-06-30T18:05:57.000000Z",
+              "deleted_at": null
+            }
+          }
+        ],
+        "errors": null,
+        "meta": {
+          "current_page": 1,
+          "last_page": 1,
+          "per_page": 15,
+          "total": 4
+        },
+        "links": {
+          "first": "http://127.0.0.1:8000/api/v1/items?page=1",
+          "last": "http://127.0.0.1:8000/api/v1/items?page=1",
+          "prev": null,
+          "next": null
+        }
+      }
+order: 3116006216918813

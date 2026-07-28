@@ -1,8 +1,11 @@
 $kind: http-request
-name: Approve Stock Count
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Approve Stock Count.resources/examples
 order: 8000
 method: POST
-url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}/approve'
+url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}/approve"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

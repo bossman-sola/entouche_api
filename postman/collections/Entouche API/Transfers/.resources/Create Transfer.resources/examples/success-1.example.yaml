@@ -1,0 +1,66 @@
+$kind: http-example
+name: success
+request:
+  url: "{{base_url}}/api/v1/transfers"
+  method: POST
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "from_warehouse_id": 1,
+        "from_location_id": 1,
+        "to_warehouse_id": 1,
+        "to_location_id": 2,
+        "notes": "Move from Receiving Area to Storage Area",
+        "items": [
+          {"item_id": 3, "quantity": 50}
+        ]
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Fri, 10 Jul 2026 03:41:44 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+          "success": true,
+          "message": "Transfer created",
+          "data": {
+              "from_warehouse_id": 1,
+              "from_location_id": 1,
+              "to_warehouse_id": 1,
+              "to_location_id": 2,
+              "notes": "Move from Receiving Area to Storage Area",
+              "transfer_number": "TRF-000008",
+              "transfer_date": "2026-07-10T00:00:00.000000Z",
+              "requested_by": 2,
+              "created_by": 2,
+              "status": "draft",
+              "updated_at": "2026-07-10T03:49:19.000000Z",
+              "created_at": "2026-07-10T03:49:19.000000Z",
+              "id": 8,
+              "items": [
+                  {
+                      "id": 16,
+                      "transfer_id": 8,
+                      "item_id": 3,
+                      "quantity": "50.000",
+                      "created_at": "2026-07-10T03:49:19.000000Z",
+                      "updated_at": "2026-07-10T03:49:19.000000Z"
+                  }
+              ]
+          },
+          "errors": null
+      }
+order: 3608986172242014

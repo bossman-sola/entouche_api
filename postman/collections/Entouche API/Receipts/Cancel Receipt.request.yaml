@@ -1,8 +1,11 @@
 $kind: http-request
-name: Cancel Receipt
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Cancel Receipt.resources/examples
 order: 8000
 method: POST
-url: '{{base_url}}/v1/receipts/{{receipt_id}}/cancel'
+url: "{{base_url}}/api/v1/receipts/{{receipt_id}}/cancel"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json
