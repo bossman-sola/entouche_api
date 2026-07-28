@@ -1,0 +1,8 @@
+$kind: http-request
+name: Cancel Transfer
+order: 10000
+method: POST
+url: '{{base_url}}/v1/transfers/{{transfer_id}}/cancel'
+headers:
+  - key: Accept
+    value: application/json

@@ -1,0 +1,27 @@
+$kind: http-request
+name: Movement Report
+order: 3000
+method: GET
+url: '{{base_url}}/v1/reports/movement-report'
+headers:
+  - key: Accept
+    value: application/json
+queryParams:
+  - key: item_id
+    value: ''
+    disabled: true
+  - key: warehouse_id
+    value: ''
+    disabled: true
+  - key: transaction_type
+    value: ''
+    disabled: true
+  - key: date_from
+    value: ''
+    disabled: true
+  - key: date_to
+    value: ''
+    disabled: true
+  - key: per_page
+    value: '15'
+    disabled: true

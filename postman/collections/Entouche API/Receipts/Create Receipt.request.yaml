@@ -1,0 +1,26 @@
+$kind: http-request
+name: Create Receipt
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Receipt.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/receipts"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "supplier_id": 1,
+      "warehouse_id": 1,
+      "receiving_location_id": 1,
+      "receipt_date": "2026-06-29",
+      "notes": "Initial stock receipt",
+      "items": [
+        {"item_id": 1, "warehouse_location_id": 2, "quantity": 100, "unit_cost": 10.00}
+      ]
+    }

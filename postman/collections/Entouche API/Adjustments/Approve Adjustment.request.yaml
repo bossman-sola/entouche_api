@@ -1,0 +1,12 @@
+$kind: http-request
+name: Approve Adjustment
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Approve Adjustment.resources/examples
+order: 7000
+method: POST
+url: "{{base_url}}/api/v1/adjustments/{{adjustment_id}}/approve"
+headers:
+  Accept: application/json

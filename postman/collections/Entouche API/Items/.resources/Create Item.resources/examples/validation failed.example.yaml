@@ -1,0 +1,62 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Widget A",
+        "unit_of_measure_id": 1,
+        "category_id": 1,
+        "supplier_id": 1,
+        "barcode": "1234567890",
+        "item_type": "product",
+        "brand": "BrandX",
+        "description": "A sample widget",
+        "unit_cost": 10.00,
+        "selling_price": 15.00,
+        "reorder_level": 10,
+        "status": "active"
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Content
+  headers:
+    - key: host
+      value: 127.0.0.1:8000
+    - key: connection
+      value: close
+    - key: x-powered-by
+      value: PHP/8.5.7
+    - key: cache-control
+      value: no-cache, private
+    - key: date
+      value: Tue, 30 Jun 2026 16:15:03 GMT
+    - key: content-type
+      value: application/json
+    - key: access-control-allow-origin
+      value: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "Validation failed.",
+        "data": null,
+        "errors": {
+          "unit_of_measure_id": [
+            "The selected unit of measure id is invalid."
+          ],
+          "supplier_id": [
+            "The selected supplier id is invalid."
+          ]
+        }
+      }
+order: 1782836382449
+name: validation failed

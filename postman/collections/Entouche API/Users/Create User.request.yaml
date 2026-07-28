@@ -1,0 +1,23 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create User.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/users"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Jackson Bello",
+      "email": "jcko@example.com",
+      "phone": "+1234567890",
+      "password": "password123",
+      "status": "active",
+      "roles": ["management_viewer"]
+    }

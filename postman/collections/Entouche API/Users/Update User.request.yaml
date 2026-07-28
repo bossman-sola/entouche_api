@@ -1,0 +1,21 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update User.resources/examples
+order: 4000
+method: PUT
+url: "{{base_url}}/api/v1/users/{{user_id}}"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "John Doe Updated",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "status": "active"
+    }

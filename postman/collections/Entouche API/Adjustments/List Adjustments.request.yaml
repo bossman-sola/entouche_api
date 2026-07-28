@@ -1,0 +1,11 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/List Adjustments.resources/examples
+order: 1000
+method: GET
+url: "{{base_url}}/api/v1/adjustments"
+headers:
+  Accept: application/json

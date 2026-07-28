@@ -1,0 +1,21 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Category.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/categories"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Electronics",
+      "code": "ELEC",
+      "parent_id": null,
+      "status": "active"
+    }

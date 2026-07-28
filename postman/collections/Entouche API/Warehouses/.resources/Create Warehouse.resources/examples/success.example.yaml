@@ -1,0 +1,50 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/warehouses"
+  method: POST
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Secondary Warehouse",
+        "code": "WH-002",
+        "address": "123 Main St",
+        "status": "active"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 16:37:27 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=dTZSZImbl4yOy1ou5m8z1HkYvJcgWW3YY35RRSspRd8%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783442247"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=dTZSZImbl4yOy1ou5m8z1HkYvJcgWW3YY35RRSspRd8%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783442247"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "267"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Created successfully",
+        "data": {
+          "name": "Secondary Warehouse",
+          "code": "WH-002",
+          "address": "123 Main St",
+          "status": "active",
+          "updated_at": "2026-07-07T16:37:27.000000Z",
+          "created_at": "2026-07-07T16:37:27.000000Z",
+          "id": 3,
+          "locations": []
+        },
+        "errors": null
+      }
+order: 1783442250694

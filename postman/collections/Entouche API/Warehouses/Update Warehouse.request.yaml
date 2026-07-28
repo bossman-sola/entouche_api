@@ -1,0 +1,21 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Update Warehouse.resources/examples
+order: 4000
+method: PUT
+url: "{{base_url}}/api/v1/warehouses/{{warehouse_id}}"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Main Warehouse",
+      "code": "WH-001",
+      "address": "123 Main St",
+      "status": "active"
+    }

@@ -1,0 +1,22 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Location.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/warehouses/{{warehouse_id}}/locations"
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "warehouse_id": 1,
+      "name": "Receiving Area",
+      "code": "RCV",
+      "type": "Receiving",
+      "status": "active"
+    }

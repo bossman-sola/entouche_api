@@ -1,0 +1,1808 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/imports"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: file
+        src:
+          - postman-cloud:///1f17a0c4-9945-4490-ac41-dcd94e32e652
+        description: CSV/XLSX/XLS file to import
+        disabled: false
+      - type: text
+        key: import_type
+        value: items
+        description: "Type of import: items or inventory"
+        disabled: false
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 07 Jul 2026 14:01:21 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=DZjoWZWiBi1FLrqDnqC0eS3z2RZXH24sL61NlcSRgjQ%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783432879"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=DZjoWZWiBi1FLrqDnqC0eS3z2RZXH24sL61NlcSRgjQ%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783432879"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    transfer-encoding: chunked
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Import uploaded",
+        "data": {
+          "id": 1,
+          "import_type": "items",
+          "file_name": "pEMTHCNkRrqBkcuUUsXYiCQD3aT8pLXdyzmchaqS.xlsx",
+          "file_path": "imports/items/pEMTHCNkRrqBkcuUUsXYiCQD3aT8pLXdyzmchaqS.xlsx",
+          "original_name": "tutor_logs_20250613_20260613.xlsx",
+          "file_size": 8409,
+          "status": "partial",
+          "total_rows": 0,
+          "successful_rows": 0,
+          "failed_rows": 83,
+          "skipped_rows": 0,
+          "error_summary": null,
+          "uploaded_by": 1,
+          "started_at": "2026-07-07T14:01:20.000000Z",
+          "completed_at": "2026-07-07T14:01:21.000000Z",
+          "created_at": "2026-07-07T14:01:20.000000Z",
+          "updated_at": "2026-07-07T14:01:21.000000Z",
+          "errors": [
+            {
+              "id": 1,
+              "import_id": 1,
+              "row_number": 2,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/29/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 2,
+              "import_id": 1,
+              "row_number": 3,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/29/2026 12:09 PM",
+                "time_out": "04/29/2026 09:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 22m 2s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 50m 53s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 3,
+              "import_id": 1,
+              "row_number": 4,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/27/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 4,
+              "import_id": 1,
+              "row_number": 5,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/27/2026 10:32 AM",
+                "time_out": "04/27/2026 07:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 58m 39s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 5,
+              "import_id": 1,
+              "row_number": 6,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/22/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 6,
+              "import_id": 1,
+              "row_number": 7,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/22/2026 11:09 AM",
+                "time_out": "04/22/2026 07:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 21m 25s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 7,
+              "import_id": 1,
+              "row_number": 8,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/20/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 8,
+              "import_id": 1,
+              "row_number": 9,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/20/2026 09:03 AM",
+                "time_out": "04/20/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 27m 15s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 9,
+              "import_id": 1,
+              "row_number": 10,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/15/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 10,
+              "import_id": 1,
+              "row_number": 11,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/15/2026 09:11 AM",
+                "time_out": "04/15/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 19m 29s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 11,
+              "import_id": 1,
+              "row_number": 12,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/13/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 12,
+              "import_id": 1,
+              "row_number": 13,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/13/2026 11:51 AM",
+                "time_out": "04/13/2026 09:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 39m 40s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 13,
+              "import_id": 1,
+              "row_number": 14,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/13/2026 09:42 AM",
+                "time_out": "04/13/2026 07:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 48m 16s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 14,
+              "import_id": 1,
+              "row_number": 15,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/09/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 15,
+              "import_id": 1,
+              "row_number": 16,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "04/09/2026 01:05 PM",
+                "time_out": "04/09/2026 09:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "8h 25m 31s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 54m 27s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 16,
+              "import_id": 1,
+              "row_number": 17,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/08/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 17,
+              "import_id": 1,
+              "row_number": 18,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "04/08/2026 09:51 AM",
+                "time_out": "04/08/2026 07:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 39m 38s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 18,
+              "import_id": 1,
+              "row_number": 19,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/08/2026 09:14 AM",
+                "time_out": "04/08/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 16m 54s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 19,
+              "import_id": 1,
+              "row_number": 20,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/06/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 20,
+              "import_id": 1,
+              "row_number": 21,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "04/06/2026 10:19 AM",
+                "time_out": "04/06/2026 07:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 11m 5s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 21,
+              "import_id": 1,
+              "row_number": 22,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/06/2026 09:45 AM",
+                "time_out": "04/06/2026 07:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 45m 18s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 22,
+              "import_id": 1,
+              "row_number": 23,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/02/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 23,
+              "import_id": 1,
+              "row_number": 24,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "04/02/2026 01:22 PM",
+                "time_out": "04/02/2026 09:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "8h 8m 13s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 37m 8s"
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 24,
+              "import_id": 1,
+              "row_number": 25,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "04/01/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:20.000000Z",
+              "updated_at": "2026-07-07T14:01:20.000000Z"
+            },
+            {
+              "id": 25,
+              "import_id": 1,
+              "row_number": 26,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "04/01/2026 12:01 PM",
+                "time_out": "04/01/2026 09:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 29m 14s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 58m 10s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 26,
+              "import_id": 1,
+              "row_number": 27,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "04/01/2026 09:07 AM",
+                "time_out": "04/01/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 24m 5s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 27,
+              "import_id": 1,
+              "row_number": 28,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/30/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 28,
+              "import_id": 1,
+              "row_number": 29,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/30/2026 09:40 AM",
+                "time_out": "03/30/2026 07:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 50m 31s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 29,
+              "import_id": 1,
+              "row_number": 30,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/26/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 30,
+              "import_id": 1,
+              "row_number": 31,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/26/2026 01:43 PM",
+                "time_out": "03/26/2026 11:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 47m 31s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 16m 26s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 31,
+              "import_id": 1,
+              "row_number": 32,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/25/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 32,
+              "import_id": 1,
+              "row_number": 33,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/25/2026 08:52 AM",
+                "time_out": "03/25/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 38m 44s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 33,
+              "import_id": 1,
+              "row_number": 34,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/23/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 34,
+              "import_id": 1,
+              "row_number": 35,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/23/2026 09:56 AM",
+                "time_out": "03/23/2026 07:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 34m 21s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 35,
+              "import_id": 1,
+              "row_number": 36,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/23/2026 09:15 AM",
+                "time_out": "03/23/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 15m 44s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 36,
+              "import_id": 1,
+              "row_number": 37,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/19/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 37,
+              "import_id": 1,
+              "row_number": 38,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/19/2026 01:31 PM",
+                "time_out": "03/19/2026 11:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 59m 27s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 28m 23s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 38,
+              "import_id": 1,
+              "row_number": 39,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/18/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 39,
+              "import_id": 1,
+              "row_number": 40,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/18/2026 10:04 AM",
+                "time_out": "03/18/2026 07:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 27m 25s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 40,
+              "import_id": 1,
+              "row_number": 41,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/18/2026 09:19 AM",
+                "time_out": "04/29/2026 02:13 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "1012h 54m 17s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 41,
+              "import_id": 1,
+              "row_number": 42,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/16/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 42,
+              "import_id": 1,
+              "row_number": 43,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/16/2026 10:06 AM",
+                "time_out": "03/16/2026 07:31 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 24m 38s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 43,
+              "import_id": 1,
+              "row_number": 44,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/16/2026 09:06 AM",
+                "time_out": "03/16/2026 05:31 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "8h 24m 11s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 44,
+              "import_id": 1,
+              "row_number": 45,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/05/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 45,
+              "import_id": 1,
+              "row_number": 46,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/05/2026 01:16 PM",
+                "time_out": "03/05/2026 10:30 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "9h 13m 41s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 43m 37s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 46,
+              "import_id": 1,
+              "row_number": 47,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/04/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 47,
+              "import_id": 1,
+              "row_number": 48,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/04/2026 10:10 AM",
+                "time_out": "04/09/2026 01:05 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "865h 54m 49s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 48,
+              "import_id": 1,
+              "row_number": 49,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/04/2026 08:53 AM",
+                "time_out": "03/04/2026 06:30 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 36m 18s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 49,
+              "import_id": 1,
+              "row_number": 50,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "03/02/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 50,
+              "import_id": 1,
+              "row_number": 51,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "03/02/2026 10:03 AM",
+                "time_out": "03/02/2026 06:30 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "8h 26m 49s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 51,
+              "import_id": 1,
+              "row_number": 52,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "03/02/2026 09:23 AM",
+                "time_out": "03/02/2026 06:30 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "9h 6m 5s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 52,
+              "import_id": 1,
+              "row_number": 53,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/26/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 53,
+              "import_id": 1,
+              "row_number": 54,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/26/2026 01:02 PM",
+                "time_out": "03/04/2026 10:10 AM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "141h 7m 59s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 57m 45s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 54,
+              "import_id": 1,
+              "row_number": 55,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/25/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 55,
+              "import_id": 1,
+              "row_number": 56,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/25/2026 10:01 AM",
+                "time_out": "03/01/2026 06:30 AM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "92h 28m 17s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 56,
+              "import_id": 1,
+              "row_number": 57,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/25/2026 09:05 AM",
+                "time_out": "03/01/2026 06:30 AM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "93h 24m 55s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 57,
+              "import_id": 1,
+              "row_number": 58,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/23/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 58,
+              "import_id": 1,
+              "row_number": 59,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/23/2026 10:13 AM",
+                "time_out": "03/01/2026 06:30 AM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "140h 16m 6s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 59,
+              "import_id": 1,
+              "row_number": 60,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/23/2026 08:54 AM",
+                "time_out": "03/16/2026 02:28 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "508h 33m 31s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 60,
+              "import_id": 1,
+              "row_number": 61,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/19/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 61,
+              "import_id": 1,
+              "row_number": 62,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/19/2026 12:44 PM",
+                "time_out": "02/25/2026 06:33 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "149h 49m 31s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 15m 48s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 62,
+              "import_id": 1,
+              "row_number": 63,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/18/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 63,
+              "import_id": 1,
+              "row_number": 64,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/18/2026 12:42 PM",
+                "time_out": "03/01/2026 06:30 AM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "257h 47m 25s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 17m 21s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 64,
+              "import_id": 1,
+              "row_number": 65,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/18/2026 09:59 AM",
+                "time_out": "02/24/2026 01:58 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "147h 59m 1s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 65,
+              "import_id": 1,
+              "row_number": 66,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/16/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 66,
+              "import_id": 1,
+              "row_number": 67,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "02/16/2026 10:50 AM",
+                "time_out": "02/18/2026 03:47 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "52h 56m 38s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 67,
+              "import_id": 1,
+              "row_number": 68,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/16/2026 09:30 AM",
+                "time_out": "02/18/2026 04:09 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "54h 38m 56s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 68,
+              "import_id": 1,
+              "row_number": 69,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/11/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 69,
+              "import_id": 1,
+              "row_number": 70,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/11/2026 09:39 AM",
+                "time_out": "02/11/2026 03:00 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "5h 20m 41s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "5h 0m 0s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 70,
+              "import_id": 1,
+              "row_number": 71,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/09/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 71,
+              "import_id": 1,
+              "row_number": 72,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/09/2026 09:38 AM",
+                "time_out": "02/09/2026 02:37 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "4h 58m 52s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 58m 52s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 72,
+              "import_id": 1,
+              "row_number": 73,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "02/04/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 73,
+              "import_id": 1,
+              "row_number": 74,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "02/04/2026 12:46 PM",
+                "time_out": "02/04/2026 03:48 PM",
+                "tutor_id": "zFJ5sZfsDlKajVxMOQTk",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "3h 1m 44s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 1m 44s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 74,
+              "import_id": 1,
+              "row_number": 75,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "01/29/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 75,
+              "import_id": 1,
+              "row_number": 76,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "01/29/2026 12:46 PM",
+                "time_out": "02/16/2026 10:50 AM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "430h 3m 28s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 13m 26s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 76,
+              "import_id": 1,
+              "row_number": 77,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "01/28/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 77,
+              "import_id": 1,
+              "row_number": 78,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "01/28/2026 12:02 PM",
+                "time_out": "01/28/2026 04:32 PM",
+                "tutor_id": "0oQ2Xn8KpZotvYWeMeIj",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "4h 29m 27s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "4h 29m 27s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 78,
+              "import_id": 1,
+              "row_number": 79,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "01/13/2026",
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 79,
+              "import_id": 1,
+              "row_number": 80,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "anko@pvamu.edu",
+                "time_in": "01/13/2026 01:40 PM",
+                "time_out": "03/01/2026 06:30 AM",
+                "tutor_id": "9BLA0PqkRUmahcGWFveb",
+                "tutor_name": "Anko Larson",
+                "actual_duration": "1120h 49m 16s",
+                "total_hours_capped": "",
+                "billable_duration_max_5_hrs": "3h 19m 13s"
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 80,
+              "import_id": 1,
+              "row_number": 81,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": null,
+                "email": null,
+                "time_in": null,
+                "time_out": null,
+                "tutor_id": null,
+                "tutor_name": null,
+                "actual_duration": null,
+                "total_hours_capped": null,
+                "billable_duration_max_5_hrs": null
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 81,
+              "import_id": 1,
+              "row_number": 82,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jbest1@pvamu.edu",
+                "time_in": "",
+                "time_out": "",
+                "tutor_id": "",
+                "tutor_name": "Jayden Matthew Best",
+                "actual_duration": "",
+                "total_hours_capped": 117,
+                "billable_duration_max_5_hrs": ""
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 82,
+              "import_id": 1,
+              "row_number": 83,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "jpalacios5@pvamu.edu",
+                "time_in": "",
+                "time_out": "",
+                "tutor_id": "",
+                "tutor_name": "Jamilet Palacios",
+                "actual_duration": "",
+                "total_hours_capped": 95,
+                "billable_duration_max_5_hrs": ""
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            },
+            {
+              "id": 83,
+              "import_id": 1,
+              "row_number": 84,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "date": "",
+                "email": "anko@pvamu.edu",
+                "time_in": "",
+                "time_out": "",
+                "tutor_id": "",
+                "tutor_name": "Anko Larson",
+                "actual_duration": "",
+                "total_hours_capped": 3,
+                "billable_duration_max_5_hrs": ""
+              },
+              "created_at": "2026-07-07T14:01:21.000000Z",
+              "updated_at": "2026-07-07T14:01:21.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783432924829

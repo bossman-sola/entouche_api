@@ -1,0 +1,12 @@
+$kind: http-request
+name: Logout
+auth:
+  type: bearer
+  credentials:
+    token: "{{auth_secret_134v}}"
+examples: .resources/Logout.resources/examples
+order: 2000
+method: POST
+url: "{{base_url}}/api/v1/auth/logout"
+headers:
+  Accept: application/json

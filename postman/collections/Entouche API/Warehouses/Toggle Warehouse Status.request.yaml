@@ -1,0 +1,11 @@
+$kind: http-request
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Toggle Warehouse Status.resources/examples
+order: 6000
+method: POST
+url: "{{base_url}}/api/v1/warehouses/{{warehouse_id}}/toggle-status"
+headers:
+  Accept: application/json

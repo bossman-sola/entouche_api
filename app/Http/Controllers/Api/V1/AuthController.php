@@ -18,16 +18,22 @@ class AuthController extends BaseApiController
             return $this->error('Invalid credentials', null, 401);
         }
 
-        return $this->success([
+        $data = (object) [
             'user' => $user->load('roles.permissions'),
             'access_token' => $user->createToken('api')->accessToken,
             'token_type' => 'Bearer',
-        ], 'Login successful');
+        ];
+
+        return $this->success($data, 'Login successful');
     }
 
     public function logout(Request $request)
     {
-        $request->user()?->token()?->revoke();
+        $user = $request->user();
+
+        if ($user && $token = $user->token()) {
+            $token->revoke();
+        }
 
         return $this->success(null, 'Logout successful');
     }
@@ -39,7 +45,7 @@ class AuthController extends BaseApiController
 
     public function refresh(Request $request)
     {
-        return $this->success([
+        return $this->success((object) [
             'access_token' => $request->user()->createToken('api')->accessToken,
             'token_type' => 'Bearer',
         ], 'Token refreshed');
