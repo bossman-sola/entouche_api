@@ -1,4 +1,3 @@
-# Use this workspace to collaborate
 workspace:
   id: 7a49a1bd-c72e-4610-893a-849661b9551c
 
@@ -7,3 +6,8 @@ localResources:
     - ../postman/specs/Entouche API tested endpoints/Entouche API tested
       endpoints.yaml
     - ../postman/specs/Entouche Endpoints/Entouche Endpoints.json
+    - ../composer.json
+resourceNameMappings:
+  specs:
+    - ../postman/specs/Entouche API tested endpoints/Entouche API tested endpoints.yaml: Entouche API tested endpoints.yaml
+    - ../postman/specs/Entouche Endpoints/Entouche Endpoints.json: Entouche Endpoints.json
