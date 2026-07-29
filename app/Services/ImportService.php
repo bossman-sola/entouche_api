@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Imports\AssetsImport;
 use App\Imports\ItemsImport;
 use App\Models\Import;
 use Illuminate\Http\UploadedFile;
@@ -14,12 +15,17 @@ class ImportService extends BaseService
     {
     }
 
-    public function upload(UploadedFile $file, string $importType): Import
+    public function upload(UploadedFile $file, string $importType, ?int $warehouseId = null): Import
     {
+        if ($importType === 'inventory' && ! $warehouseId) {
+            throw new \InvalidArgumentException('A warehouse must be selected before uploading an inventory import.');
+        }
+
         $path = $file->store("imports/{$importType}", 'local');
 
         $import = Import::create([
             'import_type' => $importType,
+            'warehouse_id' => $warehouseId,
             'file_name' => basename($path),
             'file_path' => $path,
             'original_name' => $file->getClientOriginalName(),
@@ -30,7 +36,7 @@ class ImportService extends BaseService
 
         $this->process($import);
 
-        return $import->fresh('errors');
+        return $import->fresh(['errors', 'rows']);
     }
 
     public function process(Import $import): void
@@ -40,11 +46,13 @@ class ImportService extends BaseService
         try {
             match ($import->import_type) {
                 'items' => Excel::import(new ItemsImport($import), Storage::disk('local')->path($import->file_path)),
+                'inventory' => Excel::import(new AssetsImport($import), Storage::disk('local')->path($import->file_path)),
                 default => throw new \InvalidArgumentException('Unsupported import type: ' . $import->import_type),
             };
 
             $import->refresh();
             $import->update([
+                'total_rows' => $import->successful_rows + $import->failed_rows + $import->skipped_rows,
                 'status' => $import->failed_rows > 0 ? 'partial' : 'completed',
                 'completed_at' => now(),
             ]);
@@ -93,7 +101,13 @@ class ImportService extends BaseService
     public function downloadTemplate(string $importType)
     {
         $headers = match ($importType) {
-            'inventory' => ['sku', 'warehouse', 'location', 'quantity'],
+            'inventory' => [
+                'S/N', 'ASSET TAG NO', 'ASSET DESCRIPTION', 'EQUIPMENT SERIAL NUMBER', 'COST',
+                'ASSET LIFE', 'DATE ACQUIRED', 'MANUFACTURER', 'MODEL NUMBER', 'API NUMBER',
+                'FIELD LOCATION', 'VENDOR NAME', 'DELIVERY DATE TO LOCATION/YARD', 'STATUS',
+                'INVOICE NUMBER FROM VENDOR', 'PO NUMBER FROM VENDOR', 'PO NUMBER ISSUED BY API',
+                'PAYMENT DATE', 'NOTES',
+            ],
             default => ['name', 'category', 'unit', 'item_type', 'barcode', 'reorder_level', 'unit_cost', 'description', 'brand', 'supplier'],
         };
 

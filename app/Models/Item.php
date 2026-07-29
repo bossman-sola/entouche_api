@@ -16,6 +16,8 @@ class Item extends Model
         'sku',
         'barcode',
         'name',
+        'manufacturer',
+        'model_number',
         'item_type',
         'brand',
         'description',
