@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Services\BaseService;
 use App\Services\NotificationService;
 use App\Services\StockMovementService;
+
 use Illuminate\Http\Request;
 
 class ReceiptController extends BaseApiController
