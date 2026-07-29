@@ -8,6 +8,7 @@ class Import extends Model
 {
     protected $fillable = [
         'import_type',
+        'warehouse_id',
         'file_name',
         'file_path',
         'original_name',
@@ -31,6 +32,16 @@ class Import extends Model
     public function errors()
     {
         return $this->hasMany(ImportError::class);
+    }
+
+    public function rows()
+    {
+        return $this->hasMany(ImportRow::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 
     public function uploader()

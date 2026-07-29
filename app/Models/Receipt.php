@@ -11,12 +11,16 @@ class Receipt extends Model
 
     protected $fillable = [
         'receipt_number',
+        'invoice_number',
+        'vendor_po_number',
+        'api_po_number',
         'supplier_id',
         'warehouse_id',
         'receiving_location_id',
         'received_by',
         'created_by',
         'receipt_date',
+        'payment_date',
         'received_at',
         'status',
         'notes',
@@ -24,7 +28,7 @@ class Receipt extends Model
 
     protected function casts(): array
     {
-        return ['receipt_date' => 'date', 'received_at' => 'datetime'];
+        return ['receipt_date' => 'date', 'payment_date' => 'date', 'received_at' => 'datetime'];
     }
 
     public function items()

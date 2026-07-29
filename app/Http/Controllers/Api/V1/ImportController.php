@@ -23,14 +23,21 @@ class ImportController extends BaseApiController
         $data = $request->validate([
             'file' => ['required', 'file', 'mimes:csv,xlsx,xls'],
             'import_type' => ['required', 'in:items,inventory'],
+            'warehouse_id' => ['required_if:import_type,inventory', 'nullable', 'exists:warehouses,id'],
         ]);
 
-        return $this->created($this->imports->upload($data['file'], $data['import_type']), 'Import uploaded');
+        try {
+            $import = $this->imports->upload($data['file'], $data['import_type'], $data['warehouse_id'] ?? null);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), null, 422);
+        }
+
+        return $this->created($import, 'Import uploaded');
     }
 
     public function show(Import $import)
     {
-        return $this->success($import->load('errors'));
+        return $this->success($import->load(['errors', 'rows.asset', 'warehouse', 'uploader:id,name']));
     }
 
     public function downloadTemplate(string $type)
