@@ -111,7 +111,33 @@ class ImportService extends BaseService
             default => ['name', 'category', 'unit', 'item_type', 'barcode', 'reorder_level', 'unit_cost', 'description', 'brand', 'supplier'],
         };
 
-        return response(implode(',', $headers) . PHP_EOL, 200, [
+        
+        $sampleRows = match ($importType) {
+            'inventory' => [
+                [
+                    1, 'AST-0001', 'Dell Latitude 5440 Laptop', 'DL5440-SN-1001', 1250,
+                    4, '2024-02-15', 'Dell', 'Latitude 5440', 'API-IT-0001',
+                    'Storage', 'Technology Distributors Ltd.', '2024-02-20', 'Available',
+                    'INV-TD-240201', 'VPO-TD-24001', 'API-PO-24001', '2024-03-05',
+                    'Assigned to general IT inventory',
+                ],
+                [
+                    2, 'AST-0002', 'Dell Latitude 5440 Laptop', 'DL5440-SN-1002', 1250,
+                    4, '2024-02-15', 'Dell', 'Latitude 5440', 'API-IT-0002',
+                    'Storage', 'Technology Distributors Ltd.', '2024-02-20', 'Available',
+                    'INV-TD-240201', 'VPO-TD-24001', 'API-PO-24001', '2024-03-05',
+                    'Ready for allocation',
+                ],
+            ],
+            default => [],
+        };
+
+        $lines = array_map(
+            fn (array $row) => implode(',', $row),
+            [$headers, ...$sampleRows],
+        );
+
+        return response(implode(PHP_EOL, $lines) . PHP_EOL, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$importType}_template.csv\"",
         ]);
