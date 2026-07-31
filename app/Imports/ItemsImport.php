@@ -12,13 +12,15 @@ use App\Services\ItemService;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class ItemsImport implements ToCollection, WithHeadingRow
+class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 {
     public function __construct(private readonly Import $import)
     {
     }
-   public function sheets(): array
+    
+    public function sheets(): array
     {
         return [0 => $this];
     }
@@ -30,6 +32,10 @@ class ItemsImport implements ToCollection, WithHeadingRow
 
         foreach ($rows as $index => $row) {
             try {
+                // Skip completely empty rows (phantom rows from Excel's used range)
+                if ($row->filter(fn ($v) => filled($v))->isEmpty()) {
+                    continue;
+                }
                 // NEW: support both template heading styles
                 $name = $row['name'] ?? $row['item_name'] ?? null;
 
