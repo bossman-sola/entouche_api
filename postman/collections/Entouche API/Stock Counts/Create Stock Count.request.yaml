@@ -1,13 +1,15 @@
 $kind: http-request
-name: Create Stock Count
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Create Stock Count.resources/examples
 order: 2000
 method: POST
-url: '{{base_url}}/v1/stock-counts'
+url: "{{base_url}}/api/v1/stock-counts"
 headers:
-  - key: Accept
-    value: application/json
-  - key: Content-Type
-    value: application/json
+  Accept: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
@@ -16,6 +18,6 @@ body:
       "warehouse_location_id": null,
       "count_date": "2026-06-29",
       "items": [
-        {"item_id": 1, "system_quantity": 100, "counted_quantity": 98}
+        {"item_id": 5, "system_quantity": 100, "counted_quantity": 98}
       ]
     }

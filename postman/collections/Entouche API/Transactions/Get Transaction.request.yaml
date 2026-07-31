@@ -1,8 +1,11 @@
 $kind: http-request
-name: Get Transaction
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Get Transaction.resources/examples
 order: 2000
 method: GET
-url: '{{base_url}}/v1/transactions/{{txn_id}}'
+url: "{{base_url}}/api/v1/transactions/{{txn_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

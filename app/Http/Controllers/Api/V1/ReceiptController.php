@@ -39,7 +39,7 @@ class ReceiptController extends BaseApiController
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_cost' => ['sometimes', 'numeric', 'min:0'],
         ]);
-
+    
         $helper = new class extends BaseService {};
         $items = $data['items'];
         unset($data['items']);
@@ -48,11 +48,15 @@ class ReceiptController extends BaseApiController
             'receipt_date' => $data['receipt_date'] ?? now()->toDateString(),
             'created_by' => auth()->id(),
         ]);
-
+    
         foreach ($items as $row) {
-            ReceiptItem::create($row + ['receipt_id' => $receipt->id, 'total_cost' => ($row['quantity'] * ($row['unit_cost'] ?? 0))]);
+            ReceiptItem::create($row + [
+                'receipt_id' => $receipt->id,
+                'warehouse_location_id' => $row['warehouse_location_id'] ?? $receipt->receiving_location_id,
+                'total_cost' => ($row['quantity'] * ($row['unit_cost'] ?? 0)),
+            ]);
         }
-
+    
         return $this->created($receipt->load('items'), 'Receipt created');
     }
 

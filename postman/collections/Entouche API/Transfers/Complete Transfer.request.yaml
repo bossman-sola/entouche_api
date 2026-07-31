@@ -1,8 +1,11 @@
 $kind: http-request
-name: Complete Transfer
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Complete Transfer.resources/examples
 order: 9000
 method: POST
-url: '{{base_url}}/v1/transfers/{{transfer_id}}/complete'
+url: "{{base_url}}/api/v1/transfers/{{transfer_id}}/complete"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

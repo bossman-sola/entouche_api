@@ -1,0 +1,128 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/settings"
+  method: PUT
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "settings": {
+          "numbering.receipt_prefix": "RCPT",
+          "numbering.transfer_prefix": "TRF"
+        }
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 16:41:25 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Settings updated",
+        "data": [
+          {
+            "id": 1,
+            "group": "general",
+            "key": "general.company_name",
+            "value": "InventoryPro",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 2,
+            "group": "general",
+            "key": "general.currency",
+            "value": "NGN",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 10,
+            "group": "inventory",
+            "key": "inventory.allow_negative_stock",
+            "value": "0",
+            "type": "boolean",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 9,
+            "group": "inventory",
+            "key": "inventory.low_stock_alerts",
+            "value": "1",
+            "type": "boolean",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 6,
+            "group": "numbering",
+            "key": "numbering.adjustment_prefix",
+            "value": "ADJ",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 3,
+            "group": "numbering",
+            "key": "numbering.item_prefix",
+            "value": "ITM",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 4,
+            "group": "numbering",
+            "key": "numbering.receipt_prefix",
+            "value": "RCPT",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-07-09T16:41:25.000000Z"
+          },
+          {
+            "id": 7,
+            "group": "numbering",
+            "key": "numbering.stock_count_prefix",
+            "value": "SC",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 8,
+            "group": "numbering",
+            "key": "numbering.transaction_prefix",
+            "value": "TXN",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T03:38:09.000000Z"
+          },
+          {
+            "id": 5,
+            "group": "numbering",
+            "key": "numbering.transfer_prefix",
+            "value": "TRF",
+            "type": "string",
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-07-09T16:41:25.000000Z"
+          }
+        ],
+        "errors": null
+      }
+order: 1783615343662

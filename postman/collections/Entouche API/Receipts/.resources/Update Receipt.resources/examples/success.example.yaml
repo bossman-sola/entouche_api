@@ -1,0 +1,91 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/receipts/{{receipt_id}}"
+  method: PUT
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "notes": "Updated notes",
+        "receipt_date": "2026-06-29",
+        "items": [
+          {"item_id": 2, "warehouse_location_id": 2, "quantity": 50, "unit_cost": 25.00}
+        ]
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Wed, 08 Jul 2026 21:05:15 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=2RcUemtAQTy4PDuiRBxEUokN%2F%2BMQ2VIldwK4cPLApOY%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783544714"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=2RcUemtAQTy4PDuiRBxEUokN%2F%2BMQ2VIldwK4cPLApOY%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783544714"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "1046"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Receipt updated",
+        "data": {
+          "id": 2,
+          "receipt_number": "RCPT-000002",
+          "supplier_id": 1,
+          "warehouse_id": 1,
+          "receiving_location_id": 2,
+          "received_by": null,
+          "created_by": 1,
+          "receipt_date": "2026-06-29T00:00:00.000000Z",
+          "received_at": null,
+          "status": "draft",
+          "notes": "Updated notes",
+          "created_at": "2026-07-07T20:06:03.000000Z",
+          "updated_at": "2026-07-07T20:36:52.000000Z",
+          "deleted_at": null,
+          "items": [
+            {
+              "id": 4,
+              "receipt_id": 2,
+              "item_id": 2,
+              "warehouse_location_id": 2,
+              "quantity": "50.000",
+              "unit_cost": "25.00",
+              "total_cost": "1250.00",
+              "created_at": "2026-07-08T21:05:15.000000Z",
+              "updated_at": "2026-07-08T21:05:15.000000Z",
+              "item": {
+                "id": 2,
+                "category_id": 1,
+                "unit_of_measure_id": 1,
+                "supplier_id": 1,
+                "sku": "ITM-000002",
+                "barcode": null,
+                "name": "Widget A",
+                "item_type": "product",
+                "brand": "BrandX",
+                "description": "A sample widget",
+                "unit_cost": "10.00",
+                "selling_price": "15.00",
+                "reorder_level": "10.000",
+                "image_path": null,
+                "status": "active",
+                "created_by": 1,
+                "created_at": "2026-07-06T19:47:00.000000Z",
+                "updated_at": "2026-07-06T19:47:00.000000Z",
+                "deleted_at": null
+              }
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783544825298

@@ -1,8 +1,11 @@
 $kind: http-request
-name: Delete Stock Count
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Delete Stock Count.resources/examples
 order: 5000
 method: DELETE
-url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}'
+url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

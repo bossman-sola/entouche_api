@@ -1,0 +1,128 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/settings"
+  method: GET
+  headers:
+    Accept: application/json
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    access-control-allow-origin: "*"
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Thu, 09 Jul 2026 15:35:16 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=LqZkd0QQmqhG6MosXjUiS9fHb3pcPKKaq1mKqHG6V8E%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783611316"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=LqZkd0QQmqhG6MosXjUiS9fHb3pcPKKaq1mKqHG6V8E%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783611316"
+    server: Heroku
+    vary: Authorization
+    via: 1.1 heroku-router
+    content-length: "1888"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": {
+          "general": [
+            {
+              "id": 1,
+              "group": "general",
+              "key": "general.company_name",
+              "value": "InventoryPro",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 2,
+              "group": "general",
+              "key": "general.currency",
+              "value": "NGN",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            }
+          ],
+          "inventory": [
+            {
+              "id": 10,
+              "group": "inventory",
+              "key": "inventory.allow_negative_stock",
+              "value": "0",
+              "type": "boolean",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 9,
+              "group": "inventory",
+              "key": "inventory.low_stock_alerts",
+              "value": "1",
+              "type": "boolean",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            }
+          ],
+          "numbering": [
+            {
+              "id": 6,
+              "group": "numbering",
+              "key": "numbering.adjustment_prefix",
+              "value": "ADJ",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 3,
+              "group": "numbering",
+              "key": "numbering.item_prefix",
+              "value": "ITM",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 4,
+              "group": "numbering",
+              "key": "numbering.receipt_prefix",
+              "value": "RCPT",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 7,
+              "group": "numbering",
+              "key": "numbering.stock_count_prefix",
+              "value": "SC",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 8,
+              "group": "numbering",
+              "key": "numbering.transaction_prefix",
+              "value": "TXN",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            },
+            {
+              "id": 5,
+              "group": "numbering",
+              "key": "numbering.transfer_prefix",
+              "value": "TRF",
+              "type": "string",
+              "created_at": "2026-07-01T22:00:26.000000Z",
+              "updated_at": "2026-07-01T22:00:26.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783611612500

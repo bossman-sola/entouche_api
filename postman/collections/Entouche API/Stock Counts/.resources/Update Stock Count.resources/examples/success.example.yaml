@@ -1,0 +1,68 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}"
+  method: PUT
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "notes": "Updated notes",
+        "count_date": "2026-06-29"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Thu, 09 Jul 2026 16:57:43 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Stock count updated",
+        "data": {
+          "id": 1,
+          "count_number": "SC-000001",
+          "warehouse_id": 1,
+          "warehouse_location_id": null,
+          "counted_by": 2,
+          "approved_by": null,
+          "created_by": 2,
+          "count_date": "2026-06-29T00:00:00.000000Z",
+          "started_at": null,
+          "completed_at": null,
+          "approved_at": null,
+          "status": "draft",
+          "notes": "Updated notes",
+          "rejection_reason": null,
+          "created_at": "2026-07-09T16:53:32.000000Z",
+          "updated_at": "2026-07-09T16:57:43.000000Z",
+          "deleted_at": null,
+          "items": [
+            {
+              "id": 1,
+              "stock_count_id": 1,
+              "item_id": 5,
+              "warehouse_location_id": null,
+              "system_quantity": "100.000",
+              "counted_quantity": "98.000",
+              "variance_quantity": "-2.000",
+              "adjustment_created": 0,
+              "remarks": null,
+              "created_at": "2026-07-09T16:53:32.000000Z",
+              "updated_at": "2026-07-09T16:53:32.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 1783616268791

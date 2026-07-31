@@ -1,8 +1,11 @@
 $kind: http-request
-name: Complete Stock Count
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Complete Stock Count.resources/examples
 order: 7000
 method: POST
-url: '{{base_url}}/v1/stock-counts/{{stock_count_id}}/complete'
+url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}/complete"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json

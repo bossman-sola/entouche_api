@@ -28,7 +28,7 @@ class StockMovementService extends BaseService
             $qty = (float) $data['quantity'];
             $after = $data['direction'] === 'out' ? $before - $qty : $before + $qty;
 
-            if ($after < 0 && ! Setting::get('inventory.allow_negative_stock', false)) {
+            if ($after < 0 && !Setting::get('inventory.allow_negative_stock', false)) {
                 throw new \RuntimeException('Insufficient stock for this movement.');
             }
 
@@ -41,7 +41,12 @@ class StockMovementService extends BaseService
             $this->maybeNotifyStockThreshold($before, $after, $data);
 
             return InventoryTransaction::create([
-                'transaction_number' => $this->generateNumber('inventory_transactions', 'transaction_number', Setting::get('numbering.transaction_prefix', 'TXN'), 6),
+                'transaction_number' => $this->generateNumber(
+                    'inventory_transactions', 
+                    'transaction_number', 
+                    Setting::get('numbering.transaction_prefix', 'TXN'), 
+                    6
+                ),
                 'item_id' => $data['item_id'],
                 'warehouse_id' => $data['warehouse_id'],
                 'warehouse_location_id' => $data['warehouse_location_id'] ?? null,

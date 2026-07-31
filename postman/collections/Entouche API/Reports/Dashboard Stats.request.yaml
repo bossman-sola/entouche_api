@@ -1,8 +1,11 @@
 $kind: http-request
-name: Dashboard Stats
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Dashboard Stats.resources/examples
 order: 1000
 method: GET
-url: '{{base_url}}/v1/reports/dashboard-stats'
+url: "{{base_url}}/api/v1/reports/dashboard-stats"
 headers:
-  - key: Accept
-    value: application/json
+  Accept: application/json
