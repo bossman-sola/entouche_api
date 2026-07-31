@@ -18,9 +18,14 @@ class ItemsImport implements ToCollection, WithHeadingRow
     public function __construct(private readonly Import $import)
     {
     }
+   public function sheets(): array
+    {
+        return [0 => $this];
+    }
 
     public function collection(Collection $rows): void
     {
+      
         $service = app(ItemService::class);
 
         foreach ($rows as $index => $row) {
