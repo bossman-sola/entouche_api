@@ -16,11 +16,16 @@ body:
     - type: file
       key: file
       src:
-        - postman-cloud:///1f17a0ee-6ca8-4980-ba96-2aa3670bea43
+        - postman-cloud:///1f18c765-ec2a-4480-bd6f-a8f324e759b0
       description: CSV/XLSX/XLS file to import
       disabled: false
     - type: text
       key: import_type
       value: items
       description: "Type of import: items or inventory"
+      disabled: false
+    - type: text
+      key: warehouse_id
+      value: "1"
+      description: ""
       disabled: false
