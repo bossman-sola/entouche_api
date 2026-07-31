@@ -25,7 +25,10 @@ class ItemsImport implements ToCollection, WithHeadingRow
 
         foreach ($rows as $index => $row) {
             try {
-                if (blank($row['name'] ?? null)) {
+                // NEW: support both template heading styles
+                $name = $row['name'] ?? $row['item_name'] ?? null;
+
+                if (blank($name)) {                                    // CHANGED: was $row['name']
                     throw new \InvalidArgumentException('Item name is required.');
                 }
 
@@ -33,10 +36,20 @@ class ItemsImport implements ToCollection, WithHeadingRow
                     ['name' => $row['category'] ?? 'Uncategorized'],
                     ['code' => strtoupper(substr(md5($row['category'] ?? 'UNC'), 0, 8)), 'status' => 'active']
                 );
-                $unit = Unit::firstOrCreate(
-                    ['abbreviation' => $row['unit'] ?? 'PCS'],
-                    ['name' => $row['unit'] ?? 'Piece', 'status' => 'active']
+
+                // NEW: parse "Piece (PCS)" style unit values
+                $unitName = $row['unit'] ?? 'Piece';
+                $unitAbbr = $unitName;
+                if (preg_match('/^(.+?)\s*\((.+?)\)$/', $unitName, $m)) {
+                    $unitName = trim($m[1]);
+                    $unitAbbr = trim($m[2]);
+                }
+
+                $unit = Unit::firstOrCreate(                            // CHANGED: uses parsed values
+                    ['abbreviation' => $unitAbbr ?: 'PCS'],
+                    ['name' => $unitName ?: 'Piece', 'status' => 'active']
                 );
+
                 $supplier = null;
                 if (filled($row['supplier'] ?? null)) {
                     $supplier = Supplier::firstOrCreate(
@@ -51,7 +64,7 @@ class ItemsImport implements ToCollection, WithHeadingRow
                 }
 
                 $service->create([
-                    'name' => $row['name'],
+                    'name' => $name,                                    // CHANGED: was $row['name']
                     'category_id' => $category->id,
                     'unit_of_measure_id' => $unit->id,
                     'supplier_id' => $supplier?->id,
