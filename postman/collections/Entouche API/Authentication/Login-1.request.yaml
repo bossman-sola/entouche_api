@@ -1,6 +1,6 @@
 $kind: http-request
 name: Login
-url: https://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/auth/login
+url: "{{base_url}}/api/v1/auth/login"
 method: POST
 body:
   type: json
