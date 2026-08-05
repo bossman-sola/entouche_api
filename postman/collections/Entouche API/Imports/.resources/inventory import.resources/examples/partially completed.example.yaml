@@ -1,0 +1,166 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/imports"
+  method: POST
+  body:
+    type: formdata
+    content:
+      - type: text
+        key: import_type
+        value: items
+        description: ""
+        disabled: false
+      - type: file
+        key: file
+        src:
+          - postman-cloud:///1f18c765-ec2a-4480-bd6f-a8f324e759b0
+        description: ""
+        disabled: false
+response:
+  statusCode: 207
+  statusText: Multi-Status
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Fri, 31 Jul 2026 14:17:41 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "Import partially completed. 2 row(s) succeeded, 4 failed, and 3 were skipped. Correct the listed errors and upload only the corrected failed rows again.",
+        "data": {
+          "id": 2,
+          "import_type": "items",
+          "warehouse_id": null,
+          "file_name": "CsG6rrcESZQMvvttF73ukiwELV7nJo9K5LMNY56f.xlsx",
+          "file_path": "imports/items/CsG6rrcESZQMvvttF73ukiwELV7nJo9K5LMNY56f.xlsx",
+          "original_name": "item-import-template (1).xlsx",
+          "file_size": 9410,
+          "status": "partial",
+          "total_rows": 9,
+          "successful_rows": 2,
+          "failed_rows": 4,
+          "skipped_rows": 3,
+          "error_summary": null,
+          "uploaded_by": 2,
+          "started_at": "2026-07-31T14:17:41.000000Z",
+          "completed_at": "2026-07-31T14:17:41.000000Z",
+          "created_at": "2026-07-31T14:17:41.000000Z",
+          "updated_at": "2026-07-31T14:17:41.000000Z",
+          "errors": [
+            {
+              "id": 1,
+              "import_id": 2,
+              "row_number": 2,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "load_blogjs": "book",
+                "each_ea": "Kilogram (KG)",
+                "count": "Weight"
+              },
+              "created_at": "2026-07-31T14:17:41.000000Z",
+              "updated_at": "2026-07-31T14:17:41.000000Z"
+            },
+            {
+              "id": 2,
+              "import_id": 2,
+              "row_number": 3,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "load_blogjs": "Laptop",
+                "each_ea": "Box (BOX)",
+                "count": "Volume"
+              },
+              "created_at": "2026-07-31T14:17:41.000000Z",
+              "updated_at": "2026-07-31T14:17:41.000000Z"
+            },
+            {
+              "id": 3,
+              "import_id": 2,
+              "row_number": 4,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "load_blogjs": null,
+                "each_ea": null,
+                "count": "Length"
+              },
+              "created_at": "2026-07-31T14:17:41.000000Z",
+              "updated_at": "2026-07-31T14:17:41.000000Z"
+            },
+            {
+              "id": 4,
+              "import_id": 2,
+              "row_number": 5,
+              "field": null,
+              "error_type": "InvalidArgumentException",
+              "error_message": "Item name is required.",
+              "row_data": {
+                "load_blogjs": null,
+                "each_ea": null,
+                "count": "Area"
+              },
+              "created_at": "2026-07-31T14:17:41.000000Z",
+              "updated_at": "2026-07-31T14:17:41.000000Z"
+            }
+          ],
+          "rows": []
+        },
+        "errors": [
+          {
+            "row_number": 2,
+            "field": null,
+            "issue": "Item name is required.",
+            "required_action": "Enter an item name in the \"name\" column. Also verify that the correct spreadsheet row is being used as the header row.",
+            "row_data": {
+              "load_blogjs": "book",
+              "each_ea": "Kilogram (KG)",
+              "count": "Weight"
+            }
+          },
+          {
+            "row_number": 3,
+            "field": null,
+            "issue": "Item name is required.",
+            "required_action": "Enter an item name in the \"name\" column. Also verify that the correct spreadsheet row is being used as the header row.",
+            "row_data": {
+              "load_blogjs": "Laptop",
+              "each_ea": "Box (BOX)",
+              "count": "Volume"
+            }
+          },
+          {
+            "row_number": 4,
+            "field": null,
+            "issue": "Item name is required.",
+            "required_action": "Enter an item name in the \"name\" column. Also verify that the correct spreadsheet row is being used as the header row.",
+            "row_data": {
+              "load_blogjs": null,
+              "each_ea": null,
+              "count": "Length"
+            }
+          },
+          {
+            "row_number": 5,
+            "field": null,
+            "issue": "Item name is required.",
+            "required_action": "Enter an item name in the \"name\" column. Also verify that the correct spreadsheet row is being used as the header row.",
+            "row_data": {
+              "load_blogjs": null,
+              "each_ea": null,
+              "count": "Area"
+            }
+          }
+        ]
+      }
+order: 1785507482170
