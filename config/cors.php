@@ -1,25 +1,17 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    */
-
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'oauth/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000'), 'http://localhost:5173'],
+    'allowed_origins' => [
+        'https://entouche-inventory.netlify.app',
+    ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https://deploy-preview-\d+--entouche-inventory\.netlify\.app$#',
+    ],
 
     'allowed_headers' => ['*'],
 
@@ -27,6 +19,5 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
-
+    'supports_credentials' => false,
 ];
