@@ -6,6 +6,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+        env('FRONTEND_URL'),
         'https://entouche-inventory.netlify.app',
     ],
 

@@ -136,3 +136,5 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
     });
 });
+
+

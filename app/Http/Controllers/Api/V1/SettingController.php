@@ -25,14 +25,25 @@ class SettingController extends BaseApiController
 
     public function bulkUpdate(Request $request)
     {
-        $data = $request->validate(['settings' => ['required', 'array']]);
+        $data = $request->validate([
+            'settings' => ['required', 'array']
+        ]);
 
         foreach ($data['settings'] as $key => $value) {
-            Setting::where('key', $key)->update(['value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value]);
+            // Parse a dynamic group prefix from the key string (e.g., "company.email" -> group is "company")
+            $group = str_contains($key, '.') ? explode('.', $key)[0] : 'general';
+
+            // Gracefully insert the row if it's missing, or update it if it exists
+            Setting::updateOrCreate(
+                ['key' => $key],
+                [
+                    'group' => $group,
+                    'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value
+                ]
+            );
         }
 
-        
-        if (! empty($data['settings']['system.maintenance_message'])) {
+        if (!empty($data['settings']['system.maintenance_message'])) {
             $this->notifications->notifyAdmins(
                 'system_maintenance',
                 'System Maintenance Scheduled',
@@ -42,4 +53,6 @@ class SettingController extends BaseApiController
 
         return $this->success(Setting::orderBy('key')->get(), 'Settings updated');
     }
+
+
 }
