@@ -1,15 +1,32 @@
 <?php
 
 return [
-    'paths' => ['api/*', 'oauth/*'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cross-Origin Resource Sharing (CORS) Configuration
+    |--------------------------------------------------------------------------
+    */
+
+    'paths' => [
+        'api/*',
+        'oauth/*',
+    ],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('FRONTEND_URL'),
+        // Local Vite development
+        'http://localhost:5173',
+
+        // Netlify production
         'https://entouche-inventory.netlify.app',
     ],
 
+    /*
+     * Allow Netlify deploy previews such as:
+     * https://deploy-preview-34--entouche-inventory.netlify.app
+     */
     'allowed_origins_patterns' => [
         '#^https://deploy-preview-\d+--entouche-inventory\.netlify\.app$#',
     ],
@@ -21,4 +38,5 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => false,
+
 ];
