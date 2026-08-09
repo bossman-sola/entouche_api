@@ -21,7 +21,11 @@ class StockCountController extends BaseApiController
     ) {
     }
 
-    public function index(Request $request) { return $this->paginated($this->stockCounts->list($request->all())); }
+    public function index(Request $request)
+    {
+        return $this->paginated($this->stockCounts->list($request->all()));
+    }
+
     public function show(StockCount $stockCount)
     {
         $stockCount->load(['items.item', 'warehouse', 'location', 'assignedCounter', 'submittedBy', 'approvedBy', 'rejectedBy']);
@@ -53,7 +57,7 @@ class StockCountController extends BaseApiController
         $assignedTo = $data['assigned_to'] ?? auth()->id();
         unset($data['assigned_to']);
 
-        $number = (new class extends BaseService {})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
+        $number = (new class extends BaseService{})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
 
         $count = StockCount::create($data + [
             'count_number' => $number,
@@ -63,7 +67,7 @@ class StockCountController extends BaseApiController
             'count_date' => $data['count_date'] ?? now()->toDateString(),
         ]);
 
-        if (! empty($items)) {
+        if (!empty($items)) {
             $this->stockCounts->addItems($count, $items);
         }
 
@@ -72,12 +76,21 @@ class StockCountController extends BaseApiController
             'description' => 'Created by ' . (auth()->user()->name ?? 'a user'),
         ])->log('stock_count.created');
 
+        // 💡 Hooked: Broadcasts new stock count to the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_created',
+            'New Stock Count Created',
+            "Stock Count {$count->count_number} has been created.",
+            ['stock_count_id' => $count->id]
+        );
+
         return $this->created($count->fresh('items'), 'Stock count created');
     }
 
     public function update(Request $request, StockCount $stockCount)
     {
-        if (! $stockCount->isEditable()) return $this->error('Only draft stock counts can be updated.', null, 422);
+        if (!$stockCount->isEditable())
+            return $this->error('Only draft stock counts can be updated.', null, 422);
 
         $data = $request->validate([
             'warehouse_id' => ['sometimes', 'exists:warehouses,id'],
@@ -96,19 +109,40 @@ class StockCountController extends BaseApiController
         }
 
         $stockCount->update($data);
+
+        // 💡 Hooked: Broadcasts adjustments to details on the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_updated',
+            'Stock Count Updated',
+            "Stock Count {$stockCount->count_number} details were updated.",
+            ['stock_count_id' => $stockCount->id]
+        );
+
         return $this->success($stockCount->fresh('items'), 'Stock count updated');
     }
 
     public function destroy(StockCount $stockCount)
     {
-        if (! $stockCount->isEditable()) return $this->error('Only draft stock counts can be deleted.', null, 422);
+        if (!$stockCount->isEditable())
+            return $this->error('Only draft stock counts can be deleted.', null, 422);
         $stockCount->delete();
         return $this->success(null, 'Stock count deleted');
     }
 
-    public function cancel(StockCount $stockCount) { $stockCount->update(['status' => 'cancelled']); return $this->success($stockCount, 'Stock count cancelled'); }
+    public function cancel(StockCount $stockCount)
+    {
+        $stockCount->update(['status' => 'cancelled']);
 
-    
+        // 💡 Hooked: Broadcasts the cancellation to the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_cancelled',
+            'Stock Count Cancelled',
+            "Stock Count {$stockCount->count_number} has been cancelled.",
+            ['stock_count_id' => $stockCount->id]
+        );
+
+        return $this->success($stockCount, 'Stock count cancelled');
+    }
 
     public function addItems(Request $request, StockCount $stockCount)
     {
@@ -129,7 +163,8 @@ class StockCountController extends BaseApiController
 
     public function updateItem(Request $request, StockCount $stockCount, StockCountItem $item)
     {
-        if ($item->stock_count_id !== $stockCount->id) return $this->error('Item does not belong to this stock count.', null, 404);
+        if ($item->stock_count_id !== $stockCount->id)
+            return $this->error('Item does not belong to this stock count.', null, 404);
 
         $data = $request->validate([
             'counted_quantity' => ['required', 'numeric'],
@@ -147,7 +182,8 @@ class StockCountController extends BaseApiController
 
     public function removeItem(StockCount $stockCount, StockCountItem $item)
     {
-        if ($item->stock_count_id !== $stockCount->id) return $this->error('Item does not belong to this stock count.', null, 404);
+        if ($item->stock_count_id !== $stockCount->id)
+            return $this->error('Item does not belong to this stock count.', null, 404);
 
         try {
             $this->stockCounts->removeItem($stockCount, $item);
@@ -163,9 +199,10 @@ class StockCountController extends BaseApiController
         return $this->success($this->stockCounts->searchItems($request->string('search', '')->toString()));
     }
 
-   
-
-    public function progress(StockCount $stockCount) { return $this->success($this->stockCounts->countingProgress($stockCount)); }
+    public function progress(StockCount $stockCount)
+    {
+        return $this->success($this->stockCounts->countingProgress($stockCount));
+    }
 
     public function submit(StockCount $stockCount)
     {
@@ -225,46 +262,28 @@ class StockCountController extends BaseApiController
         ]);
     }
 
-
-    public function overview() { return $this->success($this->stockCounts->overview()); }
-
+    public function overview()
+    {
+        return $this->success($this->stockCounts->overview());
+    }
     public function calendar(Request $request)
     {
-        $data = $request->validate([
-            'month' => ['required', 'integer', 'min:1', 'max:12'],
-            'year' => ['required', 'integer', 'min:2000', 'max:2100'],
-        ]);
-
+        $data = $request->validate(['month' => ['required', 'integer', 'min:1', 'max:12'], 'year' => ['required', 'integer', 'min:2000', 'max:2100'],]);
         return $this->success($this->stockCounts->calendar((int) $data['month'], (int) $data['year']));
     }
-
-    public function lookups() { return $this->success($this->stockCounts->lookups()); }
-
+    public function lookups()
+    {
+        return $this->success($this->stockCounts->lookups());
+    }
     public function export(Request $request)
     {
-        $data = $request->validate([
-            'format' => ['required', 'in:xlsx,csv'],
-            'ids' => ['sometimes', 'array'],
-        ]);
-
+        $data = $request->validate(['format' => ['required', 'in:xlsx,csv'], 'ids' => ['sometimes', 'array'],]);
         $filename = 'stock-counts-' . now()->format('Y-m-d-His') . '.' . $data['format'];
         $writerType = $data['format'] === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX;
-
         return Excel::download(new \App\Exports\StockCountsExport($request->all()), $filename, $writerType);
     }
-
     private function activity(StockCount $stockCount): array
     {
-        return \Spatie\Activitylog\Models\Activity::where('subject_type', StockCount::class)
-            ->where('subject_id', $stockCount->id)
-            ->oldest()
-            ->get()
-            ->map(fn ($log) => [
-                'title' => $log->properties['title'] ?? $log->description,
-                'detail' => $log->properties['description'] ?? '',
-                'time' => $log->created_at->format('M j, Y \a\t g:i A'),
-                'done' => true,
-            ])
-            ->all();
+        return \Spatie\Activitylog\Models\Activity::where('subject_type', StockCount::class)->where('subject_id', $stockCount->id)->oldest()->get()->map(fn($log) => ['title' => $log->properties['title'] ?? $log->description, 'detail' => $log->properties['description'] ?? '', 'time' => $log->created_at->format('M j, Y \a\t g:i A'), 'done' => true,])->all();
     }
 }

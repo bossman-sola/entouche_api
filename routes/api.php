@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function (): void {
 
         Route::apiResource('warehouses', WarehouseController::class)->middleware('permission:master-data.manage');
         Route::post('warehouses/{warehouse}/toggle-status', [WarehouseController::class, 'toggleStatus'])->middleware('permission:master-data.manage');
-        Route::get('warehouses/{warehouse}/locations', [WarehouseController::class, 'locations'])->middleware('permission:master-data.manage');
+        // Route::get('warehouses/{warehouse}/locations', [WarehouseController::class, 'locations'])->middleware('permission:master-data.manage');
         Route::get('warehouses/{warehouse}/stock-summary', [WarehouseController::class, 'stockSummary'])->middleware('permission:reports.view');
 
         Route::apiResource('warehouses.locations', LocationController::class)->shallow()->middleware('permission:master-data.manage');
@@ -93,7 +93,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('adjustments/{adjustment}/reject', [AdjustmentController::class, 'reject'])->middleware('permission:adjustments.approve');
         Route::post('adjustments/{adjustment}/cancel', [AdjustmentController::class, 'cancel'])->middleware('permission:adjustments.create');
 
-    
+
         Route::get('stock-counts/overview', [StockCountController::class, 'overview'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/lookups', [StockCountController::class, 'lookups'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/calendar', [StockCountController::class, 'calendar'])->middleware('permission:stock_counts.view');
@@ -103,12 +103,12 @@ Route::prefix('v1')->group(function (): void {
         Route::apiResource('stock-counts', StockCountController::class)->parameters(['stock-counts' => 'stockCount'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/cancel', [StockCountController::class, 'cancel'])->middleware('permission:stock_counts.create');
 
-        
+
         Route::post('stock-counts/{stockCount}/items', [StockCountController::class, 'addItems'])->middleware('permission:stock_counts.create');
         Route::patch('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'updateItem'])->middleware('permission:stock_counts.create');
         Route::delete('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'removeItem'])->middleware('permission:stock_counts.create');
 
-        
+
         Route::get('stock-counts/{stockCount}/progress', [StockCountController::class, 'progress'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/{stockCount}/variance', [StockCountController::class, 'varianceBreakdown'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/submit', [StockCountController::class, 'submit'])->middleware('permission:stock_counts.create');
@@ -136,3 +136,5 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
     });
 });
+
+

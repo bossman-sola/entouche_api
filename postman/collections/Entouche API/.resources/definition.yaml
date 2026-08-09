@@ -3,13 +3,18 @@ name: Entouche API
 variables:
   - key: base_url
     value: ""
+    disabled: false
     secret: false
   - key: access_token
     value: ""
+    disabled: false
     secret: false
   - key: json_web_token_143m
     secret: true
+    disabled: false
   - key: auth_secret_134v
     secret: true
+    disabled: false
   - key: json_web_token_0scg
     secret: true
+    disabled: false

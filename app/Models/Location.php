@@ -11,7 +11,12 @@ class Location extends Model
 
     protected $table = 'warehouse_locations';
 
-    protected $fillable = ['warehouse_id', 'name', 'code', 'type', 'status'];
+    protected $fillable = ['warehouse_id', 'name', 'code', 'type', 'description', 'capacity', 'status'];
+
+    public function stockBalances()
+    {
+        return $this->hasMany(StockBalance::class, 'warehouse_location_id');
+    }
 
     public function warehouse()
     {
