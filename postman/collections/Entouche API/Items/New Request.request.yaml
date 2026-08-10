@@ -1,0 +1,11 @@
+$kind: http-request
+name: New Request
+url: "{{base_url}}/api/v1/items?page=1"
+method: GET
+queryParams:
+  page: "1"
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1524389084397567
