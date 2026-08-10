@@ -1,9 +1,9 @@
 $kind: http-request
-name: New Request
 url: "{{base_url}}/api/v1/items/stats"
 method: GET
 auth:
   type: bearer
   credentials:
     token: "{{access_token}}"
+examples: .resources/get items stats.resources/examples
 order: 3512182270590975
