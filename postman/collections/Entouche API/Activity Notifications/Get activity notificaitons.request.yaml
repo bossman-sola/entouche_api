@@ -1,0 +1,11 @@
+$kind: http-request
+name: Get activity notificaitons
+url: "{{base_url}}/api/v1/notifications?page=1"
+method: GET
+queryParams:
+  page: "1"
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1786292031949

@@ -13,6 +13,13 @@ class ItemController extends BaseApiController
     {
     }
 
+    public function stats()
+{
+    return $this->success(
+        $this->items->getStats()
+    );
+}
+
     public function index(Request $request)
     {
         return $this->paginated($this->items->list($request->all()));

@@ -66,6 +66,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->middleware('permission:master-data.manage');
 
         Route::apiResource('items', ItemController::class)->middleware('permission:items.view');
+        Route::get('items/stats', [ItemController::class, 'stats'])->middleware('permission:items.view');
         Route::post('items/{item}/image', [ItemController::class, 'uploadImage'])->middleware('permission:items.edit');
         Route::delete('items/{item}/image', [ItemController::class, 'removeImage'])->middleware('permission:items.edit');
         Route::get('items/{item}/transactions', [ItemController::class, 'transactions'])->middleware('permission:items.view');
@@ -136,5 +137,3 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
     });
 });
-
-
