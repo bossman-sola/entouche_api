@@ -114,7 +114,7 @@ GET {{base_url}}/api/v1/transfers?page=1
 |-----------|---------|----------|--------------------------|
 | `page`    | integer | No       | Page number (default: 1) |
 
-### Sample Response — 200 OK (with data)
+### Sample Response - 200 OK (with data)
 
 ```json
 {
@@ -168,7 +168,7 @@ GET {{base_url}}/api/v1/transfers?page=1
 }
 ```
 
-### Sample Response — 200 OK (empty)
+### Sample Response - 200 OK (empty)
 
 ```json
 {
@@ -239,7 +239,7 @@ POST {{base_url}}/api/v1/transfers
 | `items[].item_id`   | integer | Yes      | Inventory item ID                                |
 | `items[].quantity`  | number  | Yes      | Quantity to transfer                             |
 
-### Sample Response — 201 Created
+### Sample Response - 201 Created
 
 ```json
 {
@@ -299,7 +299,7 @@ GET {{base_url}}/api/v1/transfers/{{transfer_id}}
 |---------------|---------|----------|-----------------|
 | `transfer_id` | integer | Yes      | Transfer ID     |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -389,7 +389,7 @@ PUT {{base_url}}/api/v1/transfers/{{transfer_id}}
 | `items[].quantity`             | number  | Yes      | Quantity to transfer                         |
 | `items[].unit_cost`            | number  | No       | Unit cost of the item                        |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -462,7 +462,7 @@ DELETE {{base_url}}/api/v1/transfers/{{transfer_id}}
 |---------------|---------|----------|--------------|
 | `transfer_id` | integer | Yes      | Transfer ID  |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -498,7 +498,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/submit
 |---------------|---------|----------|--------------|
 | `transfer_id` | integer | Yes      | Transfer ID  |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -553,7 +553,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/approve
 |---------------|---------|----------|--------------|
 | `transfer_id` | integer | Yes      | Transfer ID  |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -633,7 +633,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/reject
 |----------|--------|----------|--------------------------|
 | `reason` | string | Yes      | Reason for rejection     |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -690,7 +690,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/complete
 |---------------|---------|----------|--------------|
 | `transfer_id` | integer | Yes      | Transfer ID  |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {
@@ -730,7 +730,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/complete
 }
 ```
 
-### Sample Response — 422 Unprocessable Content (transfer not approved)
+### Sample Response - 422 Unprocessable Content (transfer not approved)
 
 ```json
 {
@@ -766,7 +766,7 @@ POST {{base_url}}/api/v1/transfers/{{transfer_id}}/cancel
 |---------------|---------|----------|--------------|
 | `transfer_id` | integer | Yes      | Transfer ID  |
 
-### Sample Response — 200 OK
+### Sample Response - 200 OK
 
 ```json
 {

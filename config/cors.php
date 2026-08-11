@@ -19,6 +19,9 @@ return [
         // Local Vite development
         'http://localhost:5173',
 
+        // Nelity staging
+        'https://staging--entouche-inventory.netlify.app',
+
         // Netlify production
         'https://entouche-inventory.netlify.app',
     ],

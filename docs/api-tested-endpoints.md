@@ -1,4 +1,4 @@
-# Entouche API — Tested Endpoints
+# Entouche API - Tested Endpoints
 
 > Auto-generated reference of all endpoints with recorded request/response samples.
 > Source: `postman/collections/Entouche API/`
@@ -134,7 +134,7 @@ Content-Type: application/json
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -212,7 +212,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -238,7 +238,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -267,7 +267,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -306,7 +306,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -340,7 +340,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success - empty)
+#### Response - `200 OK` (success - empty)
 
 ```json
 {
@@ -389,7 +389,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `201 Created` (success)
+#### Response - `201 Created` (success)
 
 ```json
 {
@@ -423,7 +423,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -468,7 +468,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -503,7 +503,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -536,7 +536,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -573,7 +573,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success - empty)
+#### Response - `200 OK` (success - empty)
 
 ```json
 {
@@ -630,7 +630,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `201 Created` (success)
+#### Response - `201 Created` (success)
 
 ```json
 {
@@ -690,7 +690,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `422 Unprocessable Content` (validation failed)
+#### Response - `422 Unprocessable Content` (validation failed)
 
 ```json
 {
@@ -723,7 +723,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -803,7 +803,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -849,7 +849,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -875,7 +875,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -921,7 +921,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -952,7 +952,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success - empty)
+#### Response - `200 OK` (success - empty)
 
 ```json
 {
@@ -1003,7 +1003,7 @@ Content-Type: multipart/form-data
 |-----|------|-------|
 | `image` | file | _(image file)_ |
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1034,7 +1034,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-#### Response — `422 Unprocessable Content` (wrong file extension)
+#### Response - `422 Unprocessable Content` (wrong file extension)
 
 ```json
 {
@@ -1064,7 +1064,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1112,7 +1112,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1197,7 +1197,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1249,7 +1249,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1300,7 +1300,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1351,7 +1351,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `201 Created` (success)
+#### Response - `201 Created` (success)
 
 ```json
 {
@@ -1387,7 +1387,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1437,7 +1437,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1474,7 +1474,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1507,7 +1507,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1529,7 +1529,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `404 Not Found` (supplier does not exist)
+#### Response - `404 Not Found` (supplier does not exist)
 
 ```json
 {
@@ -1557,7 +1557,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1615,7 +1615,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `201 Created` (success)
+#### Response - `201 Created` (success)
 
 ```json
 {
@@ -1648,7 +1648,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1692,7 +1692,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1726,7 +1726,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1752,7 +1752,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1788,7 +1788,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1877,7 +1877,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `201 Created` (success)
+#### Response - `201 Created` (success)
 
 ```json
 {
@@ -1925,7 +1925,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -1973,7 +1973,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -2010,7 +2010,7 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -2043,7 +2043,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -2064,7 +2064,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `404 Not Found` (user does not exist)
+#### Response - `404 Not Found` (user does not exist)
 
 ```json
 {
@@ -2098,7 +2098,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -2156,7 +2156,7 @@ Authorization: Bearer {{access_token}}
 }
 ```
 
-#### Response — `200 OK` (success)
+#### Response - `200 OK` (success)
 
 ```json
 {
@@ -2180,4 +2180,4 @@ Authorization: Bearer {{access_token}}
 
 ---
 
-*Generated from `postman/collections/Entouche API/` — 43 endpoints across 7 groups, 49 total recorded examples.*
+*Generated from `postman/collections/Entouche API/` - 43 endpoints across 7 groups, 49 total recorded examples.*

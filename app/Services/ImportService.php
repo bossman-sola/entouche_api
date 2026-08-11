@@ -61,7 +61,7 @@ class ImportService extends BaseService
                 $this->notifications->notifyAdmins(
                     'import_completed',
                     'Import Completed',
-                    "Import of {$import->import_type} completed successfully — {$import->successful_rows} row(s) imported.",
+                    "Import of {$import->import_type} completed successfully - {$import->successful_rows} row(s) imported.",
                     ['import_id' => $import->id],
                 );
             } else {

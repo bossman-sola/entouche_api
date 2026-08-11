@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Warehouses API group provides endpoints for managing warehouse resources within the Entouche platform. It covers the full lifecycle of a warehouse — from creation and retrieval to updates, deletion, and status management. Additional endpoints allow you to inspect warehouse locations and view stock summaries, making this group the central hub for warehouse operations.
+The Warehouses API group provides endpoints for managing warehouse resources within the Entouche platform. It covers the full lifecycle of a warehouse - from creation and retrieval to updates, deletion, and status management. Additional endpoints allow you to inspect warehouse locations and view stock summaries, making this group the central hub for warehouse operations.
 
 All endpoints require Bearer token authentication via `{{access_token}}`.
 
@@ -76,7 +76,7 @@ Creates a new warehouse with the provided details.
 | `name` | string | Human-readable name of the warehouse |
 | `code` | string | Unique short code identifier for the warehouse |
 | `address` | string | Physical address of the warehouse |
-| `status` | string | Initial status — `active` or `inactive` |
+| `status` | string | Initial status - `active` or `inactive` |
 
 ---
 
@@ -141,7 +141,7 @@ Updates the details of an existing warehouse.
 | `name` | string | Updated name of the warehouse |
 | `code` | string | Updated short code identifier |
 | `address` | string | Updated physical address |
-| `status` | string | Updated status — `active` or `inactive` |
+| `status` | string | Updated status - `active` or `inactive` |
 
 ---
 
