@@ -38,14 +38,14 @@ class ReceiptController extends BaseApiController
             'items.*.unit_cost' => ['sometimes', 'numeric', 'min:0'],
         ]);
 
-        $helper = new BaseService();
+        $helper = new BaseService;
         $items = $data['items'];
         unset($data['items']);
         $receipt = Receipt::create($data + [
             'receipt_number' => $helper->generateNumber(
-                'receipts', 
-                'receipt_number', 
-                (string) Setting::get('numbering.receipt_prefix', 'RCPT'), 
+                'receipts',
+                'receipt_number',
+                (string) Setting::get('numbering.receipt_prefix', 'RCPT'),
                 6
             ),
             'receipt_date' => $data['receipt_date'] ?? now()->toDateString(),

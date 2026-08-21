@@ -22,7 +22,7 @@ class WarehouseController extends MasterCrudController
             ->map(function (Location $location) {
                 $quantityOnHand = (int) $location->stockBalances->sum('quantity_on_hand');
                 $stockValue = $location->stockBalances->sum(
-                    fn($balance) => $balance->quantity_on_hand * ($balance->item->unit_cost ?? 0)
+                    fn ($balance) => $balance->quantity_on_hand * ($balance->item->unit_cost ?? 0)
                 );
 
                 return array_merge(

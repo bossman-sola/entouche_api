@@ -78,11 +78,28 @@ Route::prefix('v1')->group(function (): void {
         Route::get('transactions', [TransactionController::class, 'index'])->middleware('permission:reports.view');
         Route::get('transactions/{txn}', [TransactionController::class, 'show'])->middleware('permission:reports.view');
 
-        Route::apiResource('receipts', ReceiptController::class)->middleware('permission:receipts.view');
-        Route::post('receipts/{receipt}/submit', [ReceiptController::class, 'submit'])->middleware('permission:receipts.create');
-        Route::post('receipts/{receipt}/approve', [ReceiptController::class, 'approve'])->middleware('permission:receipts.approve');
-        Route::post('receipts/{receipt}/receive', [ReceiptController::class, 'receive'])->middleware('permission:receipts.approve');
-        Route::post('receipts/{receipt}/cancel', [ReceiptController::class, 'cancel'])->middleware('permission:receipts.create');
+        Route::apiResource('receipts', ReceiptController::class)
+            ->middleware('permission:receipts.view');
+
+        Route::post(
+            'receipts/{receipt}/submit',
+            [ReceiptController::class, 'submit']
+        )->middleware('permission:receipts.create');
+
+        Route::post(
+            'receipts/{receipt}/approve',
+            [ReceiptController::class, 'approve']
+        )->middleware('permission:receipts.approve');
+
+        Route::post(
+            'receipts/{receipt}/receive',
+            [ReceiptController::class, 'receive']
+        )->middleware('permission:receipts.approve');
+
+        Route::post(
+            'receipts/{receipt}/cancel',
+            [ReceiptController::class, 'cancel']
+        )->middleware('permission:receipts.create');
 
         Route::apiResource('transfers', TransferController::class)->middleware('permission:transfers.view');
         Route::post('transfers/{transfer}/submit', [TransferController::class, 'submit'])->middleware('permission:transfers.create');
@@ -102,7 +119,6 @@ Route::prefix('v1')->group(function (): void {
         Route::get('stock-counts/calendar', [StockCountController::class, 'calendar'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/export', [StockCountController::class, 'export'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/items/search', [StockCountController::class, 'searchItems'])->middleware('permission:stock_counts.view');
-
         Route::apiResource('stock-counts', StockCountController::class)->parameters(['stock-counts' => 'stockCount'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/cancel', [StockCountController::class, 'cancel'])->middleware('permission:stock_counts.create');
 

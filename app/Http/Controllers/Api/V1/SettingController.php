@@ -24,7 +24,7 @@ class SettingController extends BaseApiController
     public function bulkUpdate(Request $request)
     {
         $data = $request->validate([
-            'settings' => ['required', 'array']
+            'settings' => ['required', 'array'],
         ]);
 
         foreach ($data['settings'] as $key => $value) {
@@ -36,7 +36,7 @@ class SettingController extends BaseApiController
                 ['key' => $key],
                 [
                     'group' => $group,
-                    'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value
+                    'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value,
                 ]
             );
         }
@@ -51,6 +51,4 @@ class SettingController extends BaseApiController
 
         return $this->success(Setting::orderBy('key')->get(), 'Settings updated');
     }
-
-
 }

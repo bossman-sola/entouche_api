@@ -13,23 +13,23 @@ use App\Models\StockCount;
 use App\Models\StockCountItem;
 use App\Models\User;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Spatie\Activitylog\Models\Activity;
 
 class StockCountService extends BaseService
 {
     public function list(array $filters = [])
     {
         return StockCount::with(['items.item', 'warehouse', 'location', 'assignedCounter', 'submittedBy'])
-            ->when($filters['search'] ?? null, fn($q, $v) => $q->where('count_number', 'like', "%{$v}%"))
-            ->when($filters['status'] ?? null, fn($q, $v) => $q->where('status', $v))
-            ->when($filters['warehouse_id'] ?? null, fn($q, $v) => $q->where('warehouse_id', $v))
-            ->when($filters['warehouse_location_id'] ?? null, fn($q, $v) => $q->where('warehouse_location_id', $v))
-            ->when($filters['count_type'] ?? null, fn($q, $v) => $q->where('count_type', $v))
-            ->when($filters['date_from'] ?? null, fn($q, $v) => $q->whereDate('count_date', '>=', $v))
-            ->when($filters['date_to'] ?? null, fn($q, $v) => $q->whereDate('count_date', '<=', $v))
-            ->when(($filters['variance'] ?? null) === 'variance_only', fn($q) => $q->whereHas('items', fn($i) => $i->where('variance_quantity', '!=', 0)))
-            ->when(($filters['variance'] ?? null) === 'matches_only', fn($q) => $q->whereDoesntHave('items', fn($i) => $i->where('variance_quantity', '!=', 0)))
+            ->when($filters['search'] ?? null, fn ($q, $v) => $q->where('count_number', 'like', "%{$v}%"))
+            ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
+            ->when($filters['warehouse_id'] ?? null, fn ($q, $v) => $q->where('warehouse_id', $v))
+            ->when($filters['warehouse_location_id'] ?? null, fn ($q, $v) => $q->where('warehouse_location_id', $v))
+            ->when($filters['count_type'] ?? null, fn ($q, $v) => $q->where('count_type', $v))
+            ->when($filters['date_from'] ?? null, fn ($q, $v) => $q->whereDate('count_date', '>=', $v))
+            ->when($filters['date_to'] ?? null, fn ($q, $v) => $q->whereDate('count_date', '<=', $v))
+            ->when(($filters['variance'] ?? null) === 'variance_only', fn ($q) => $q->whereHas('items', fn ($i) => $i->where('variance_quantity', '!=', 0)))
+            ->when(($filters['variance'] ?? null) === 'matches_only', fn ($q) => $q->whereDoesntHave('items', fn ($i) => $i->where('variance_quantity', '!=', 0)))
             ->latest()
             ->paginate($filters['per_page'] ?? 15);
     }
@@ -75,14 +75,14 @@ class StockCountService extends BaseService
             ->whereNotNull('count_type')
             ->groupBy('count_type')
             ->pluck('total', 'count_type')
-            ->map(fn($count, $type) => ['label' => $type, 'value' => $count])
+            ->map(fn ($count, $type) => ['label' => $type, 'value' => $count])
             ->values();
 
         return [
             'total_stock_counts' => $total,
             'total_delta' => $total - $totalLastMonth,
             'pending_review' => StockCount::where('status', 'pending_review')->count(),
-            'variances_found' => StockCount::whereHas('items', fn($q) => $q->where('variance_quantity', '!=', 0))->count(),
+            'variances_found' => StockCount::whereHas('items', fn ($q) => $q->where('variance_quantity', '!=', 0))->count(),
             'completed_counts' => $completed,
             'completed_delta' => $completed - $completedLastMonth,
             'breakdown' => $breakdown,
@@ -110,7 +110,7 @@ class StockCountService extends BaseService
                     'type' => $data['type'] ?? 'stock_count_activity',
                     'title' => $data['title'] ?? 'Stock Count Update',
                     'description' => $data['description'] ?? '',
-                    'time' => \Carbon\Carbon::parse($notification->created_at)->diffForHumans(),
+                    'time' => Carbon::parse($notification->created_at)->diffForHumans(),
                 ];
             })
             ->all();
@@ -122,7 +122,7 @@ class StockCountService extends BaseService
             ->whereYear('count_date', $year)
             ->whereMonth('count_date', $month)
             ->get()
-            ->map(fn(StockCount $sc) => [
+            ->map(fn (StockCount $sc) => [
                 'id' => $sc->id,
                 'count_number' => $sc->count_number,
                 'type' => $sc->count_type,
@@ -136,7 +136,7 @@ class StockCountService extends BaseService
 
     public function addItems(StockCount $stockCount, array $items): StockCount
     {
-        if (!$stockCount->isEditable()) {
+        if (! $stockCount->isEditable()) {
             throw new \RuntimeException('Items can only be added while the stock count is a draft.');
         }
 
@@ -167,7 +167,7 @@ class StockCountService extends BaseService
 
     public function removeItem(StockCount $stockCount, StockCountItem $item): void
     {
-        if (!$stockCount->isEditable()) {
+        if (! $stockCount->isEditable()) {
             throw new \RuntimeException('Items can only be removed while the stock count is a draft.');
         }
 
@@ -176,7 +176,7 @@ class StockCountService extends BaseService
 
     public function updateItemCount(StockCount $stockCount, StockCountItem $item, float $countedQuantity, ?string $reason = null): StockCountItem
     {
-        if (!$stockCount->isEditable()) {
+        if (! $stockCount->isEditable()) {
             throw new \RuntimeException('Counted quantities can only be edited while the stock count is a draft.');
         }
 
@@ -205,7 +205,7 @@ class StockCountService extends BaseService
 
     public function submit(StockCount $stockCount, NotificationService $notifications): StockCount
     {
-        if (!$stockCount->isEditable()) {
+        if (! $stockCount->isEditable()) {
             throw new \RuntimeException('Only a draft stock count can be submitted.');
         }
 
@@ -252,7 +252,7 @@ class StockCountService extends BaseService
 
     public function approveAndComplete(StockCount $stockCount, NotificationService $notifications): StockCount
     {
-        if (!$stockCount->isPendingReview()) {
+        if (! $stockCount->isPendingReview()) {
             throw new \RuntimeException('Only a stock count that is pending review can be approved.');
         }
 
@@ -344,7 +344,7 @@ class StockCountService extends BaseService
 
     public function reject(StockCount $stockCount, string $reason, NotificationService $notifications): StockCount
     {
-        if (!$stockCount->isPendingReview()) {
+        if (! $stockCount->isPendingReview()) {
             throw new \RuntimeException('Only a stock count that is pending review can be rejected.');
         }
 
@@ -375,7 +375,7 @@ class StockCountService extends BaseService
 
     public function requestRecount(StockCount $stockCount, ?string $reason, NotificationService $notifications): StockCount
     {
-        if (!$stockCount->isPendingReview()) {
+        if (! $stockCount->isPendingReview()) {
             throw new \RuntimeException('Only a stock count that is pending review can have a recount requested.');
         }
 
@@ -419,7 +419,7 @@ class StockCountService extends BaseService
     public function varianceBreakdown(StockCount $stockCount): array
     {
         return $stockCount->items()->with('item')->get()
-            ->filter(fn(StockCountItem $item) => (float) $item->variance_quantity != 0.0)
+            ->filter(fn (StockCountItem $item) => (float) $item->variance_quantity != 0.0)
             ->map(function (StockCountItem $item) {
                 $variance = (float) $item->variance_quantity;
 
@@ -456,7 +456,7 @@ class StockCountService extends BaseService
     public function searchItems(string $search = '', int $limit = 20)
     {
         return Item::active()
-            ->when($search !== '', fn($q) => $q->where(fn($qq) => $qq
+            ->when($search !== '', fn ($q) => $q->where(fn ($qq) => $qq
                 ->where('name', 'like', "%{$search}%")
                 ->orWhere('sku', 'like', "%{$search}%")
                 ->orWhere('barcode', 'like', "%{$search}%")))

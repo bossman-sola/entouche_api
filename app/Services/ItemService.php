@@ -10,35 +10,35 @@ use Illuminate\Support\Facades\Storage;
 class ItemService extends BaseService
 {
     public function getStats(): array
-{
-    $totalItems = Item::count();
+    {
+        $totalItems = Item::count();
 
-    $totalSkus = Item::query()
-        ->whereNotNull('sku')
-        ->where('sku', '!=', '')
-        ->distinct()
-        ->count('sku');
+        $totalSkus = Item::query()
+            ->whereNotNull('sku')
+            ->where('sku', '!=', '')
+            ->distinct()
+            ->count('sku');
 
-    $totalCategories = Item::query()
-        ->whereNotNull('category_id')
-        ->distinct()
-        ->count('category_id');
+        $totalCategories = Item::query()
+            ->whereNotNull('category_id')
+            ->distinct()
+            ->count('category_id');
 
-    $itemsWithBarcode = Item::query()
-        ->whereNotNull('barcode')
-        ->where('barcode', '!=', '')
-        ->count();
+        $itemsWithBarcode = Item::query()
+            ->whereNotNull('barcode')
+            ->where('barcode', '!=', '')
+            ->count();
 
-    return [
-        'total_items' => $totalItems,
-        'total_skus' => $totalSkus,
-        'total_categories' => $totalCategories,
-        'items_with_barcode' => $itemsWithBarcode,
-        'barcode_percentage' => $totalItems > 0
-            ? round(($itemsWithBarcode / $totalItems) * 100, 1)
-            : 0,
-    ];
-}
+        return [
+            'total_items' => $totalItems,
+            'total_skus' => $totalSkus,
+            'total_categories' => $totalCategories,
+            'items_with_barcode' => $itemsWithBarcode,
+            'barcode_percentage' => $totalItems > 0
+                ? round(($itemsWithBarcode / $totalItems) * 100, 1)
+                : 0,
+        ];
+    }
 
     public function list(array $filters = [])
     {
