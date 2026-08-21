@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 abstract class MasterCrudController extends BaseApiController
 {
     protected string $model;
+
     protected array $rules = [];
+
     protected array $relations = [];
 
     public function index(Request $request)
@@ -33,6 +36,7 @@ abstract class MasterCrudController extends BaseApiController
     public function show($record)
     {
         $record = $this->resolveRecord($record);
+
         return $this->success($record->load($this->relations));
     }
 
@@ -62,7 +66,7 @@ abstract class MasterCrudController extends BaseApiController
 
     protected function resolveRecord($record)
     {
-        if ($record instanceof \Illuminate\Database\Eloquent\Model) {
+        if ($record instanceof Model) {
             return $record;
         }
 

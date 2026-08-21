@@ -1,0 +1,9 @@
+$kind: http-request
+name: List Notifications
+url: "{{base_url}}/api/v1/notifications"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1786653807524

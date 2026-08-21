@@ -11,9 +11,7 @@ use App\Models\Warehouse;
 
 class StockMovementService extends BaseService
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function move(array $data): InventoryTransaction
     {
@@ -28,7 +26,7 @@ class StockMovementService extends BaseService
             $qty = (float) $data['quantity'];
             $after = $data['direction'] === 'out' ? $before - $qty : $before + $qty;
 
-            if ($after < 0 && !Setting::get('inventory.allow_negative_stock', false)) {
+            if ($after < 0 && ! Setting::get('inventory.allow_negative_stock', false)) {
                 throw new \RuntimeException('Insufficient stock for this movement.');
             }
 
@@ -42,9 +40,9 @@ class StockMovementService extends BaseService
 
             return InventoryTransaction::create([
                 'transaction_number' => $this->generateNumber(
-                    'inventory_transactions', 
-                    'transaction_number', 
-                    Setting::get('numbering.transaction_prefix', 'TXN'), 
+                    'inventory_transactions',
+                    'transaction_number',
+                    Setting::get('numbering.transaction_prefix', 'TXN'),
                     6
                 ),
                 'item_id' => $data['item_id'],
@@ -65,6 +63,7 @@ class StockMovementService extends BaseService
             ]);
         });
     }
+
     private function maybeNotifyStockThreshold(float $before, float $after, array $data): void
     {
         if (! Setting::get('inventory.low_stock_alerts', true)) {

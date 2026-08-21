@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\StockCountValidationException;
+use App\Exports\StockCountsExport;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Setting;
 use App\Models\StockCount;
@@ -12,14 +13,14 @@ use App\Services\NotificationService;
 use App\Services\StockCountService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Activitylog\Models\Activity;
 
 class StockCountController extends BaseApiController
 {
     public function __construct(
         private readonly StockCountService $stockCounts,
         private readonly NotificationService $notifications,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -73,7 +74,7 @@ class StockCountController extends BaseApiController
 
         activity()->causedBy(auth()->user())->performedOn($count)->withProperties([
             'title' => 'Stock Count Created',
-            'description' => 'Created by ' . (auth()->user()->name ?? 'a user'),
+            'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
         ])->log('stock_count.created');
 
         // 💡 Hooked: Broadcasts new stock count to the dashboard timeline log
@@ -89,8 +90,9 @@ class StockCountController extends BaseApiController
 
     public function update(Request $request, StockCount $stockCount)
     {
-        if (!$stockCount->isEditable())
+        if (! $stockCount->isEditable()) {
             return $this->error('Only draft stock counts can be updated.', null, 422);
+        }
 
         $data = $request->validate([
             'warehouse_id' => ['sometimes', 'exists:warehouses,id'],
@@ -123,9 +125,11 @@ class StockCountController extends BaseApiController
 
     public function destroy(StockCount $stockCount)
     {
-        if (!$stockCount->isEditable())
+        if (!$stockCount->isEditable()) {
             return $this->error('Only draft stock counts can be deleted.', null, 422);
+        }
         $stockCount->delete();
+
         return $this->success(null, 'Stock count deleted');
     }
 
@@ -163,8 +167,9 @@ class StockCountController extends BaseApiController
 
     public function updateItem(Request $request, StockCount $stockCount, StockCountItem $item)
     {
-        if ($item->stock_count_id !== $stockCount->id)
+        if ($item->stock_count_id !== $stockCount->id) {
             return $this->error('Item does not belong to this stock count.', null, 404);
+        }
 
         $data = $request->validate([
             'counted_quantity' => ['required', 'numeric'],
@@ -182,8 +187,9 @@ class StockCountController extends BaseApiController
 
     public function removeItem(StockCount $stockCount, StockCountItem $item)
     {
-        if ($item->stock_count_id !== $stockCount->id)
+        if ($item->stock_count_id !== $stockCount->id) {
             return $this->error('Item does not belong to this stock count.', null, 404);
+        }
 
         try {
             $this->stockCounts->removeItem($stockCount, $item);
@@ -266,24 +272,42 @@ class StockCountController extends BaseApiController
     {
         return $this->success($this->stockCounts->overview());
     }
+
     public function calendar(Request $request)
     {
         $data = $request->validate(['month' => ['required', 'integer', 'min:1', 'max:12'], 'year' => ['required', 'integer', 'min:2000', 'max:2100'],]);
         return $this->success($this->stockCounts->calendar((int) $data['month'], (int) $data['year']));
     }
+
     public function lookups()
     {
         return $this->success($this->stockCounts->lookups());
     }
+
     public function export(Request $request)
     {
-        $data = $request->validate(['format' => ['required', 'in:xlsx,csv'], 'ids' => ['sometimes', 'array'],]);
-        $filename = 'stock-counts-' . now()->format('Y-m-d-His') . '.' . $data['format'];
+        $data = $request->validate([
+            'format' => ['required', 'in:xlsx,csv'],
+            'ids' => ['sometimes', 'array'],
+        ]);
+
+        $filename = 'stock-counts-'.now()->format('Y-m-d-His').'.'.$data['format'];
         $writerType = $data['format'] === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX;
-        return Excel::download(new \App\Exports\StockCountsExport($request->all()), $filename, $writerType);
+
+        return Excel::download(new StockCountsExport($request->all()), $filename, $writerType);
     }
     private function activity(StockCount $stockCount): array
     {
-        return \Spatie\Activitylog\Models\Activity::where('subject_type', StockCount::class)->where('subject_id', $stockCount->id)->oldest()->get()->map(fn($log) => ['title' => $log->properties['title'] ?? $log->description, 'detail' => $log->properties['description'] ?? '', 'time' => $log->created_at->format('M j, Y \a\t g:i A'), 'done' => true,])->all();
+        return Activity::where('subject_type', StockCount::class)
+            ->where('subject_id', $stockCount->id)
+            ->oldest()
+            ->get()
+            ->map(fn ($log) => [
+                'title' => $log->properties['title'] ?? $log->description,
+                'detail' => $log->properties['description'] ?? '',
+                'time' => $log->created_at->format('M j, Y \a\t g:i A'),
+                'done' => true,
+            ])
+            ->all();
     }
 }

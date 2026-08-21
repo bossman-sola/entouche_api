@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class SettingController extends BaseApiController
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function index()
     {
@@ -43,7 +41,7 @@ class SettingController extends BaseApiController
             );
         }
 
-        if (!empty($data['settings']['system.maintenance_message'])) {
+        if (! empty($data['settings']['system.maintenance_message'])) {
             $this->notifications->notifyAdmins(
                 'system_maintenance',
                 'System Maintenance Scheduled',

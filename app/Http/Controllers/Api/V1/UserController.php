@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class UserController extends BaseApiController
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function index(Request $request)
     {
@@ -61,7 +59,7 @@ class UserController extends BaseApiController
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $user->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$user->id],
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['sometimes', 'nullable', 'string', 'min:8'],
             'status' => ['sometimes', 'in:active,inactive'],

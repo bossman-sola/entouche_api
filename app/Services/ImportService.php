@@ -11,9 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportService extends BaseService
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function upload(UploadedFile $file, string $importType, ?int $warehouseId = null): Import
     {
@@ -47,7 +45,7 @@ class ImportService extends BaseService
             match ($import->import_type) {
                 'items' => Excel::import(new ItemsImport($import), Storage::disk('local')->path($import->file_path)),
                 'inventory' => Excel::import(new AssetsImport($import), Storage::disk('local')->path($import->file_path)),
-                default => throw new \InvalidArgumentException('Unsupported import type: ' . $import->import_type),
+                default => throw new \InvalidArgumentException('Unsupported import type: '.$import->import_type),
             };
 
             $import->refresh();
@@ -111,7 +109,6 @@ class ImportService extends BaseService
             default => ['name', 'category', 'unit', 'item_type', 'barcode', 'reorder_level', 'unit_cost', 'description', 'brand', 'supplier'],
         };
 
-        
         $sampleRows = match ($importType) {
             'inventory' => [
                 [
@@ -137,7 +134,7 @@ class ImportService extends BaseService
             [$headers, ...$sampleRows],
         );
 
-        return response(implode(PHP_EOL, $lines) . PHP_EOL, 200, [
+        return response(implode(PHP_EOL, $lines).PHP_EOL, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$importType}_template.csv\"",
         ]);

@@ -16,10 +16,8 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 {
-    public function __construct(private readonly Import $import)
-    {
-    }
-    
+    public function __construct(private readonly Import $import) {}
+
     public function sheets(): array
     {
         return [0 => $this];
@@ -27,7 +25,7 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 
     public function collection(Collection $rows): void
     {
-      
+
         $service = app(ItemService::class);
 
         foreach ($rows as $index => $row) {
@@ -71,6 +69,7 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 
                 if (Item::where('barcode', $row['barcode'] ?? null)->whereNotNull('barcode')->exists()) {
                     $this->import->increment('skipped_rows');
+
                     continue;
                 }
 

@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Notification;
 
 class NotificationService extends BaseService
 {
-    
     public function notifyAdmins(string $type, string $title, string $description, array $data = []): void
     {
         $this->notifyRole('system_administrator', $type, $title, $description, $data);
     }
 
-   
     public function notifyRole(string $role, string $type, string $title, string $description, array $data = []): void
     {
         $users = User::role($role)->where('status', 'active')->get();
@@ -26,7 +24,6 @@ class NotificationService extends BaseService
 
         $this->send($users, $type, $title, $description, $data);
     }
-
 
     public function notifyUser(User $user, string $type, string $title, string $description, array $data = []): void
     {
@@ -39,7 +36,7 @@ class NotificationService extends BaseService
 
     private function send(iterable $notifiables, string $type, string $title, string $description, array $data): void
     {
-        
+
         try {
             Notification::send($notifiables, new ActivityNotification($type, $title, $description, $data));
         } catch (\Throwable $e) {

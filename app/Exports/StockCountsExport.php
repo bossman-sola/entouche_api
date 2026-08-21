@@ -10,9 +10,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class StockCountsExport implements FromCollection, WithHeadings, WithMapping
 {
-    public function __construct(private readonly array $filters = [])
-    {
-    }
+    public function __construct(private readonly array $filters = []) {}
 
     public function collection(): Collection
     {

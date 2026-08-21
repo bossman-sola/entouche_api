@@ -15,10 +15,8 @@ class ActivityNotification extends Notification
         public readonly string $title,
         public readonly string $description,
         public readonly array $data = [],
-    ) {
-    }
+    ) {}
 
-    
     public function via(object $notifiable): array
     {
         return ['database', 'mail'];
@@ -35,9 +33,9 @@ class ActivityNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $mail = (new MailMessage())
+        $mail = (new MailMessage)
             ->subject($this->title)
-            ->greeting('Hi ' . $notifiable->name . ',')
+            ->greeting('Hi '.$notifiable->name.',')
             ->line($this->description);
 
         if (! empty($this->data['url'])) {
