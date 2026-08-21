@@ -2,8 +2,6 @@ $kind: http-example
 request:
   url: "{{base_url}}/api/v1/imports"
   method: GET
-  headers:
-    Accept: application/json
 response:
   statusCode: 200
   statusText: OK
@@ -11,33 +9,409 @@ response:
     access-control-allow-origin: "*"
     cache-control: no-cache, private
     content-type: application/json
-    date: Tue, 07 Jul 2026 13:52:30 GMT
+    date: Fri, 31 Jul 2026 18:31:57 GMT
     nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
-    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=Y549MbB95g6y%2FTnbDW1ma9jw4TJD96na0unVHHkbOac%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1783432350"}],"max_age":3600}'
-    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=Y549MbB95g6y%2FTnbDW1ma9jw4TJD96na0unVHHkbOac%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1783432350"
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=PjGZfos5USqFMq1SV9H8dpQyz20LWb2H2MjqEFIj96w%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1785522717"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=PjGZfos5USqFMq1SV9H8dpQyz20LWb2H2MjqEFIj96w%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1785522717"
     server: Heroku
     vary: Authorization
     via: 1.1 heroku-router
-    content-length: "341"
+    transfer-encoding: chunked
   body:
     type: json
     content: |-
       {
         "success": true,
         "message": "Success",
-        "data": [],
+        "data": [
+          {
+            "id": 21,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "CZQlQqqO4bl0jPhKFDTduUdeGVeipmpaSA7i7YXf.xlsx",
+            "file_path": "imports/items/CZQlQqqO4bl0jPhKFDTduUdeGVeipmpaSA7i7YXf.xlsx",
+            "original_name": "item-import-template.xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 5,
+            "successful_rows": 0,
+            "failed_rows": 5,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T15:57:59.000000Z",
+            "completed_at": "2026-07-31T15:57:59.000000Z",
+            "created_at": "2026-07-31T15:57:59.000000Z",
+            "updated_at": "2026-07-31T15:57:59.000000Z",
+            "errors_count": 5,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 20,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "rVlcYFBNT5g7x4v8AXcqmumJVwxZtuTA1Aj61pVe.xlsx",
+            "file_path": "imports/items/rVlcYFBNT5g7x4v8AXcqmumJVwxZtuTA1Aj61pVe.xlsx",
+            "original_name": "item-import-template (2).xlsx",
+            "file_size": 10350,
+            "status": "completed",
+            "total_rows": 5,
+            "successful_rows": 5,
+            "failed_rows": 0,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T15:57:50.000000Z",
+            "completed_at": "2026-07-31T15:57:50.000000Z",
+            "created_at": "2026-07-31T15:57:50.000000Z",
+            "updated_at": "2026-07-31T15:57:50.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 19,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "CCFah7Yj401KYOalJxlhdSXhJa9e5ZJ0tD8BFYV4.xlsx",
+            "file_path": "imports/items/CCFah7Yj401KYOalJxlhdSXhJa9e5ZJ0tD8BFYV4.xlsx",
+            "original_name": "item-import-template (2).xlsx",
+            "file_size": 10350,
+            "status": "completed",
+            "total_rows": 5,
+            "successful_rows": 5,
+            "failed_rows": 0,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T15:35:29.000000Z",
+            "completed_at": "2026-07-31T15:35:29.000000Z",
+            "created_at": "2026-07-31T15:35:29.000000Z",
+            "updated_at": "2026-07-31T15:35:29.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 18,
+            "import_type": "inventory",
+            "warehouse_id": 1,
+            "file_name": "VownpTGMqqNLqINqeig5noJAmu2Mx7MAHEVyC86c.xlsx",
+            "file_path": "imports/inventory/VownpTGMqqNLqINqeig5noJAmu2Mx7MAHEVyC86c.xlsx",
+            "original_name": "Inventory_Current_Template_Completed.xlsx",
+            "file_size": 12100,
+            "status": "partial",
+            "total_rows": 12,
+            "successful_rows": 0,
+            "failed_rows": 12,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T03:59:38.000000Z",
+            "completed_at": "2026-07-31T03:59:38.000000Z",
+            "created_at": "2026-07-31T03:59:38.000000Z",
+            "updated_at": "2026-07-31T03:59:38.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 17,
+            "import_type": "inventory",
+            "warehouse_id": 7,
+            "file_name": "lw9pvRBJENEpuqCuLMqCiV8nbhirPi0AoEeG6QLT.xlsx",
+            "file_path": "imports/inventory/lw9pvRBJENEpuqCuLMqCiV8nbhirPi0AoEeG6QLT.xlsx",
+            "original_name": "Inventory_Current_Template_Completed.xlsx",
+            "file_size": 12100,
+            "status": "partial",
+            "total_rows": 12,
+            "successful_rows": 0,
+            "failed_rows": 12,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T03:56:22.000000Z",
+            "completed_at": "2026-07-31T03:56:22.000000Z",
+            "created_at": "2026-07-31T03:56:22.000000Z",
+            "updated_at": "2026-07-31T03:56:22.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 16,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "vs2xuln4C9iIY5tonNKWJfvjgjBWx18vPkUCxR4e.xlsx",
+            "file_path": "imports/items/vs2xuln4C9iIY5tonNKWJfvjgjBWx18vPkUCxR4e.xlsx",
+            "original_name": "Inventory_Current_Template_Completed.xlsx",
+            "file_size": 12100,
+            "status": "partial",
+            "total_rows": 12,
+            "successful_rows": 0,
+            "failed_rows": 12,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T03:39:44.000000Z",
+            "completed_at": "2026-07-31T03:39:44.000000Z",
+            "created_at": "2026-07-31T03:39:44.000000Z",
+            "updated_at": "2026-07-31T03:39:44.000000Z",
+            "errors_count": 12,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 15,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "I3yCcSUjkT93moNhvNTOpCTINby0VlicrzcwPu7I.xlsx",
+            "file_path": "imports/items/I3yCcSUjkT93moNhvNTOpCTINby0VlicrzcwPu7I.xlsx",
+            "original_name": "item-import-template (1).xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 4,
+            "skipped_rows": 5,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T03:36:30.000000Z",
+            "completed_at": "2026-07-31T03:36:30.000000Z",
+            "created_at": "2026-07-31T03:36:30.000000Z",
+            "updated_at": "2026-07-31T03:36:30.000000Z",
+            "errors_count": 4,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 14,
+            "import_type": "inventory",
+            "warehouse_id": 1,
+            "file_name": "l9AmcxvLLimpVjQp2WgqDU82zgnbBjppK59pmrzi.xlsx",
+            "file_path": "imports/inventory/l9AmcxvLLimpVjQp2WgqDU82zgnbBjppK59pmrzi.xlsx",
+            "original_name": "Inventory_Current_Template_Completed.xlsx",
+            "file_size": 12100,
+            "status": "partial",
+            "total_rows": 12,
+            "successful_rows": 10,
+            "failed_rows": 2,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T03:32:25.000000Z",
+            "completed_at": "2026-07-31T03:32:26.000000Z",
+            "created_at": "2026-07-31T03:32:25.000000Z",
+            "updated_at": "2026-07-31T03:32:26.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 13,
+            "import_type": "items",
+            "warehouse_id": 1,
+            "file_name": "1kMqNapedIXT3QAqi12tmNUfNjLcqfiWW1xXx79p.xlsx",
+            "file_path": "imports/items/1kMqNapedIXT3QAqi12tmNUfNjLcqfiWW1xXx79p.xlsx",
+            "original_name": "item-import-template (1).xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 4,
+            "skipped_rows": 5,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T01:41:26.000000Z",
+            "completed_at": "2026-07-31T01:41:27.000000Z",
+            "created_at": "2026-07-31T01:41:26.000000Z",
+            "updated_at": "2026-07-31T01:41:27.000000Z",
+            "errors_count": 4,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 12,
+            "import_type": "items",
+            "warehouse_id": 1,
+            "file_name": "2Epsyu6IdYrboFO5K8Z4F2egvG1UremEegbvEvdT.xlsx",
+            "file_path": "imports/items/2Epsyu6IdYrboFO5K8Z4F2egvG1UremEegbvEvdT.xlsx",
+            "original_name": "item-import-template (1).xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 2,
+            "failed_rows": 4,
+            "skipped_rows": 3,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T01:19:08.000000Z",
+            "completed_at": "2026-07-31T01:19:08.000000Z",
+            "created_at": "2026-07-31T01:19:08.000000Z",
+            "updated_at": "2026-07-31T01:19:08.000000Z",
+            "errors_count": 4,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 11,
+            "import_type": "items",
+            "warehouse_id": 1,
+            "file_name": "Vd6OnGefNHNOFwDmhmUs3OYAVSJ544TEXRk7DHGk.xlsx",
+            "file_path": "imports/items/Vd6OnGefNHNOFwDmhmUs3OYAVSJ544TEXRk7DHGk.xlsx",
+            "original_name": "item-import-template (1).xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 9,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T00:43:52.000000Z",
+            "completed_at": "2026-07-31T00:43:52.000000Z",
+            "created_at": "2026-07-31T00:43:52.000000Z",
+            "updated_at": "2026-07-31T00:43:52.000000Z",
+            "errors_count": 9,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 10,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "nxKgHgVif9tJgFC5b7mweRzxVKTGYl3ZNt8CPX2B.xlsx",
+            "file_path": "imports/items/nxKgHgVif9tJgFC5b7mweRzxVKTGYl3ZNt8CPX2B.xlsx",
+            "original_name": "item-import-template.xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 9,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T00:41:00.000000Z",
+            "completed_at": "2026-07-31T00:41:01.000000Z",
+            "created_at": "2026-07-31T00:41:00.000000Z",
+            "updated_at": "2026-07-31T00:41:01.000000Z",
+            "errors_count": 9,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 9,
+            "import_type": "items",
+            "warehouse_id": null,
+            "file_name": "pmISZtmRH0Uj0VmXxTsfCnZDUBr35HAmHYJwvDwi.xlsx",
+            "file_path": "imports/items/pmISZtmRH0Uj0VmXxTsfCnZDUBr35HAmHYJwvDwi.xlsx",
+            "original_name": "item-import-template.xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 9,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T00:40:09.000000Z",
+            "completed_at": "2026-07-31T00:40:09.000000Z",
+            "created_at": "2026-07-31T00:40:09.000000Z",
+            "updated_at": "2026-07-31T00:40:09.000000Z",
+            "errors_count": 9,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 8,
+            "import_type": "items",
+            "warehouse_id": 1,
+            "file_name": "MmDNJH56krYF6diFE9zZPRA25ynJR5PW4Rj7DXM5.xlsx",
+            "file_path": "imports/items/MmDNJH56krYF6diFE9zZPRA25ynJR5PW4Rj7DXM5.xlsx",
+            "original_name": "item-import-template (1).xlsx",
+            "file_size": 9410,
+            "status": "partial",
+            "total_rows": 9,
+            "successful_rows": 0,
+            "failed_rows": 9,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-31T00:25:48.000000Z",
+            "completed_at": "2026-07-31T00:25:48.000000Z",
+            "created_at": "2026-07-31T00:25:48.000000Z",
+            "updated_at": "2026-07-31T00:25:48.000000Z",
+            "errors_count": 9,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          },
+          {
+            "id": 7,
+            "import_type": "inventory",
+            "warehouse_id": 7,
+            "file_name": "kaocqyxDH3775QhTO4RDUmKEb1gBGd6BjsafdhaT.csv",
+            "file_path": "imports/inventory/kaocqyxDH3775QhTO4RDUmKEb1gBGd6BjsafdhaT.csv",
+            "original_name": "inventory_template.csv",
+            "file_size": 757,
+            "status": "completed",
+            "total_rows": 2,
+            "successful_rows": 2,
+            "failed_rows": 0,
+            "skipped_rows": 0,
+            "error_summary": null,
+            "uploaded_by": 1,
+            "started_at": "2026-07-30T23:06:02.000000Z",
+            "completed_at": "2026-07-30T23:06:03.000000Z",
+            "created_at": "2026-07-30T23:06:02.000000Z",
+            "updated_at": "2026-07-30T23:06:03.000000Z",
+            "errors_count": 0,
+            "uploader": {
+              "id": 1,
+              "name": "Ayomide Ajayi"
+            }
+          }
+        ],
         "errors": null,
         "meta": {
           "current_page": 1,
-          "last_page": 1,
+          "last_page": 2,
           "per_page": 15,
-          "total": 0
+          "total": 21
         },
         "links": {
           "first": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/imports?page=1",
-          "last": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/imports?page=1",
+          "last": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/imports?page=2",
           "prev": null,
-          "next": null
+          "next": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/imports?page=2"
         }
       }
-order: 1783432355154
+order: 1785522722588

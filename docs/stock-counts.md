@@ -72,7 +72,7 @@ Retrieve a paginated list of all stock counts.
 
 ### Response
 
-#### 200 OK — Success (with data)
+#### 200 OK - Success (with data)
 
 ```json
 {
@@ -148,7 +148,7 @@ Retrieve a paginated list of all stock counts.
 }
 ```
 
-#### 200 OK — Success (empty list)
+#### 200 OK - Success (empty list)
 
 ```json
 {
@@ -225,7 +225,7 @@ Create a new stock count record in `draft` status.
 
 ### Response
 
-#### 201 Created — Success
+#### 201 Created - Success
 
 ```json
 {
@@ -292,7 +292,7 @@ Retrieve a single stock count by its ID.
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -404,7 +404,7 @@ Update an existing stock count. Only allowed when the count is in `draft` status
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -478,7 +478,7 @@ Permanently delete a stock count. Only allowed when the count is in `draft` stat
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -519,7 +519,7 @@ Transition a stock count from `draft` to `in_progress`. The system quantity for 
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -593,7 +593,7 @@ Mark a stock count as `completed`. The count must be `in_progress` before it can
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -652,7 +652,7 @@ Approve a completed stock count. This posts inventory adjustments for all varian
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {
@@ -744,7 +744,7 @@ Cancel a stock count. Can be applied at any stage of the lifecycle.
 
 ### Response
 
-#### 200 OK — Success
+#### 200 OK - Success
 
 ```json
 {

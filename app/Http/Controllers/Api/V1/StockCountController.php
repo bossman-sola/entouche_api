@@ -58,7 +58,7 @@ class StockCountController extends BaseApiController
         $assignedTo = $data['assigned_to'] ?? auth()->id();
         unset($data['assigned_to']);
 
-        $number = (new class extends BaseService {})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
+        $number = (new class extends BaseService{})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
 
         $count = StockCount::create($data + [
             'count_number' => $number,
@@ -68,7 +68,7 @@ class StockCountController extends BaseApiController
             'count_date' => $data['count_date'] ?? now()->toDateString(),
         ]);
 
-        if (! empty($items)) {
+        if (!empty($items)) {
             $this->stockCounts->addItems($count, $items);
         }
 
@@ -76,6 +76,14 @@ class StockCountController extends BaseApiController
             'title' => 'Stock Count Created',
             'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
         ])->log('stock_count.created');
+
+        // 💡 Hooked: Broadcasts new stock count to the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_created',
+            'New Stock Count Created',
+            "Stock Count {$count->count_number} has been created.",
+            ['stock_count_id' => $count->id]
+        );
 
         return $this->created($count->fresh('items'), 'Stock count created');
     }
@@ -104,12 +112,20 @@ class StockCountController extends BaseApiController
 
         $stockCount->update($data);
 
+        // 💡 Hooked: Broadcasts adjustments to details on the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_updated',
+            'Stock Count Updated',
+            "Stock Count {$stockCount->count_number} details were updated.",
+            ['stock_count_id' => $stockCount->id]
+        );
+
         return $this->success($stockCount->fresh('items'), 'Stock count updated');
     }
 
     public function destroy(StockCount $stockCount)
     {
-        if (! $stockCount->isEditable()) {
+        if (!$stockCount->isEditable()) {
             return $this->error('Only draft stock counts can be deleted.', null, 422);
         }
         $stockCount->delete();
@@ -120,6 +136,14 @@ class StockCountController extends BaseApiController
     public function cancel(StockCount $stockCount)
     {
         $stockCount->update(['status' => 'cancelled']);
+
+        // 💡 Hooked: Broadcasts the cancellation to the dashboard timeline log
+        $this->notifications->notifyAdmins(
+            'stock_count_cancelled',
+            'Stock Count Cancelled',
+            "Stock Count {$stockCount->count_number} has been cancelled.",
+            ['stock_count_id' => $stockCount->id]
+        );
 
         return $this->success($stockCount, 'Stock count cancelled');
     }
@@ -251,11 +275,7 @@ class StockCountController extends BaseApiController
 
     public function calendar(Request $request)
     {
-        $data = $request->validate([
-            'month' => ['required', 'integer', 'min:1', 'max:12'],
-            'year' => ['required', 'integer', 'min:2000', 'max:2100'],
-        ]);
-
+        $data = $request->validate(['month' => ['required', 'integer', 'min:1', 'max:12'], 'year' => ['required', 'integer', 'min:2000', 'max:2100'],]);
         return $this->success($this->stockCounts->calendar((int) $data['month'], (int) $data['year']));
     }
 
@@ -276,7 +296,6 @@ class StockCountController extends BaseApiController
 
         return Excel::download(new StockCountsExport($request->all()), $filename, $writerType);
     }
-
     private function activity(StockCount $stockCount): array
     {
         return Activity::where('subject_type', StockCount::class)

@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function (): void {
 
         Route::apiResource('warehouses', WarehouseController::class)->middleware('permission:master-data.manage');
         Route::post('warehouses/{warehouse}/toggle-status', [WarehouseController::class, 'toggleStatus'])->middleware('permission:master-data.manage');
-        Route::get('warehouses/{warehouse}/locations', [WarehouseController::class, 'locations'])->middleware('permission:master-data.manage');
+        // Route::get('warehouses/{warehouse}/locations', [WarehouseController::class, 'locations'])->middleware('permission:master-data.manage');
         Route::get('warehouses/{warehouse}/stock-summary', [WarehouseController::class, 'stockSummary'])->middleware('permission:reports.view');
 
         Route::apiResource('warehouses.locations', LocationController::class)->shallow()->middleware('permission:master-data.manage');
@@ -65,7 +65,10 @@ Route::prefix('v1')->group(function (): void {
         Route::apiResource('suppliers', SupplierController::class)->middleware('permission:master-data.manage');
         Route::post('suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->middleware('permission:master-data.manage');
 
-        Route::apiResource('items', ItemController::class)->middleware('permission:items.view');
+        Route::get('items/stats', [ItemController::class, 'stats'])
+            ->middleware('permission:items.view');
+        Route::apiResource('items', ItemController::class)
+            ->middleware('permission:items.view');
         Route::post('items/{item}/image', [ItemController::class, 'uploadImage'])->middleware('permission:items.edit');
         Route::delete('items/{item}/image', [ItemController::class, 'removeImage'])->middleware('permission:items.edit');
         Route::get('items/{item}/transactions', [ItemController::class, 'transactions'])->middleware('permission:items.view');

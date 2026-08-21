@@ -1,0 +1,34 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/items/stats"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Mon, 10 Aug 2026 03:33:11 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=xgq8f%2BrsL9vVvr%2Fbj4RZ6Tk67qlRIw61mQuB2EukaGc%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1786332791"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=xgq8f%2BrsL9vVvr%2Fbj4RZ6Tk67qlRIw61mQuB2EukaGc%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1786332791"
+    server: Heroku
+    vary: Origin,Authorization
+    via: 1.1 heroku-router
+    content-length: "159"
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": {
+          "total_items": 12,
+          "total_skus": 12,
+          "total_categories": 1,
+          "items_with_barcode": 0,
+          "barcode_percentage": 0
+        },
+        "errors": null
+      }
+order: 1786332813865
