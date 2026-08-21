@@ -38,7 +38,7 @@ class ReceiptController extends BaseApiController
             'items.*.unit_cost' => ['sometimes', 'numeric', 'min:0'],
         ]);
 
-        $helper = new BaseService;
+        $helper = new class extends BaseService {};
         $items = $data['items'];
         unset($data['items']);
         $receipt = Receipt::create($data + [
