@@ -12,17 +12,16 @@ use App\Models\ReceiptItem;
 use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\Unit;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class AssetImportService extends BaseService
 {
-    public function __construct(private readonly StockMovementService $stock)
-    {
-    }
+    public function __construct(private readonly StockMovementService $stock) {}
 
     /**
-     * @throws \Throwable 
+     * @throws \Throwable
      */
     public function importRow(Import $import, Collection $row): Asset
     {
@@ -75,7 +74,6 @@ class AssetImportService extends BaseService
                 ]);
             }
 
-            
             $this->stock->move([
                 'item_id' => $item->id,
                 'warehouse_id' => $import->warehouse_id,
@@ -87,10 +85,9 @@ class AssetImportService extends BaseService
                 'total_value' => $cost,
                 'reference_type' => Asset::class,
                 'reference_id' => $asset->id,
-                'remarks' => 'Opening balance from inventory import ' . $import->file_name,
+                'remarks' => 'Opening balance from inventory import '.$import->file_name,
             ]);
 
-            
             AssetLocationHistory::create([
                 'asset_id' => $asset->id,
                 'warehouse_id' => $import->warehouse_id,
@@ -144,7 +141,7 @@ class AssetImportService extends BaseService
 
         return Location::firstOrCreate(
             ['warehouse_id' => $warehouseId, 'name' => $name],
-            ['code' => strtoupper(substr(md5($warehouseId . $name), 0, 8)), 'type' => 'field', 'status' => 'active'],
+            ['code' => strtoupper(substr(md5($warehouseId.$name), 0, 8)), 'type' => 'field', 'status' => 'active'],
         );
     }
 
@@ -162,7 +159,6 @@ class AssetImportService extends BaseService
         );
     }
 
-   
     private function resolveReceipt(int $warehouseId, ?Location $location, ?Supplier $supplier, Collection $row): ?Receipt
     {
         $invoiceNumber = filled($row['invoice_number_from_vendor'] ?? null) ? trim($row['invoice_number_from_vendor']) : null;
@@ -221,12 +217,12 @@ class AssetImportService extends BaseService
         }
 
         try {
-            
+
             if (is_numeric($value)) {
-                return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject((float) $value)->format('Y-m-d');
+                return Date::excelToDateTimeObject((float) $value)->format('Y-m-d');
             }
 
-            return \Illuminate\Support\Carbon::parse((string) $value)->toDateString();
+            return Carbon::parse((string) $value)->toDateString();
         } catch (\Throwable) {
             return null;
         }

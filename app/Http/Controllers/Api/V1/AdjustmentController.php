@@ -16,11 +16,17 @@ class AdjustmentController extends BaseApiController
     public function __construct(
         private readonly StockMovementService $stock,
         private readonly NotificationService $notifications,
-    ) {
+    ) {}
+
+    public function index(Request $request)
+    {
+        return $this->paginated(Adjustment::with('items')->latest()->paginate($request->integer('per_page', 15)));
     }
 
-    public function index(Request $request) { return $this->paginated(Adjustment::with('items')->latest()->paginate($request->integer('per_page', 15))); }
-    public function show(Adjustment $adjustment) { return $this->success($adjustment->load('items')); }
+    public function show(Adjustment $adjustment)
+    {
+        return $this->success($adjustment->load('items'));
+    }
 
     public function store(Request $request)
     {
@@ -35,24 +41,34 @@ class AdjustmentController extends BaseApiController
             'items.*.quantity_before' => ['sometimes', 'numeric'],
             'items.*.quantity_after' => ['sometimes', 'numeric'],
         ]);
-        $items = $data['items']; unset($data['items']);
+        $items = $data['items'];
+        unset($data['items']);
         $number = (new class extends BaseService {})->generateNumber('adjustments', 'adjustment_number', Setting::get('numbering.adjustment_prefix', 'ADJ'), 6);
         $adjustment = Adjustment::create($data + ['adjustment_number' => $number, 'adjusted_by' => auth()->id(), 'created_by' => auth()->id(), 'status' => 'draft', 'adjustment_date' => now()->toDateString()]);
-        foreach ($items as $row) AdjustmentItem::create($row + ['adjustment_id' => $adjustment->id, 'warehouse_location_id' => $data['warehouse_location_id'] ?? null]);
+        foreach ($items as $row) {
+            AdjustmentItem::create($row + ['adjustment_id' => $adjustment->id, 'warehouse_location_id' => $data['warehouse_location_id'] ?? null]);
+        }
+
         return $this->created($adjustment->load('items'), 'Adjustment created');
     }
 
     public function update(Request $request, Adjustment $adjustment)
     {
-        if ($adjustment->status !== 'draft') return $this->error('Only draft adjustments can be updated.', null, 422);
+        if ($adjustment->status !== 'draft') {
+            return $this->error('Only draft adjustments can be updated.', null, 422);
+        }
         $adjustment->update($request->only(['warehouse_id', 'warehouse_location_id', 'adjustment_type', 'reason', 'notes']));
+
         return $this->success($adjustment->fresh('items'), 'Adjustment updated');
     }
 
     public function destroy(Adjustment $adjustment)
     {
-        if ($adjustment->status !== 'draft') return $this->error('Only draft adjustments can be deleted.', null, 422);
+        if ($adjustment->status !== 'draft') {
+            return $this->error('Only draft adjustments can be deleted.', null, 422);
+        }
         $adjustment->delete();
+
         return $this->success(null, 'Adjustment deleted');
     }
 
@@ -65,10 +81,26 @@ class AdjustmentController extends BaseApiController
             "Adjustment {$adjustment->adjustment_number} has been submitted and is awaiting approval.",
             ['adjustment_id' => $adjustment->id],
         );
+
         return $this->success($adjustment, 'Adjustment submitted');
     }
-    public function reject(Request $request, Adjustment $adjustment) { $adjustment->update(['status' => 'rejected', 'rejection_reason' => $request->reason]); return $this->success($adjustment, 'Adjustment rejected'); }
-    public function cancel(Adjustment $adjustment) { $adjustment->update(['status' => 'cancelled']); return $this->success($adjustment, 'Adjustment cancelled'); }
+
+    public function reject(Request $request, Adjustment $adjustment)
+    {
+        $adjustment->update([
+            'status' => 'rejected',
+            'rejection_reason' => $request->reason,
+        ]);
+
+        return $this->success($adjustment, 'Adjustment rejected');
+    }
+
+    public function cancel(Adjustment $adjustment)
+    {
+        $adjustment->update(['status' => 'cancelled']);
+
+        return $this->success($adjustment, 'Adjustment cancelled');
+    }
 
     public function approve(Adjustment $adjustment)
     {
@@ -77,6 +109,7 @@ class AdjustmentController extends BaseApiController
             $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $adjustment->warehouse_id, 'warehouse_location_id' => $item->warehouse_location_id ?? $adjustment->warehouse_location_id, 'transaction_type' => $direction === 'in' ? 'adjustment_in' : 'adjustment_out', 'direction' => $direction, 'quantity' => $item->adjustment_quantity, 'reference_type' => Adjustment::class, 'reference_id' => $adjustment->id]);
         }
         $adjustment->update(['status' => 'approved', 'approved_by' => auth()->id(), 'approved_at' => now()]);
+
         return $this->success($adjustment->fresh('items'), 'Adjustment approved');
     }
 }

@@ -10,7 +10,7 @@ return [
     'table' => env('SESSION_TABLE', 'sessions'),
     'store' => env('SESSION_STORE'),
     'lottery' => [2, 100],
-    'cookie' => env('SESSION_COOKIE', str_replace(' ', '_', strtolower(env('APP_NAME', 'laravel'))) . '_session'),
+    'cookie' => env('SESSION_COOKIE', str_replace(' ', '_', strtolower(env('APP_NAME', 'laravel'))).'_session'),
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
     'secure' => env('SESSION_SECURE_COOKIE'),

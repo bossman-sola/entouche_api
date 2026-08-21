@@ -62,7 +62,6 @@ class StockCount extends Model
         return $this->belongsTo(Location::class, 'warehouse_location_id');
     }
 
-    
     public function assignedCounter()
     {
         return $this->belongsTo(User::class, 'counted_by');
@@ -83,13 +82,38 @@ class StockCount extends Model
         return $this->belongsTo(User::class, 'rejected_by');
     }
 
-    public function isDraft(): bool { return $this->status === 'draft'; }
-    public function isInProgress(): bool { return $this->status === 'in_progress'; }
-    public function isPendingReview(): bool { return $this->status === 'pending_review'; }
-    public function isCompleted(): bool { return $this->status === 'completed'; }
-    public function isApproved(): bool { return $this->status === 'approved'; }
-    public function isCancelled(): bool { return $this->status === 'cancelled'; }
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
+    }
 
-    
-    public function isEditable(): bool { return in_array($this->status, ['draft', 'in_progress'], true); }
+    public function isInProgress(): bool
+    {
+        return $this->status === 'in_progress';
+    }
+
+    public function isPendingReview(): bool
+    {
+        return $this->status === 'pending_review';
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === 'completed';
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
+    }
+
+    public function isEditable(): bool
+    {
+        return in_array($this->status, ['draft', 'in_progress'], true);
+    }
 }

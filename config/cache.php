@@ -20,5 +20,5 @@ return [
             'lock_table' => env('DB_CACHE_LOCK_TABLE', 'cache_locks'),
         ],
     ],
-    'prefix' => env('CACHE_PREFIX', str_replace(' ', '_', strtolower(env('APP_NAME', 'laravel'))) . '_cache_'),
+    'prefix' => env('CACHE_PREFIX', str_replace(' ', '_', strtolower(env('APP_NAME', 'laravel'))).'_cache_'),
 ];

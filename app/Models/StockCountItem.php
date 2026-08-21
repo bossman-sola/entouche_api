@@ -40,7 +40,6 @@ class StockCountItem extends Model
         return $this->belongsTo(User::class, 'counted_by');
     }
 
-    
     public function getIsCountedAttribute(): bool
     {
         return $this->counted_at !== null;
@@ -48,7 +47,7 @@ class StockCountItem extends Model
 
     public function getVarianceAttribute(): float
     {
-        
+
         return (float) $this->variance_quantity;
     }
 }

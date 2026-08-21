@@ -7,6 +7,8 @@ localResources:
       endpoints.yaml
     - ../postman/specs/Entouche Endpoints/Entouche Endpoints.json
     - ../composer.json
+  documents:
+    - ../README.md
 resourceNameMappings:
   specs:
     - ../postman/specs/Entouche API tested endpoints/Entouche API tested endpoints.yaml: Entouche API tested endpoints.yaml

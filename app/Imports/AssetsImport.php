@@ -11,18 +11,15 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class AssetsImport implements ToCollection, WithHeadingRow
 {
-    public function __construct(private readonly Import $import)
-    {
-    }
+    public function __construct(private readonly Import $import) {}
 
     public function collection(Collection $rows): void
     {
         $service = app(AssetImportService::class);
 
         foreach ($rows as $index => $row) {
-            $rowNumber = $index + 2; 
+            $rowNumber = $index + 2;
 
-            
             if ($row->filter(fn ($value) => filled($value))->isEmpty()) {
                 continue;
             }

@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class ItemController extends BaseApiController
 {
-    public function __construct(private readonly ItemService $items)
-    {
-    }
+    public function __construct(private readonly ItemService $items) {}
 
     public function index(Request $request)
     {
@@ -50,7 +48,7 @@ class ItemController extends BaseApiController
             'category_id' => ['nullable', 'exists:categories,id'],
             'unit_of_measure_id' => ['sometimes', 'exists:units_of_measure,id'],
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
-            'barcode' => ['nullable', 'string', 'unique:items,barcode,' . $item->id],
+            'barcode' => ['nullable', 'string', 'unique:items,barcode,'.$item->id],
             'name' => ['sometimes', 'string'],
             'item_type' => ['sometimes', 'string'],
             'brand' => ['nullable', 'string'],

@@ -14,6 +14,7 @@ use App\Models\StockCountItem;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Activity;
 
 class StockCountService extends BaseService
 {
@@ -33,7 +34,6 @@ class StockCountService extends BaseService
             ->paginate($filters['per_page'] ?? 15);
     }
 
-   
     public function lookups(): array
     {
         return [
@@ -46,7 +46,6 @@ class StockCountService extends BaseService
         ];
     }
 
-    
     public function overview(): array
     {
         $total = StockCount::count();
@@ -94,7 +93,7 @@ class StockCountService extends BaseService
 
     private function recentActivity(int $limit = 8): array
     {
-        return \Spatie\Activitylog\Models\Activity::where('subject_type', StockCount::class)
+        return Activity::where('subject_type', StockCount::class)
             ->latest()
             ->limit($limit)
             ->get()
@@ -108,7 +107,6 @@ class StockCountService extends BaseService
             ->all();
     }
 
-   
     public function calendar(int $month, int $year): array
     {
         return StockCount::with(['warehouse', 'location'])
@@ -152,7 +150,7 @@ class StockCountService extends BaseService
 
         activity()->causedBy(auth()->user())->performedOn($stockCount)->withProperties([
             'title' => 'Items Added',
-            'description' => count($items) . ' item(s) added to the count.',
+            'description' => count($items).' item(s) added to the count.',
         ])->log('stock_count.items_added');
 
         return $stockCount->fresh('items.item');
@@ -167,7 +165,6 @@ class StockCountService extends BaseService
         $item->delete();
     }
 
-    
     public function updateItemCount(StockCount $stockCount, StockCountItem $item, float $countedQuantity, ?string $reason = null): StockCountItem
     {
         if (! $stockCount->isEditable()) {
@@ -184,7 +181,6 @@ class StockCountService extends BaseService
         return $item->fresh();
     }
 
-    
     public function countingProgress(StockCount $stockCount): array
     {
         $items = $stockCount->items;
@@ -198,7 +194,6 @@ class StockCountService extends BaseService
         ];
     }
 
-   
     public function submit(StockCount $stockCount, NotificationService $notifications): StockCount
     {
         if (! $stockCount->isEditable()) {
@@ -226,7 +221,7 @@ class StockCountService extends BaseService
 
         activity()->causedBy(auth()->user())->performedOn($stockCount)->withProperties([
             'title' => 'Stock Count Submitted',
-            'description' => 'Submitted by ' . (auth()->user()->name ?? 'a user'),
+            'description' => 'Submitted by '.(auth()->user()->name ?? 'a user'),
         ])->log('stock_count.submitted');
 
         $notifications->notifyRole(
@@ -246,7 +241,6 @@ class StockCountService extends BaseService
         return $stockCount->fresh(['items.item', 'submittedBy']);
     }
 
-   
     public function approveAndComplete(StockCount $stockCount, NotificationService $notifications): StockCount
     {
         if (! $stockCount->isPendingReview()) {
@@ -268,7 +262,7 @@ class StockCountService extends BaseService
                     'warehouse_id' => $stockCount->warehouse_id,
                     'warehouse_location_id' => $countItem->warehouse_location_id ?? $stockCount->warehouse_location_id,
                     'adjustment_type' => $variance > 0 ? 'increase' : 'decrease',
-                    'reason' => 'Stock count variance - ' . $stockCount->count_number,
+                    'reason' => 'Stock count variance - '.$stockCount->count_number,
                     'adjusted_by' => auth()->id(),
                     'approved_by' => auth()->id(),
                     'created_by' => auth()->id(),
@@ -296,7 +290,7 @@ class StockCountService extends BaseService
                     'quantity' => abs($variance),
                     'reference_type' => StockCount::class,
                     'reference_id' => $stockCount->id,
-                    'remarks' => 'Auto-adjustment from stock count ' . $stockCount->count_number,
+                    'remarks' => 'Auto-adjustment from stock count '.$stockCount->count_number,
                 ]);
 
                 $countItem->update(['adjustment_created' => true]);
@@ -325,7 +319,7 @@ class StockCountService extends BaseService
 
             activity()->causedBy(auth()->user())->performedOn($stockCount)->withProperties([
                 'title' => 'Stock Count Approved & Completed',
-                'description' => 'Approved by ' . (auth()->user()->name ?? 'a user'),
+                'description' => 'Approved by '.(auth()->user()->name ?? 'a user'),
             ])->log('stock_count.completed');
 
             $notifications->notifyAdmins(
@@ -339,7 +333,6 @@ class StockCountService extends BaseService
         });
     }
 
-    
     public function reject(StockCount $stockCount, string $reason, NotificationService $notifications): StockCount
     {
         if (! $stockCount->isPendingReview()) {
@@ -371,7 +364,6 @@ class StockCountService extends BaseService
         return $stockCount->fresh(['items.item']);
     }
 
-    
     public function requestRecount(StockCount $stockCount, ?string $reason, NotificationService $notifications): StockCount
     {
         if (! $stockCount->isPendingReview()) {
@@ -407,7 +399,6 @@ class StockCountService extends BaseService
         return $stockCount->fresh(['items.item']);
     }
 
-   
     public function varianceBreakdown(StockCount $stockCount): array
     {
         return $stockCount->items()->with('item')->get()
@@ -424,8 +415,8 @@ class StockCountService extends BaseService
                     'difference' => $variance,
                     'reason' => $item->remarks,
                     'adjustment_recommendation' => $variance > 0
-                        ? 'Increase system quantity by ' . abs($variance) . ' to match the physical count.'
-                        : 'Decrease system quantity by ' . abs($variance) . ' to match the physical count.',
+                        ? 'Increase system quantity by '.abs($variance).' to match the physical count.'
+                        : 'Decrease system quantity by '.abs($variance).' to match the physical count.',
                 ];
             })
             ->values()
