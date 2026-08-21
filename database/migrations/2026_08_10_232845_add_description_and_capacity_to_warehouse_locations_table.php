@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('warehouse_locations', function (Blueprint $table) {
-            if (!Schema::hasColumn('warehouse_locations', 'description')) {
+            if (! Schema::hasColumn('warehouse_locations', 'description')) {
                 $table->text('description')->nullable();
             }
 
-            if (!Schema::hasColumn('warehouse_locations', 'capacity')) {
+            if (! Schema::hasColumn('warehouse_locations', 'capacity')) {
                 $table->decimal('capacity', 15, 3)->nullable();
             }
         });
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('warehouse_locations', function (Blueprint $table) {
-             if (Schema::hasColumn('warehouse_locations', 'description')) {
+            if (Schema::hasColumn('warehouse_locations', 'description')) {
                 $table->dropColumn('description');
             }
 

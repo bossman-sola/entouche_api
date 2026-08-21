@@ -10,6 +10,7 @@ class LocationController extends MasterCrudController
     protected string $model = Location::class;
 
     protected array $relations = ['warehouse'];
+
     protected array $rules = [
         'warehouse_id' => ['required', 'exists:warehouses,id'],
         'name' => ['required', 'string'],
@@ -33,7 +34,7 @@ class LocationController extends MasterCrudController
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(fn($q) => $q->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%"));
+            $query->where(fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%"));
         }
 
         $locations = $query->latest()->paginate($request->integer('per_page', 15));
@@ -41,7 +42,7 @@ class LocationController extends MasterCrudController
         $locations->getCollection()->transform(function (Location $location) {
             $quantityOnHand = (int) $location->stockBalances->sum('quantity_on_hand');
             $stockValue = $location->stockBalances->sum(
-                fn($b) => $b->quantity_on_hand * ($b->item->unit_cost ?? 0)
+                fn ($b) => $b->quantity_on_hand * ($b->item->unit_cost ?? 0)
             );
 
             $location->quantity_on_hand = $quantityOnHand;

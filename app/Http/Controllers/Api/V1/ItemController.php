@@ -12,11 +12,11 @@ class ItemController extends BaseApiController
     public function __construct(private readonly ItemService $items) {}
 
     public function stats()
-{
-    return $this->success(
-        $this->items->getStats()
-    );
-}
+    {
+        return $this->success(
+            $this->items->getStats()
+        );
+    }
 
     public function index(Request $request)
     {
