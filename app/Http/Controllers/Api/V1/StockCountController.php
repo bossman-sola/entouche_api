@@ -77,13 +77,25 @@ class StockCountController extends BaseApiController
             'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
         ])->log('stock_count.created');
 
-        // 💡 Hooked: Broadcasts new stock count to the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_created',
-            'New Stock Count Created',
-            "Stock Count {$count->count_number} has been created.",
-            ['stock_count_id' => $count->id]
-        );
+        $count = $count->fresh('items');
+        $response = $count->toArray();
+
+        $response['items'] = $count->items->map(function ($item) {
+            return [
+                'id' => $item->item_id,
+                'stock_count_id' => $item->stock_count_id,
+                'warehouse_location_id' => $item->warehouse_location_id,
+                'system_quantity' => $item->system_quantity,
+                'counted_quantity' => $item->counted_quantity,
+                'counted_at' => $item->counted_at,
+                'counted_by' => $item->counted_by,
+                'variance_quantity' => $item->variance_quantity,
+                'adjustment_created' => $item->adjustment_created,
+                'remarks' => $item->remarks,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        })->values()->all();
 
         return $this->created($count->fresh('items'), 'Stock count created');
     }
@@ -112,14 +124,6 @@ class StockCountController extends BaseApiController
 
         $stockCount->update($data);
 
-        // 💡 Hooked: Broadcasts adjustments to details on the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_updated',
-            'Stock Count Updated',
-            "Stock Count {$stockCount->count_number} details were updated.",
-            ['stock_count_id' => $stockCount->id]
-        );
-
         return $this->success($stockCount->fresh('items'), 'Stock count updated');
     }
 
@@ -135,17 +139,47 @@ class StockCountController extends BaseApiController
 
     public function cancel(StockCount $stockCount)
     {
-        $stockCount->update(['status' => 'cancelled']);
+        if (in_array($stockCount->status, ['completed', 'cancelled'], true)) {
+            return $this->error(
+                'This stock count cannot be cancelled.',
+                null,
+                422
+            );
+        }
 
-        // 💡 Hooked: Broadcasts the cancellation to the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_cancelled',
-            'Stock Count Cancelled',
-            "Stock Count {$stockCount->count_number} has been cancelled.",
-            ['stock_count_id' => $stockCount->id]
+        $previousStatus = $stockCount->status;
+
+        $stockCount->update([
+            'status' => 'cancelled',
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Cancelled',
+                'description' => 'Cancelled by '.(auth()->user()->name ?? 'a user'),
+                'previous_status' => $previousStatus,
+            ])
+            ->log('stock_count.cancelled');
+
+        // Drafts have not entered the workflow yet,
+        // so cancelling one should not notify other users.
+        if ($previousStatus !== 'draft') {
+            $this->notifications->notifyAdmins(
+                'stock_count_cancelled',
+                'Stock Count Cancelled',
+                "Stock Count {$stockCount->count_number} has been cancelled.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count cancelled'
         );
-
-        return $this->success($stockCount, 'Stock count cancelled');
     }
 
     public function addItems(Request $request, StockCount $stockCount)

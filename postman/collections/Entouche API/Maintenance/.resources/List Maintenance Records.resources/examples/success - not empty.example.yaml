@@ -1,0 +1,68 @@
+$kind: http-example
+request:
+  url: http://127.0.0.1:8000/api/v1/maintenance
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Sat, 22 Aug 2026 01:12:57 GMT
+    content-type: application/json
+    vary: Origin
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": [
+          {
+            "id": 1,
+            "title": "Scheduled System Maintenance",
+            "message": "The inventory management system will be temporarily unavailable while scheduled maintenance is performed.",
+            "starts_at": "2026-08-22T20:15:00.000000Z",
+            "ends_at": "2026-08-22T20:30:00.000000Z",
+            "notify_before_minutes": 5,
+            "affected_service": "entire_system",
+            "send_email_notifications": true,
+            "show_maintenance_page": true,
+            "status": "scheduled",
+            "created_by": 2,
+            "notification_sent_at": null,
+            "started_at": null,
+            "completed_at": null,
+            "cancelled_at": null,
+            "created_at": "2026-08-22T01:12:34.000000Z",
+            "updated_at": "2026-08-22T01:12:34.000000Z",
+            "creator": {
+              "id": 2,
+              "name": "System Administrator",
+              "email": "admin@inventory.local",
+              "phone": null,
+              "status": "active",
+              "email_verified_at": null,
+              "created_at": "2026-06-30T03:38:09.000000Z",
+              "updated_at": "2026-06-30T14:14:15.000000Z",
+              "deleted_at": null
+            }
+          }
+        ],
+        "errors": null,
+        "meta": {
+          "current_page": 1,
+          "last_page": 1,
+          "per_page": 15,
+          "total": 1
+        },
+        "links": {
+          "first": "http://127.0.0.1:8000/api/v1/maintenance?page=1",
+          "last": "http://127.0.0.1:8000/api/v1/maintenance?page=1",
+          "prev": null,
+          "next": null
+        }
+      }
+order: 1659941835184850

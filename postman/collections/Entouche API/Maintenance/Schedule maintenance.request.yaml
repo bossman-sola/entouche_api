@@ -1,0 +1,23 @@
+$kind: http-request
+name: Schedule maintenance
+url: http://127.0.0.1:8000/api/v1/maintenance
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "title": "Scheduled System Maintenance",
+        "message": "The inventory management system will be temporarily unavailable while scheduled maintenance is performed.",
+        "starts_at": "2026-08-22T10:15:00.000Z",
+        "ends_at": "2026-08-22T10:30:00.000Z",
+        "notify_before_minutes": 5,
+        "affected_service": "entire_system",
+        "send_email_notifications": true,
+        "show_maintenance_page": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+examples: .resources/Schedule maintenance.resources/examples
+order: 4276495899990893

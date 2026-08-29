@@ -1,7 +1,9 @@
 $kind: http-request
 name: List Notifications
-url: "{{base_url}}/api/v1/notifications"
+url: http://127.0.0.1:8000/api/v1/notifications?page=1
 method: GET
+queryParams:
+  page: "1"
 auth:
   type: bearer
   credentials:

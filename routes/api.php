@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ImportController;
 use App\Http\Controllers\Api\V1\ItemController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\MaintenanceController;
 use App\Http\Controllers\Api\V1\ReceiptController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\RoleController;
@@ -151,5 +152,15 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings', [SettingController::class, 'index'])->middleware('permission:settings.manage');
         Route::put('settings', [SettingController::class, 'bulkUpdate'])->middleware('permission:settings.manage');
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
+
+        Route::prefix('maintenance')
+            ->middleware('permission:settings.manage')
+            ->group(function () {
+                Route::get('/', [MaintenanceController::class, 'index']);
+                Route::post('/', [MaintenanceController::class, 'store']);
+                Route::get('/{maintenance}', [MaintenanceController::class, 'show']);
+                Route::put('/{maintenance}', [MaintenanceController::class, 'update']);
+                Route::post('/{maintenance}/cancel', [MaintenanceController::class, 'cancel']);
+            });
     });
 });
