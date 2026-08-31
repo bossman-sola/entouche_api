@@ -31,35 +31,52 @@ response:
     type: json
     content: |-
       {
-        "success": true,
-        "message": "Stock count created",
-        "data": {
-          "warehouse_id": 1,
-          "warehouse_location_id": null,
-          "count_date": "2026-06-29T00:00:00.000000Z",
-          "count_number": "SC-000003",
-          "counted_by": 2,
-          "created_by": 2,
-          "status": "draft",
-          "updated_at": "2026-07-09T16:55:11.000000Z",
-          "created_at": "2026-07-09T16:55:11.000000Z",
-          "id": 3,
-          "items": [
-            {
-              "id": 3,
-              "stock_count_id": 3,
-              "item_id": 5,
+          "success": true,
+          "message": "Stock count created",
+          "data": {
+              "id": 10,
+              "count_number": "SC-000010",
+              "warehouse_id": 1,
               "warehouse_location_id": null,
-              "system_quantity": "100.000",
-              "counted_quantity": "98.000",
-              "variance_quantity": "-2.000",
-              "adjustment_created": 0,
-              "remarks": null,
-              "created_at": "2026-07-09T16:55:11.000000Z",
-              "updated_at": "2026-07-09T16:55:11.000000Z"
-            }
-          ]
-        },
-        "errors": null
+              "count_type": null,
+              "priority": "medium",
+              "counted_by": 2,
+              "approved_by": null,
+              "rejected_by": null,
+              "recount_requested_by": null,
+              "created_by": 2,
+              "submitted_by": null,
+              "count_date": "2026-06-29T00:00:00.000000Z",
+              "start_time": null,
+              "started_at": null,
+              "submitted_at": null,
+              "completed_at": null,
+              "approved_at": null,
+              "rejected_at": null,
+              "recount_requested_at": null,
+              "status": "draft",
+              "notes": null,
+              "rejection_reason": null,
+              "created_at": "2026-08-29T20:31:09.000000Z",
+              "updated_at": "2026-08-29T20:31:09.000000Z",
+              "deleted_at": null,
+              "items": [
+                  {
+                      "id": 5,
+                      "stock_count_id": 10,
+                      "warehouse_location_id": null,
+                      "system_quantity": "98.000",
+                      "counted_quantity": "0.000",
+                      "counted_at": null,
+                      "counted_by": null,
+                      "variance_quantity": "-98.000",
+                      "adjustment_created": 0,
+                      "remarks": null,
+                      "created_at": "2026-08-29T20:31:09.000000Z",
+                      "updated_at": "2026-08-29T20:31:09.000000Z"
+                  }
+              ]
+          },
+          "errors": null
       }
 order: 1783616151142

@@ -59,6 +59,20 @@ class MaintenanceController extends BaseApiController
             'created_by' => auth()->id(),
         ]);
 
+        if($maintenance->send_email_notifications) {
+            $this->notifications->notifyAdmins(
+                'maintenance_scheduled',
+                'Scheduled Maintenance',
+                "A maintenance window titled '{$maintenance->title}' has been scheduled to start at {$maintenance->starts_at} and end at {$maintenance->ends_at}.",
+                [
+                    'maintenance_id' => $maintenance->id,
+                    'starts_at' => $maintenance->starts_at,
+                    'ends_at' => $maintenance->ends_at,
+                    'affected_service' => $maintenance->affected_service,
+                ]
+            );
+        }
+
         return $this->created(
             $maintenance->load('creator'),
             'Maintenance scheduled successfully'
@@ -79,6 +93,20 @@ class MaintenanceController extends BaseApiController
             'status' => 'cancelled',
             'cancelled_at' => now(),
         ]);
+
+        if($maintenance->send_email_notifications) {
+            $this->notifications->notifyAdmins(
+                'maintenance_cancelled',
+                'Maintenance Cancelled',
+                "The maintenance window titled '{$maintenance->title}' scheduled to start at {$maintenance->starts_at} has been cancelled.",
+                [
+                    'maintenance_id' => $maintenance->id,
+                    'starts_at' => $maintenance->starts_at,
+                    'ends_at' => $maintenance->ends_at,
+                    'affected_service' => $maintenance->affected_service,
+                ]
+            );
+        }
 
         return $this->success(
             $maintenance->fresh(),

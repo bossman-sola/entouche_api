@@ -122,11 +122,9 @@ Route::prefix('v1')->group(function (): void {
         Route::get('stock-counts/items/search', [StockCountController::class, 'searchItems'])->middleware('permission:stock_counts.view');
         Route::apiResource('stock-counts', StockCountController::class)->parameters(['stock-counts' => 'stockCount'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/cancel', [StockCountController::class, 'cancel'])->middleware('permission:stock_counts.create');
-
         Route::post('stock-counts/{stockCount}/items', [StockCountController::class, 'addItems'])->middleware('permission:stock_counts.create');
         Route::patch('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'updateItem'])->middleware('permission:stock_counts.create');
         Route::delete('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'removeItem'])->middleware('permission:stock_counts.create');
-
         Route::get('stock-counts/{stockCount}/progress', [StockCountController::class, 'progress'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/{stockCount}/variance', [StockCountController::class, 'varianceBreakdown'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/submit', [StockCountController::class, 'submit'])->middleware('permission:stock_counts.create');

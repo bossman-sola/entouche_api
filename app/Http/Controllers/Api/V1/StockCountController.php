@@ -97,7 +97,10 @@ class StockCountController extends BaseApiController
             ];
         })->values()->all();
 
-        return $this->created($count->fresh('items'), 'Stock count created');
+        return $this->created(
+            $response,
+            'Stock count created'
+        );
     }
 
     public function update(Request $request, StockCount $stockCount)
