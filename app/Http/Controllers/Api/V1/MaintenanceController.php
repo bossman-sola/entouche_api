@@ -56,19 +56,21 @@ class MaintenanceController extends BaseApiController
             'send_email_notifications' => $data['send_email_notifications'] ?? true,
             'show_maintenance_page' => $data['show_maintenance_page'] ?? true,
             'status' => 'scheduled',
-            'created_by' => auth()->id(),
+            'created_by' => auth()->id()
         ]);
 
         if($maintenance->send_email_notifications) {
             $this->notifications->notifyAdmins(
                 'maintenance_scheduled',
                 'Scheduled Maintenance',
-                "A maintenance window titled '{$maintenance->title}' has been scheduled to start at {$maintenance->starts_at} and end at {$maintenance->ends_at}.",
+                "A maintenance window titled '{$maintenance->title}' has been scheduled.",
                 [
                     'maintenance_id' => $maintenance->id,
+                    'maintenance_title' => $maintenance->title,
                     'starts_at' => $maintenance->starts_at,
                     'ends_at' => $maintenance->ends_at,
                     'affected_service' => $maintenance->affected_service,
+                    'status' => 'scheduled',
                 ]
             );
         }
@@ -96,16 +98,18 @@ class MaintenanceController extends BaseApiController
 
         if($maintenance->send_email_notifications) {
             $this->notifications->notifyAdmins(
-                'maintenance_cancelled',
-                'Maintenance Cancelled',
-                "The maintenance window titled '{$maintenance->title}' scheduled to start at {$maintenance->starts_at} has been cancelled.",
-                [
-                    'maintenance_id' => $maintenance->id,
-                    'starts_at' => $maintenance->starts_at,
-                    'ends_at' => $maintenance->ends_at,
-                    'affected_service' => $maintenance->affected_service,
-                ]
-            );
+    'maintenance_cancelled',
+    'Maintenance Cancelled',
+    "The maintenance window titled '{$maintenance->title}' has been cancelled.",
+    [
+        'maintenance_id' => $maintenance->id,
+        'maintenance_title' => $maintenance->title,
+        'starts_at' => $maintenance->starts_at,
+        'ends_at' => $maintenance->ends_at,
+        'affected_service' => $maintenance->affected_service,
+        'status' => 'cancelled',
+    ]
+);
         }
 
         return $this->success(

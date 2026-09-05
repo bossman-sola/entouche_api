@@ -1,5 +1,4 @@
 $kind: http-request
-name: Upload Import
 auth:
   type: bearer
   credentials:
@@ -16,12 +15,12 @@ body:
     - type: file
       key: file
       src:
-        - postman-cloud:///1f18c765-ec2a-4480-bd6f-a8f324e759b0
+        - postman-cloud:///1f1a9485-bdbf-4fc0-bad2-37453d4a0b61
       description: CSV/XLSX/XLS file to import
       disabled: false
     - type: text
       key: import_type
-      value: items
+      value: inventory
       description: "Type of import: items or inventory"
       disabled: false
     - type: text

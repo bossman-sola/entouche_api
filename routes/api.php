@@ -143,6 +143,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('imports', [ImportController::class, 'index'])->middleware('permission:data_import.manage');
         Route::get('imports/{import}', [ImportController::class, 'show'])->middleware('permission:data_import.manage');
         Route::get('imports/templates/{type}', [ImportController::class, 'downloadTemplate'])->middleware('permission:data_import.manage');
+        Route::get('/imports/{import}/error-report', [ImportController::class, 'downloadErrorReport'])->middleware('permission:data_import.manage');
 
         Route::get('audit-logs', [AuditLogController::class, 'index'])->middleware('permission:audit_logs.view');
         Route::get('audit-logs/{log}', [AuditLogController::class, 'show'])->middleware('permission:audit_logs.view');

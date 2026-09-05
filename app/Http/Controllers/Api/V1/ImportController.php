@@ -49,26 +49,18 @@ class ImportController extends BaseApiController
         $import->loadMissing('errors');
 
         $rectifications = $import->errors
-            ->map(function ($error) {
-                $requiredAction = match ($error->error_message) {
-                    'Item name is required.' => 'Enter an item name in the "name" column. Also verify that the correct spreadsheet row is being used as the header row.',
-
-                    'SKU is required.' => 'Enter a SKU in the "sku" column.',
-
-                    'Unit of measure is required.' => 'Enter a valid unit of measure in the "unit_of_measure" column.',
-
-                    default => 'Correct the invalid or missing data in this row and upload the corrected row again.',
-                };
-
-                return [
-                    'row_number' => $error->row_number,
-                    'field' => $error->field,
-                    'issue' => $error->error_message,
-                    'required_action' => $requiredAction,
-                    'row_data' => $error->row_data,
-                ];
-            })
-            ->values();
+    ->map(function ($error) {
+        return [
+            'row_number' => $error->row_number,
+            'field' => $error->field,
+            'issue' => $error->error_message,
+            'required_action' => $this->imports->getRequiredAction(
+                $error->error_message
+            ),
+            'row_data' => $error->row_data,
+        ];
+    })
+    ->values();
 
         /*
          * Complete import: all processed rows succeeded.
@@ -116,5 +108,18 @@ class ImportController extends BaseApiController
     public function downloadTemplate(string $type)
     {
         return $this->imports->downloadTemplate($type);
+    }
+
+    public function downloadErrorReport(Import $import)
+    {
+    try {
+        return $this->imports->downloadErrorReport($import);
+    } catch (\InvalidArgumentException $e) {
+        return $this->error(
+            $e->getMessage(),
+            [],
+            404
+        );
+    }
     }
 }

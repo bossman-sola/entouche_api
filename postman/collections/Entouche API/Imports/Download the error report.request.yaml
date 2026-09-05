@@ -1,0 +1,9 @@
+$kind: http-request
+name: Download the error report
+url: "{{base_url}}/api/v1/imports/9/error-report"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3946884689397811

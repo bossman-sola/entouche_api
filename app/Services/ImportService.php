@@ -37,6 +37,23 @@ class ImportService extends BaseService
         return $import->fresh(['errors', 'rows']);
     }
 
+   public function getRequiredAction(string $message): string
+{
+    return match ($message) {
+        'Item name is required.' =>
+            'Enter an item name in the "name" column. Also verify that the correct spreadsheet row is being used as the header row.',
+
+        'SKU is required.' =>
+            'Enter a SKU in the "sku" column.',
+
+        'Unit of measure is required.' =>
+            'Enter a valid unit of measure in the "unit" column.',
+
+        default =>
+            'Correct the invalid or missing data in this row and upload the corrected row again.',
+    };
+}
+
     public function process(Import $import): void
     {
         $import->update(['status' => 'processing', 'started_at' => now()]);
@@ -139,4 +156,75 @@ class ImportService extends BaseService
             'Content-Disposition' => "attachment; filename=\"{$importType}_template.csv\"",
         ]);
     }
+
+public function downloadErrorReport(Import $import)
+{
+    $import->loadMissing('errors');
+
+    if ($import->errors->isEmpty()) {
+        throw new \InvalidArgumentException(
+            'No error report is available for this import.'
+        );
+    }
+
+    $filename = sprintf(
+        'import-%s-error-report.csv',
+        $import->id
+    );
+
+    return response()->streamDownload(function () use ($import) {
+        $handle = fopen('php://output', 'w');
+
+        // Excel UTF-8 BOM
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, [
+            'Row Number',
+            'Field',
+            'Issue',
+            'Required Action',
+            'Row Data',
+        ]);
+
+        foreach ($import->errors as $error) {
+            $requiredAction = $this->getRequiredAction(
+    $error->error_message
+);
+
+            $rowData = $error->row_data;
+
+            if (is_string($rowData)) {
+                $decoded = json_decode($rowData, true);
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $rowData = $decoded;
+                }
+            }
+
+            if (is_array($rowData)) {
+                $rowData = collect($rowData)
+                    ->map(function ($value, $key) {
+                        $displayValue = $value === null || $value === ''
+                            ? '(empty)'
+                            : $value;
+
+                        return "{$key}: {$displayValue}";
+                    })
+                    ->implode(' | ');
+            }
+
+            fputcsv($handle, [
+                $error->row_number,
+                $error->field ?? '—',
+                $error->error_message,
+                $requiredAction,
+                $rowData,
+            ]);
+        }
+
+        fclose($handle);
+    }, $filename, [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+    ]);
+}
 }

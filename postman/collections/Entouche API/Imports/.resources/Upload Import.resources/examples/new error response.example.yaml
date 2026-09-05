@@ -1,0 +1,237 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/imports"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: file
+        src:
+          - postman-cloud:///1f18c765-ec2a-4480-bd6f-a8f324e759b0
+        description: CSV/XLSX/XLS file to import
+        disabled: false
+      - type: text
+        key: import_type
+        value: items
+        description: "Type of import: items or inventory"
+        disabled: false
+      - type: text
+        key: warehouse_id
+        value: "1"
+        description: ""
+        disabled: false
+response:
+  statusCode: 422
+  statusText: Unprocessable Content
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Sat, 05 Sep 2026 16:36:46 GMT
+    content-type: application/json
+    vary: Origin
+  body:
+    type: json
+    content: |-
+      {
+        "success": false,
+        "message": "Import failed. No items were created. Correct the listed spreadsheet errors and upload the file again.",
+        "data": {
+          "id": 10,
+          "import_type": "items",
+          "warehouse_id": 1,
+          "file_name": "0InczeB6f0KNFhKKAgF12A5PChYy5vczjQAAEB9Y.xlsx",
+          "file_path": "imports/items/0InczeB6f0KNFhKKAgF12A5PChYy5vczjQAAEB9Y.xlsx",
+          "original_name": "item-import-template (1).xlsx",
+          "file_size": 9410,
+          "status": "partial",
+          "total_rows": 5,
+          "successful_rows": 0,
+          "failed_rows": 4,
+          "skipped_rows": 1,
+          "error_summary": null,
+          "uploaded_by": 2,
+          "started_at": "2026-09-05T16:36:46.000000Z",
+          "completed_at": "2026-09-05T16:36:46.000000Z",
+          "created_at": "2026-09-05T16:36:46.000000Z",
+          "updated_at": "2026-09-05T16:36:46.000000Z",
+          "errors": [
+            {
+              "id": 110,
+              "import_id": 10,
+              "row_number": 3,
+              "field": null,
+              "error_type": null,
+              "error_message": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Printer Paper, 4, 4, ?, stock_item, , 20, 3.5, ?, Double A, active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+              "row_data": {
+                "item_name": "Printer Paper",
+                "category": "Office Supplies",
+                "unit": "Ream (RM)",
+                "unit_type": "Count",
+                "barcode": "",
+                "sku": "",
+                "brand": "Double A",
+                "unit_cost": 3.5,
+                "selling_price": 5,
+                "reorder_level": 20,
+                "status": "Active"
+              },
+              "created_at": "2026-09-05T16:36:46.000000Z",
+              "updated_at": "2026-09-05T16:36:46.000000Z"
+            },
+            {
+              "id": 111,
+              "import_id": 10,
+              "row_number": 4,
+              "field": null,
+              "error_type": null,
+              "error_message": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Diesel, 5, 5, ?, stock_item, , 100, 0.9, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+              "row_data": {
+                "item_name": "Diesel",
+                "category": "Fuel",
+                "unit": "Liter (L)",
+                "unit_type": "Volume",
+                "barcode": "",
+                "sku": "",
+                "brand": "",
+                "unit_cost": 0.9,
+                "selling_price": 1.2,
+                "reorder_level": 100,
+                "status": "Active"
+              },
+              "created_at": "2026-09-05T16:36:46.000000Z",
+              "updated_at": "2026-09-05T16:36:46.000000Z"
+            },
+            {
+              "id": 112,
+              "import_id": 10,
+              "row_number": 5,
+              "field": null,
+              "error_type": null,
+              "error_message": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Electrical Cable, 6, 6, ?, stock_item, , 50, 1.2, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+              "row_data": {
+                "item_name": "Electrical Cable",
+                "category": "Electrical Supplies",
+                "unit": "Meter (m)",
+                "unit_type": "Length",
+                "barcode": "",
+                "sku": "",
+                "brand": "",
+                "unit_cost": 1.2,
+                "selling_price": 1.8,
+                "reorder_level": 50,
+                "status": "Active"
+              },
+              "created_at": "2026-09-05T16:36:46.000000Z",
+              "updated_at": "2026-09-05T16:36:46.000000Z"
+            },
+            {
+              "id": 113,
+              "import_id": 10,
+              "row_number": 6,
+              "field": null,
+              "error_type": null,
+              "error_message": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Steel Rod, 7, 1, ?, stock_item, , 200, 2, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+              "row_data": {
+                "item_name": "Steel Rod",
+                "category": "Construction Materials",
+                "unit": "Kilogram (kg)",
+                "unit_type": "Weight",
+                "barcode": "",
+                "sku": "",
+                "brand": "",
+                "unit_cost": 2,
+                "selling_price": 3,
+                "reorder_level": 200,
+                "status": "Active"
+              },
+              "created_at": "2026-09-05T16:36:46.000000Z",
+              "updated_at": "2026-09-05T16:36:46.000000Z"
+            }
+          ],
+          "rows": []
+        },
+        "errors": [
+          {
+            "row_number": 3,
+            "field": null,
+            "issue": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Printer Paper, 4, 4, ?, stock_item, , 20, 3.5, ?, Double A, active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+            "required_action": "Correct the invalid or missing data in this row and upload the corrected row again.",
+            "row_data": {
+              "item_name": "Printer Paper",
+              "category": "Office Supplies",
+              "unit": "Ream (RM)",
+              "unit_type": "Count",
+              "barcode": "",
+              "sku": "",
+              "brand": "Double A",
+              "unit_cost": 3.5,
+              "selling_price": 5,
+              "reorder_level": 20,
+              "status": "Active"
+            }
+          },
+          {
+            "row_number": 4,
+            "field": null,
+            "issue": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Diesel, 5, 5, ?, stock_item, , 100, 0.9, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+            "required_action": "Correct the invalid or missing data in this row and upload the corrected row again.",
+            "row_data": {
+              "item_name": "Diesel",
+              "category": "Fuel",
+              "unit": "Liter (L)",
+              "unit_type": "Volume",
+              "barcode": "",
+              "sku": "",
+              "brand": "",
+              "unit_cost": 0.9,
+              "selling_price": 1.2,
+              "reorder_level": 100,
+              "status": "Active"
+            }
+          },
+          {
+            "row_number": 5,
+            "field": null,
+            "issue": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Electrical Cable, 6, 6, ?, stock_item, , 50, 1.2, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+            "required_action": "Correct the invalid or missing data in this row and upload the corrected row again.",
+            "row_data": {
+              "item_name": "Electrical Cable",
+              "category": "Electrical Supplies",
+              "unit": "Meter (m)",
+              "unit_type": "Length",
+              "barcode": "",
+              "sku": "",
+              "brand": "",
+              "unit_cost": 1.2,
+              "selling_price": 1.8,
+              "reorder_level": 50,
+              "status": "Active"
+            }
+          },
+          {
+            "row_number": 6,
+            "field": null,
+            "issue": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '' for key 'items_barcode_unique' (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: inventory_api, SQL: insert into `items` (`name`, `category_id`, `unit_of_measure_id`, `supplier_id`, `item_type`, `barcode`, `reorder_level`, `unit_cost`, `description`, `brand`, `status`, `sku`, `created_by`, `updated_at`, `created_at`) values (Steel Rod, 7, 1, ?, stock_item, , 200, 2, ?, , active, ITM-000043, 2, 2026-09-05 16:36:46, 2026-09-05 16:36:46))",
+            "required_action": "Correct the invalid or missing data in this row and upload the corrected row again.",
+            "row_data": {
+              "item_name": "Steel Rod",
+              "category": "Construction Materials",
+              "unit": "Kilogram (kg)",
+              "unit_type": "Weight",
+              "barcode": "",
+              "sku": "",
+              "brand": "",
+              "unit_cost": 2,
+              "selling_price": 3,
+              "reorder_level": 200,
+              "status": "Active"
+            }
+          }
+        ]
+      }
+order: 1074392938974953
