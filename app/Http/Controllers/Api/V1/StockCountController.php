@@ -335,18 +335,37 @@ class StockCountController extends BaseApiController
         return Excel::download(new StockCountsExport($request->all()), $filename, $writerType);
     }
 
-    private function activity(StockCount $stockCount): array
-    {
-        return Activity::where('subject_type', StockCount::class)
-            ->where('subject_id', $stockCount->id)
-            ->oldest()
-            ->get()
-            ->map(fn ($log) => [
-                'title' => $log->properties['title'] ?? $log->description,
-                'detail' => $log->properties['description'] ?? '',
-                'time' => $log->created_at->format('M j, Y \a\t g:i A'),
-                'done' => true,
-            ])
-            ->all();
-    }
+   private function activity(StockCount $stockCount): array
+{
+    return Activity::where('subject_type', StockCount::class)
+        ->where('subject_id', $stockCount->id)
+        ->oldest()
+        ->get()
+        ->map(fn ($log) => [
+            'title' => $log->properties['title'] ?? $log->description,
+            'detail' => $log->properties['description'] ?? '',
+
+            // Return UTC ISO timestamp.
+            // Frontend will convert this to the user's local timezone.
+            'timestamp' => $log->created_at?->toISOString(),
+
+            'done' => true,
+        ])
+        ->all();
+}
+
+private function activity(StockCount $stockCount): array
+{
+    return Activity::where('subject_type', StockCount::class)
+        ->where('subject_id', $stockCount->id)
+        ->oldest()
+        ->get()
+        ->map(fn ($log) => [
+            'title' => $log->properties['title'] ?? $log->description,
+            'detail' => $log->properties['description'] ?? '',
+            'timestamp' => $log->created_at?->toISOString(),
+            'done' => true,
+        ])
+        ->all();
+}
 }
