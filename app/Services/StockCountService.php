@@ -193,13 +193,24 @@ class StockCountService extends BaseService
     public function countingProgress(StockCount $stockCount): array
     {
         $items = $stockCount->items;
+
         $total = $items->count();
-        $counted = $items->whereNotNull('counted_at')->count();
+
+        $counted = $items
+            ->whereNotNull('counted_at')
+            ->count();
+
+        $remaining = $total - $counted;
+
+        $percentage = $total > 0
+            ? round(($counted / $total) * 100)
+            : 0;
 
         return [
             'total_items' => $total,
             'counted_items' => $counted,
-            'remaining_items' => $total - $counted,
+            'remaining_items' => $remaining,
+            'percentage' => $percentage,
         ];
     }
 
