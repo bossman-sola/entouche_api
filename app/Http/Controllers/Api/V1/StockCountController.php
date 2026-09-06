@@ -37,71 +37,81 @@ class StockCountController extends BaseApiController
         ]));
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'warehouse_id' => ['required', 'exists:warehouses,id'],
-            'warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'count_type' => ['nullable', 'in:Cycle Count,Spot Check,Full Physical,Recount'],
-            'priority' => ['nullable', 'in:low,medium,high'],
-            'count_date' => ['nullable', 'date'],
-            'start_time' => ['nullable', 'date_format:H:i'],
-            'assigned_to' => ['nullable', 'exists:users,id'],
-            'notes' => ['nullable', 'string', 'max:500'],
-            'items' => ['sometimes', 'array'],
-            'items.*.item_id' => ['required', 'exists:items,id'],
-            'items.*.warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-        ]);
+   public function store(Request $request)
+{
+    $data = $request->validate([
+        'warehouse_id' => ['required', 'exists:warehouses,id'],
+        'warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+        'count_type' => ['nullable', 'in:Cycle Count,Spot Check,Full Physical,Recount'],
+        'priority' => ['nullable', 'in:low,medium,high'],
+        'count_date' => ['required', 'date_format:Y-m-d'],
+        'start_time' => ['nullable', 'date_format:H:i'],
+        'assigned_to' => ['nullable', 'exists:users,id'],
+        'notes' => ['nullable', 'string', 'max:500'],
+        'items' => ['sometimes', 'array'],
+        'items.*.item_id' => ['required', 'exists:items,id'],
+        'items.*.warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
+    ]);
 
-        $items = $data['items'] ?? [];
-        unset($data['items']);
-        $assignedTo = $data['assigned_to'] ?? auth()->id();
-        unset($data['assigned_to']);
+    $items = $data['items'] ?? [];
+    unset($data['items']);
 
-        $number = (new class extends BaseService {})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
+    $assignedTo = $data['assigned_to'] ?? auth()->id();
+    unset($data['assigned_to']);
 
-        $count = StockCount::create($data + [
-            'count_number' => $number,
-            'counted_by' => $assignedTo,
-            'created_by' => auth()->id(),
-            'status' => 'draft',
-            'count_date' => $data['count_date'] ?? now()->toDateString(),
-        ]);
+    $number = (new class extends BaseService {})->generateNumber(
+        'stock_counts',
+        'count_number',
+        Setting::get('numbering.stock_count_prefix', 'SC'),
+        6
+    );
 
-        if (! empty($items)) {
-            $this->stockCounts->addItems($count, $items);
-        }
+    $count = StockCount::create($data + [
+        'count_number' => $number,
+        'counted_by' => $assignedTo,
+        'created_by' => auth()->id(),
+        'status' => 'draft',
+        'count_date' => $data['count_date'],
+    ]);
 
-        activity()->causedBy(auth()->user())->performedOn($count)->withProperties([
+    if (! empty($items)) {
+        $this->stockCounts->addItems($count, $items);
+    }
+
+    activity()
+        ->causedBy(auth()->user())
+        ->performedOn($count)
+        ->withProperties([
             'title' => 'Stock Count Created',
             'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
-        ])->log('stock_count.created');
+        ])
+        ->log('stock_count.created');
 
-        $count = $count->fresh('items');
-        $response = $count->toArray();
+    $count = $count->fresh('items');
+    $response = $count->toArray();
 
-        $response['items'] = $count->items->map(function ($item) {
-            return [
-                'id' => $item->item_id,
-                'stock_count_id' => $item->stock_count_id,
-                'warehouse_location_id' => $item->warehouse_location_id,
-                'system_quantity' => $item->system_quantity,
-                'counted_quantity' => $item->counted_quantity,
-                'counted_at' => $item->counted_at,
-                'counted_by' => $item->counted_by,
-                'variance_quantity' => $item->variance_quantity,
-                'adjustment_created' => $item->adjustment_created,
-                'remarks' => $item->remarks,
-                'created_at' => $item->created_at,
-                'updated_at' => $item->updated_at,
-            ];
-        })->values()->all();
+    $response['items'] = $count->items->map(function ($item) {
+        return [
+            'id' => $item->item_id,
+            'stock_count_id' => $item->stock_count_id,
+            'warehouse_location_id' => $item->warehouse_location_id,
+            'system_quantity' => $item->system_quantity,
+            'counted_quantity' => $item->counted_quantity,
+            'counted_at' => $item->counted_at,
+            'counted_by' => $item->counted_by,
+            'variance_quantity' => $item->variance_quantity,
+            'adjustment_created' => $item->adjustment_created,
+            'remarks' => $item->remarks,
+            'created_at' => $item->created_at,
+            'updated_at' => $item->updated_at,
+        ];
+    })->values()->all();
 
-        return $this->created(
-            $response,
-            'Stock count created'
-        );
-    }
+    return $this->created(
+        $response,
+        'Stock count created'
+    );
+}
 
     public function update(Request $request, StockCount $stockCount)
     {
@@ -335,24 +345,6 @@ class StockCountController extends BaseApiController
         return Excel::download(new StockCountsExport($request->all()), $filename, $writerType);
     }
 
-   private function activity(StockCount $stockCount): array
-{
-    return Activity::where('subject_type', StockCount::class)
-        ->where('subject_id', $stockCount->id)
-        ->oldest()
-        ->get()
-        ->map(fn ($log) => [
-            'title' => $log->properties['title'] ?? $log->description,
-            'detail' => $log->properties['description'] ?? '',
-
-            // Return UTC ISO timestamp.
-            // Frontend will convert this to the user's local timezone.
-            'timestamp' => $log->created_at?->toISOString(),
-
-            'done' => true,
-        ])
-        ->all();
-}
 
 private function activity(StockCount $stockCount): array
 {
