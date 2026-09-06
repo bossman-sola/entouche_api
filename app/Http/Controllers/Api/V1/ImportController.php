@@ -112,14 +112,14 @@ class ImportController extends BaseApiController
 
     public function downloadErrorReport(Import $import)
     {
-    try {
-        return $this->imports->downloadErrorReport($import);
-    } catch (\InvalidArgumentException $e) {
-        return $this->error(
-            $e->getMessage(),
-            [],
-            404
-        );
-    }
+        try {
+            return $this->imports->downloadErrorReport($import);
+        } catch (\InvalidArgumentException $e) {
+            return $this->error(
+                $e->getMessage(),
+                [],
+                404
+            );
+        }
     }
 }
