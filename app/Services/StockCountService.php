@@ -19,59 +19,169 @@ use Illuminate\Support\Facades\DB;
 class StockCountService extends BaseService
 {
     public function list(array $filters = [])
-    {
-        return StockCount::with([
-            'items.item',
-            'warehouse',
-            'location',
-            'assignedCounter',
-            'submittedBy',
-        ])
-            ->when(
-                $filters['search'] ?? null,
-                fn ($q, $v) => $q->where('count_number', 'like', "%{$v}%")
-            )
-            ->when(
-                $filters['status'] ?? null,
-                fn ($q, $v) => $q->where('status', $v)
-            )
-            ->when(
-                $filters['warehouse_id'] ?? null,
-                fn ($q, $v) => $q->where('warehouse_id', $v)
-            )
-            ->when(
-                $filters['warehouse_location_id'] ?? null,
-                fn ($q, $v) => $q->where('warehouse_location_id', $v)
-            )
-            ->when(
-                $filters['count_type'] ?? null,
-                fn ($q, $v) => $q->where('count_type', $v)
-            )
-            ->when(
-                $filters['date_from'] ?? null,
-                fn ($q, $v) => $q->whereDate('count_date', '>=', $v)
-            )
-            ->when(
-                $filters['date_to'] ?? null,
-                fn ($q, $v) => $q->whereDate('count_date', '<=', $v)
-            )
-            ->when(
-                ($filters['variance'] ?? null) === 'variance_only',
-                fn ($q) => $q->whereHas(
-                    'items',
-                    fn ($i) => $i->where('variance_quantity', '!=', 0)
+{
+    return StockCount::with([
+        'items.item',
+        'warehouse',
+        'location',
+        'assignedCounter',
+        'submittedBy',
+    ])
+        ->when(
+            $filters['search'] ?? null,
+            fn ($q, $v) =>
+                $q->where(
+                    'count_number',
+                    'like',
+                    "%{$v}%"
                 )
-            )
-            ->when(
-                ($filters['variance'] ?? null) === 'matches_only',
-                fn ($q) => $q->whereDoesntHave(
-                    'items',
-                    fn ($i) => $i->where('variance_quantity', '!=', 0)
+        )
+
+        ->when(
+            $filters['warehouse_id'] ?? null,
+            fn ($q, $v) =>
+                $q->where(
+                    'warehouse_id',
+                    $v
                 )
-            )
-            ->latest()
-            ->paginate($filters['per_page'] ?? 15);
-    }
+        )
+
+        ->when(
+            $filters['warehouse_location_id'] ?? null,
+            fn ($q, $v) =>
+                $q->where(
+                    'warehouse_location_id',
+                    $v
+                )
+        )
+
+        /*
+         * Basic single-status filter
+         */
+        ->when(
+            $filters['status'] ?? null,
+            fn ($q, $v) =>
+                $q->where(
+                    'status',
+                    $v
+                )
+        )
+
+        /*
+         * Advanced multi-status filter
+         */
+        ->when(
+            ! empty($filters['statuses']),
+            function ($q) use ($filters) {
+                $statuses = is_array(
+                    $filters['statuses']
+                )
+                    ? $filters['statuses']
+                    : [$filters['statuses']];
+
+                $q->whereIn(
+                    'status',
+                    $statuses
+                );
+            }
+        )
+
+        /*
+         * Basic single count-type filter
+         */
+        ->when(
+            $filters['count_type'] ?? null,
+            fn ($q, $v) =>
+                $q->where(
+                    'count_type',
+                    $v
+                )
+        )
+
+        /*
+         * Advanced multi count-type filter
+         */
+        ->when(
+            ! empty($filters['count_types']),
+            function ($q) use ($filters) {
+                $types = is_array(
+                    $filters['count_types']
+                )
+                    ? $filters['count_types']
+                    : [$filters['count_types']];
+
+                $q->whereIn(
+                    'count_type',
+                    $types
+                );
+            }
+        )
+
+        /*
+         * Date range
+         */
+        ->when(
+            $filters['start_date']
+                ?? $filters['date_from']
+                ?? null,
+            fn ($q, $v) =>
+                $q->whereDate(
+                    'count_date',
+                    '>=',
+                    $v
+                )
+        )
+
+        ->when(
+            $filters['end_date']
+                ?? $filters['date_to']
+                ?? null,
+            fn ($q, $v) =>
+                $q->whereDate(
+                    'count_date',
+                    '<=',
+                    $v
+                )
+        )
+
+        /*
+         * Variance filters
+         */
+        ->when(
+            ($filters['variance'] ?? null)
+                === 'variance_only',
+            fn ($q) =>
+                $q->whereHas(
+                    'items',
+                    fn ($i) =>
+                        $i->where(
+                            'variance_quantity',
+                            '!=',
+                            0
+                        )
+                )
+        )
+
+        ->when(
+            ($filters['variance'] ?? null)
+                === 'matches_only',
+            fn ($q) =>
+                $q->whereDoesntHave(
+                    'items',
+                    fn ($i) =>
+                        $i->where(
+                            'variance_quantity',
+                            '!=',
+                            0
+                        )
+                )
+        )
+
+        ->latest()
+        ->paginate(
+            $filters['per_page'] ?? 15
+        );
+}
 
     public function lookups(): array
     {
