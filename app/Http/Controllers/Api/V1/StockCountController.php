@@ -265,20 +265,6 @@ class StockCountController extends BaseApiController
                 $this->notifications
             );
 
-            $notificationData = [
-                'stock_count_id' => $stockCount->id,
-            ];
-
-            $this->notifications->notifyRoles(
-                ['warehouse_manager', 'system_administrator'],
-                'stock_count_submitted',
-                'Stock Count Submitted',
-                "Stock Count {$stockCount->count_number} has been submitted for review.",
-                [
-                    'stock_count_id' => $stockCount->id,
-                ]
-            );
-
         } catch (StockCountValidationException $e) {
             return $this->error(
                 $e->getMessage(),
@@ -307,18 +293,6 @@ class StockCountController extends BaseApiController
                 $stockCount,
                 $this->notifications
             );
-
-            if ($stockCount->assignedCounter) {
-                $this->notifications->notifyUser(
-                    $stockCount->assignedCounter,
-                    'stock_count_approved',
-                    'Stock Count Approved',
-                    "Stock Count {$stockCount->count_number} has been approved and completed.",
-                    [
-                        'stock_count_id' => $stockCount->id,
-                    ]
-                );
-            }
 
         } catch (\RuntimeException $e) {
             return $this->error(
