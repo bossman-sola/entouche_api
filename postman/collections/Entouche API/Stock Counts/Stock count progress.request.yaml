@@ -1,9 +1,9 @@
 $kind: http-request
-name: Stock count progress
 url: "{{staging_url}}/api/v1/stock-counts/{{stock_count_id}}/progress"
 method: GET
 auth:
   type: bearer
   credentials:
     token: "{{access_token}}"
+examples: .resources/Stock count progress.resources/examples
 order: 2079577897702123

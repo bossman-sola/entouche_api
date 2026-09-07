@@ -359,4 +359,71 @@ class StockCountController extends BaseApiController
             ])
             ->all();
     }
+
+    public function requestCount(StockCount $stockCount)
+    {
+        if ($stockCount->status !== 'draft') {
+            return $this->error(
+                'Only draft stock counts can be requested.',
+                null,
+                422
+            );
+        }
+
+        if ($stockCount->items()->count() === 0) {
+            return $this->error(
+                'Add at least one item before requesting the stock count.',
+                null,
+                422
+            );
+        }
+
+        $stockCount->update([
+            'status' => 'requested',
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Requested',
+                'description' => 'Stock count sent to the assigned counter.',
+            ])
+            ->log('stock_count.requested');
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count requested'
+        );
+    }
+
+    public function start(StockCount $stockCount)
+    {
+        if ($stockCount->status !== 'requested') {
+            return $this->error(
+                'Only requested stock counts can be started.',
+                null,
+                422
+            );
+        }
+
+        $stockCount->update([
+            'status' => 'in_progress',
+            'started_at' => now(),
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Started',
+                'description' => 'Physical counting has started.',
+            ])
+            ->log('stock_count.started');
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count started'
+        );
+    }
 }

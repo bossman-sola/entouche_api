@@ -131,6 +131,15 @@ Route::prefix('v1')->group(function (): void {
         Route::post('stock-counts/{stockCount}/approve', [StockCountController::class, 'approve'])->middleware('permission:stock_counts.approve');
         Route::post('stock-counts/{stockCount}/reject', [StockCountController::class, 'reject'])->middleware('permission:stock_counts.approve');
         Route::post('stock-counts/{stockCount}/request-recount', [StockCountController::class, 'requestRecount'])->middleware('permission:stock_counts.approve');
+        Route::post(
+            'stock-counts/{stockCount}/request',
+            [StockCountController::class, 'requestCount']
+        )->middleware('permission:stock_counts.create');
+
+        Route::post(
+            'stock-counts/{stockCount}/start',
+            [StockCountController::class, 'start']
+        )->middleware('permission:stock_counts.create');
 
         Route::prefix('reports')->middleware('permission:reports.view')->group(function (): void {
             Route::get('dashboard-stats', [ReportController::class, 'dashboardStats']);
