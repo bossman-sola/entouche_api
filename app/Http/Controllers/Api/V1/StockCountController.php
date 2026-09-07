@@ -391,6 +391,18 @@ class StockCountController extends BaseApiController
             ])
             ->log('stock_count.requested');
 
+        if ($stockCount->assignedCounter) {
+            $this->notifications->notifyUser(
+                $stockCount->assignedCounter,
+                'stock_count_requested',
+                'Stock Count Requested',
+                "Stock Count {$stockCount->count_number} has been requested for counting.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
+
         return $this->success(
             $stockCount->fresh(),
             'Stock count requested'
@@ -420,6 +432,18 @@ class StockCountController extends BaseApiController
                 'description' => 'Physical counting has started.',
             ])
             ->log('stock_count.started');
+
+        if ($stockCount->assignedCounter) {
+            $this->notifications->notifyUser(
+                $stockCount->assignedCounter,
+                'stock_count_started',
+                'Stock Count Started',
+                "Stock Count {$stockCount->count_number} has been started.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
 
         return $this->success(
             $stockCount->fresh(),
