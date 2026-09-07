@@ -19,169 +19,158 @@ use Illuminate\Support\Facades\DB;
 class StockCountService extends BaseService
 {
     public function list(array $filters = [])
-{
-    return StockCount::with([
-        'items.item',
-        'warehouse',
-        'location',
-        'assignedCounter',
-        'submittedBy',
-    ])
-        ->when(
-            $filters['search'] ?? null,
-            fn ($q, $v) =>
-                $q->where(
+    {
+        return StockCount::with([
+            'items.item',
+            'warehouse',
+            'location',
+            'assignedCounter',
+            'submittedBy',
+        ])
+            ->when(
+                $filters['search'] ?? null,
+                fn ($q, $v) => $q->where(
                     'count_number',
                     'like',
                     "%{$v}%"
                 )
-        )
+            )
 
-        ->when(
-            $filters['warehouse_id'] ?? null,
-            fn ($q, $v) =>
-                $q->where(
+            ->when(
+                $filters['warehouse_id'] ?? null,
+                fn ($q, $v) => $q->where(
                     'warehouse_id',
                     $v
                 )
-        )
+            )
 
-        ->when(
-            $filters['warehouse_location_id'] ?? null,
-            fn ($q, $v) =>
-                $q->where(
+            ->when(
+                $filters['warehouse_location_id'] ?? null,
+                fn ($q, $v) => $q->where(
                     'warehouse_location_id',
                     $v
                 )
-        )
+            )
 
-        /*
-         * Basic single-status filter
-         */
-        ->when(
-            $filters['status'] ?? null,
-            fn ($q, $v) =>
-                $q->where(
+            /*
+             * Basic single-status filter
+             */
+            ->when(
+                $filters['status'] ?? null,
+                fn ($q, $v) => $q->where(
                     'status',
                     $v
                 )
-        )
+            )
 
-        /*
-         * Advanced multi-status filter
-         */
-        ->when(
-            ! empty($filters['statuses']),
-            function ($q) use ($filters) {
-                $statuses = is_array(
-                    $filters['statuses']
-                )
-                    ? $filters['statuses']
-                    : [$filters['statuses']];
+            /*
+             * Advanced multi-status filter
+             */
+            ->when(
+                ! empty($filters['statuses']),
+                function ($q) use ($filters) {
+                    $statuses = is_array(
+                        $filters['statuses']
+                    )
+                        ? $filters['statuses']
+                        : [$filters['statuses']];
 
-                $q->whereIn(
-                    'status',
-                    $statuses
-                );
-            }
-        )
+                    $q->whereIn(
+                        'status',
+                        $statuses
+                    );
+                }
+            )
 
-        /*
-         * Basic single count-type filter
-         */
-        ->when(
-            $filters['count_type'] ?? null,
-            fn ($q, $v) =>
-                $q->where(
+            /*
+             * Basic single count-type filter
+             */
+            ->when(
+                $filters['count_type'] ?? null,
+                fn ($q, $v) => $q->where(
                     'count_type',
                     $v
                 )
-        )
+            )
 
-        /*
-         * Advanced multi count-type filter
-         */
-        ->when(
-            ! empty($filters['count_types']),
-            function ($q) use ($filters) {
-                $types = is_array(
-                    $filters['count_types']
-                )
-                    ? $filters['count_types']
-                    : [$filters['count_types']];
+            /*
+             * Advanced multi count-type filter
+             */
+            ->when(
+                ! empty($filters['count_types']),
+                function ($q) use ($filters) {
+                    $types = is_array(
+                        $filters['count_types']
+                    )
+                        ? $filters['count_types']
+                        : [$filters['count_types']];
 
-                $q->whereIn(
-                    'count_type',
-                    $types
-                );
-            }
-        )
+                    $q->whereIn(
+                        'count_type',
+                        $types
+                    );
+                }
+            )
 
-        /*
-         * Date range
-         */
-        ->when(
-            $filters['start_date']
-                ?? $filters['date_from']
-                ?? null,
-            fn ($q, $v) =>
-                $q->whereDate(
+            /*
+             * Date range
+             */
+            ->when(
+                $filters['start_date']
+                    ?? $filters['date_from']
+                    ?? null,
+                fn ($q, $v) => $q->whereDate(
                     'count_date',
                     '>=',
                     $v
                 )
-        )
+            )
 
-        ->when(
-            $filters['end_date']
-                ?? $filters['date_to']
-                ?? null,
-            fn ($q, $v) =>
-                $q->whereDate(
+            ->when(
+                $filters['end_date']
+                    ?? $filters['date_to']
+                    ?? null,
+                fn ($q, $v) => $q->whereDate(
                     'count_date',
                     '<=',
                     $v
                 )
-        )
+            )
 
-        /*
-         * Variance filters
-         */
-        ->when(
-            ($filters['variance'] ?? null)
-                === 'variance_only',
-            fn ($q) =>
-                $q->whereHas(
+            /*
+             * Variance filters
+             */
+            ->when(
+                ($filters['variance'] ?? null)
+                    === 'variance_only',
+                fn ($q) => $q->whereHas(
                     'items',
-                    fn ($i) =>
-                        $i->where(
-                            'variance_quantity',
-                            '!=',
-                            0
-                        )
+                    fn ($i) => $i->where(
+                        'variance_quantity',
+                        '!=',
+                        0
+                    )
                 )
-        )
+            )
 
-        ->when(
-            ($filters['variance'] ?? null)
-                === 'matches_only',
-            fn ($q) =>
-                $q->whereDoesntHave(
+            ->when(
+                ($filters['variance'] ?? null)
+                    === 'matches_only',
+                fn ($q) => $q->whereDoesntHave(
                     'items',
-                    fn ($i) =>
-                        $i->where(
-                            'variance_quantity',
-                            '!=',
-                            0
-                        )
+                    fn ($i) => $i->where(
+                        'variance_quantity',
+                        '!=',
+                        0
+                    )
                 )
-        )
+            )
 
-        ->latest()
-        ->paginate(
-            $filters['per_page'] ?? 15
-        );
-}
+            ->latest()
+            ->paginate(
+                $filters['per_page'] ?? 15
+            );
+    }
 
     public function lookups(): array
     {
@@ -305,8 +294,7 @@ class StockCountService extends BaseService
 
             'completed_counts' => $completed,
 
-            'completed_delta' =>
-                $completed - $completedLastMonth,
+            'completed_delta' => $completed - $completedLastMonth,
 
             'breakdown' => $breakdown,
 
@@ -348,16 +336,13 @@ class StockCountService extends BaseService
                 return [
                     'id' => $notification->id,
 
-                    'type' =>
-                        $data['type']
+                    'type' => $data['type']
                         ?? 'stock_count_activity',
 
-                    'title' =>
-                        $data['title']
+                    'title' => $data['title']
                         ?? 'Stock Count Update',
 
-                    'description' =>
-                        $data['description']
+                    'description' => $data['description']
                         ?? '',
 
                     'time' => Carbon::parse(
@@ -388,27 +373,21 @@ class StockCountService extends BaseService
             ->map(fn (StockCount $sc) => [
                 'id' => $sc->id,
 
-                'count_number' =>
-                    $sc->count_number,
+                'count_number' => $sc->count_number,
 
-                'type' =>
-                    $sc->count_type,
+                'type' => $sc->count_type,
 
-                'date' =>
-                    optional(
-                        $sc->count_date
-                    )->toDateString(),
+                'date' => optional(
+                    $sc->count_date
+                )->toDateString(),
 
-                'time' =>
-                    $sc->start_time,
+                'time' => $sc->start_time,
 
-                'location' =>
-                    $sc->location->name
+                'location' => $sc->location->name
                     ?? $sc->warehouse->name
                     ?? null,
 
-                'status' =>
-                    $sc->status,
+                'status' => $sc->status,
             ])
             ->all();
     }
@@ -429,32 +408,25 @@ class StockCountService extends BaseService
                 ?? $stockCount->warehouse_location_id;
 
             $systemQty = StockBalance::where([
-                'item_id' =>
-                    $row['item_id'],
+                'item_id' => $row['item_id'],
 
-                'warehouse_id' =>
-                    $stockCount->warehouse_id,
+                'warehouse_id' => $stockCount->warehouse_id,
 
-                'warehouse_location_id' =>
-                    $warehouseLocationId,
+                'warehouse_location_id' => $warehouseLocationId,
             ])->value(
                 'quantity_on_hand'
             ) ?? 0;
 
             StockCountItem::updateOrCreate(
                 [
-                    'stock_count_id' =>
-                        $stockCount->id,
+                    'stock_count_id' => $stockCount->id,
 
-                    'item_id' =>
-                        $row['item_id'],
+                    'item_id' => $row['item_id'],
 
-                    'warehouse_location_id' =>
-                        $warehouseLocationId,
+                    'warehouse_location_id' => $warehouseLocationId,
                 ],
                 [
-                    'system_quantity' =>
-                        $systemQty,
+                    'system_quantity' => $systemQty,
                 ]
             );
         }
@@ -467,11 +439,9 @@ class StockCountService extends BaseService
                 $stockCount
             )
             ->withProperties([
-                'title' =>
-                    'Items Added',
+                'title' => 'Items Added',
 
-                'description' =>
-                    count($items)
+                'description' => count($items)
                     .' item(s) added to the count.',
             ])
             ->log(
@@ -509,17 +479,13 @@ class StockCountService extends BaseService
         }
 
         $item->update([
-            'counted_quantity' =>
-                $countedQuantity,
+            'counted_quantity' => $countedQuantity,
 
-            'counted_at' =>
-                now(),
+            'counted_at' => now(),
 
-            'counted_by' =>
-                auth()->id(),
+            'counted_by' => auth()->id(),
 
-            'remarks' =>
-                $reason
+            'remarks' => $reason
                 ?? $item->remarks,
         ]);
 
@@ -550,17 +516,13 @@ class StockCountService extends BaseService
                 : 0;
 
         return [
-            'total_items' =>
-                $total,
+            'total_items' => $total,
 
-            'counted_items' =>
-                $counted,
+            'counted_items' => $counted,
 
-            'remaining_items' =>
-                $remaining,
+            'remaining_items' => $remaining,
 
-            'percentage' =>
-                $percentage,
+            'percentage' => $percentage,
         ];
     }
 
@@ -597,14 +559,11 @@ class StockCountService extends BaseService
         }
 
         $stockCount->update([
-            'status' =>
-                'pending_review',
+            'status' => 'pending_review',
 
-            'submitted_by' =>
-                auth()->id(),
+            'submitted_by' => auth()->id(),
 
-            'submitted_at' =>
-                now(),
+            'submitted_at' => now(),
         ]);
 
         activity()
@@ -615,11 +574,9 @@ class StockCountService extends BaseService
                 $stockCount
             )
             ->withProperties([
-                'title' =>
-                    'Stock Count Submitted',
+                'title' => 'Stock Count Submitted',
 
-                'description' =>
-                    'Submitted by '
+                'description' => 'Submitted by '
                     .(
                         auth()->user()->name
                         ?? 'a user'
@@ -638,8 +595,7 @@ class StockCountService extends BaseService
             'Stock Count Pending Review',
             "Stock Count {$stockCount->count_number} has been submitted and is awaiting approval.",
             [
-                'stock_count_id' =>
-                    $stockCount->id,
+                'stock_count_id' => $stockCount->id,
             ]
         );
 
@@ -653,9 +609,7 @@ class StockCountService extends BaseService
         StockCount $stockCount,
         NotificationService $notifications
     ): StockCount {
-        if (
-            ! $stockCount->isPendingReview()
-        ) {
+        if (! $stockCount->isPendingReview()) {
             throw new \RuntimeException(
                 'Only a stock count that is pending review can be approved.'
             );
@@ -666,139 +620,117 @@ class StockCountService extends BaseService
                 $stockCount,
                 $notifications
             ): StockCount {
-                $stock =
-                    app(
-                        StockMovementService::class
-                    );
+                $stock = app(
+                    StockMovementService::class
+                );
 
                 foreach (
                     $stockCount
                         ->items()
                         ->with('item')
-                        ->get()
-                    as $countItem
+                        ->get() as $countItem
                 ) {
                     $variance =
                         (float) $countItem->counted_quantity
                         -
                         (float) $countItem->system_quantity;
 
-                    if (
-                        $variance == 0.0
-                    ) {
+                    if ($variance == 0.0) {
                         continue;
                     }
 
                     $adjustment =
                         Adjustment::create([
-                            'adjustment_number' =>
-                                $this->generateNumber(
-                                    'adjustments',
-                                    'adjustment_number',
-                                    (string) (Setting::get(
+                            'adjustment_number' => $this->generateNumber(
+                                'adjustments',
+                                'adjustment_number',
+                                (string) (
+                                    Setting::get(
                                         'numbering.adjustment_prefix',
                                         null
-                                    ) ?? 'ADJ'),
-                                    6
+                                    )
+                                    ?? 'ADJ'
                                 ),
+                                6
+                            ),
 
-                            'warehouse_id' =>
-                                $stockCount->warehouse_id,
+                            'warehouse_id' => $stockCount->warehouse_id,
 
-                            'warehouse_location_id' =>
-                                $countItem->warehouse_location_id
+                            'warehouse_location_id' => $countItem->warehouse_location_id
                                 ?? $stockCount->warehouse_location_id,
 
-                            'adjustment_type' =>
-                                $variance > 0
+                            'adjustment_type' => $variance > 0
                                     ? 'increase'
                                     : 'decrease',
 
-                            'reason' =>
-                                'Stock count variance - '
+                            'reason' => 'Stock count variance - '
                                 .$stockCount->count_number,
 
-                            'adjusted_by' =>
-                                auth()->id(),
+                            'adjusted_by' => auth()->id(),
 
-                            'approved_by' =>
-                                auth()->id(),
+                            'approved_by' => auth()->id(),
 
-                            'created_by' =>
-                                auth()->id(),
+                            'created_by' => auth()->id(),
 
-                            'adjustment_date' =>
-                                now()->toDateString(),
+                            'adjustment_date' => now()->toDateString(),
 
-                            'approved_at' =>
-                                now(),
+                            'approved_at' => now(),
 
-                            'status' =>
-                                'approved',
+                            'status' => 'approved',
                         ]);
 
+                    $unitCost = (float) (
+                        $countItem->item?->unit_cost
+                        ?? 0
+                    );
+
                     AdjustmentItem::create([
-                        'adjustment_id' =>
-                            $adjustment->id,
+                        'adjustment_id' => $adjustment->id,
 
-                        'item_id' =>
-                            $countItem->item_id,
+                        'item_id' => $countItem->item_id,
 
-                        'warehouse_location_id' =>
-                            $countItem->warehouse_location_id
+                        'warehouse_location_id' => $countItem->warehouse_location_id
                             ?? $stockCount->warehouse_location_id,
 
-                        'quantity_before' =>
-                            $countItem->system_quantity,
+                        'quantity_before' => $countItem->system_quantity,
 
-                        'adjustment_quantity' =>
-                            abs($variance),
+                        'adjustment_quantity' => abs($variance),
 
-                        'quantity_after' =>
-                            $countItem->counted_quantity,
+                        'quantity_after' => $countItem->counted_quantity,
 
-                        'unit_cost' =>
-                            0,
+                        'unit_cost' => $unitCost,
                     ]);
 
                     $stock->move([
-                        'item_id' =>
-                            $countItem->item_id,
+                        'item_id' => $countItem->item_id,
 
-                        'warehouse_id' =>
-                            $stockCount->warehouse_id,
+                        'warehouse_id' => $stockCount->warehouse_id,
 
-                        'warehouse_location_id' =>
-                            $countItem->warehouse_location_id
+                        'warehouse_location_id' => $countItem->warehouse_location_id
                             ?? $stockCount->warehouse_location_id,
 
-                        'transaction_type' =>
-                            $variance > 0
+                        'transaction_type' => $variance > 0
                                 ? 'adjustment_in'
                                 : 'adjustment_out',
 
-                        'direction' =>
-                            $variance > 0
+                        'direction' => $variance > 0
                                 ? 'in'
                                 : 'out',
 
-                        'quantity' =>
-                            abs($variance),
+                        'quantity' => abs($variance),
 
-                        'reference_type' =>
-                            StockCount::class,
+                        'unit_cost' => $unitCost,
 
-                        'reference_id' =>
-                            $stockCount->id,
+                        'reference_type' => StockCount::class,
 
-                        'remarks' =>
-                            'Auto-adjustment from stock count '
+                        'reference_id' => $stockCount->id,
+
+                        'remarks' => 'Auto-adjustment from stock count '
                             .$stockCount->count_number,
                     ]);
 
                     $countItem->update([
-                        'adjustment_created' =>
-                            true,
+                        'adjustment_created' => true,
                     ]);
 
                     $itemName =
@@ -814,36 +746,27 @@ class StockCountService extends BaseService
                         'Stock Count Variance',
                         "Stock Count {$stockCount->count_number} has a variance of {$variance} for {$itemName}.",
                         [
-                            'stock_count_id' =>
-                                $stockCount->id,
+                            'stock_count_id' => $stockCount->id,
 
-                            'item_id' =>
-                                $countItem->item_id,
+                            'item_id' => $countItem->item_id,
 
-                            'system_quantity' =>
-                                $countItem->system_quantity,
+                            'system_quantity' => $countItem->system_quantity,
 
-                            'counted_quantity' =>
-                                $countItem->counted_quantity,
+                            'counted_quantity' => $countItem->counted_quantity,
 
-                            'variance' =>
-                                $variance,
+                            'variance' => $variance,
                         ]
                     );
                 }
 
                 $stockCount->update([
-                    'status' =>
-                        'completed',
+                    'status' => 'completed',
 
-                    'approved_by' =>
-                        auth()->id(),
+                    'approved_by' => auth()->id(),
 
-                    'approved_at' =>
-                        now(),
+                    'approved_at' => now(),
 
-                    'completed_at' =>
-                        now(),
+                    'completed_at' => now(),
                 ]);
 
                 activity()
@@ -854,11 +777,9 @@ class StockCountService extends BaseService
                         $stockCount
                     )
                     ->withProperties([
-                        'title' =>
-                            'Stock Count Approved & Completed',
+                        'title' => 'Stock Count Approved & Completed',
 
-                        'description' =>
-                            'Approved by '
+                        'description' => 'Approved by '
                             .(
                                 auth()->user()->name
                                 ?? 'a user'
@@ -872,17 +793,14 @@ class StockCountService extends BaseService
                     'assignedCounter'
                 );
 
-                if (
-                    $stockCount->assignedCounter
-                ) {
+                if ($stockCount->assignedCounter) {
                     $notifications->notifyUser(
                         $stockCount->assignedCounter,
                         'stock_count_approved',
                         'Stock Count Approved',
                         "Stock Count {$stockCount->count_number} has been approved and completed.",
                         [
-                            'stock_count_id' =>
-                                $stockCount->id,
+                            'stock_count_id' => $stockCount->id,
                         ]
                     );
                 }
@@ -911,17 +829,13 @@ class StockCountService extends BaseService
         }
 
         $stockCount->update([
-            'status' =>
-                'draft',
+            'status' => 'draft',
 
-            'rejection_reason' =>
-                $reason,
+            'rejection_reason' => $reason,
 
-            'rejected_by' =>
-                auth()->id(),
+            'rejected_by' => auth()->id(),
 
-            'rejected_at' =>
-                now(),
+            'rejected_at' => now(),
         ]);
 
         activity()
@@ -932,11 +846,9 @@ class StockCountService extends BaseService
                 $stockCount
             )
             ->withProperties([
-                'title' =>
-                    'Stock Count Rejected',
+                'title' => 'Stock Count Rejected',
 
-                'description' =>
-                    $reason,
+                'description' => $reason,
             ])
             ->log(
                 'stock_count.rejected'
@@ -955,8 +867,7 @@ class StockCountService extends BaseService
                 'Stock Count Rejected',
                 "Stock Count {$stockCount->count_number} was rejected: {$reason}",
                 [
-                    'stock_count_id' =>
-                        $stockCount->id,
+                    'stock_count_id' => $stockCount->id,
                 ]
             );
         }
@@ -988,34 +899,25 @@ class StockCountService extends BaseService
                 $stockCount
                     ->items()
                     ->update([
-                        'counted_quantity' =>
-                            0,
+                        'counted_quantity' => 0,
 
-                        'counted_at' =>
-                            null,
+                        'counted_at' => null,
 
-                        'counted_by' =>
-                            null,
+                        'counted_by' => null,
                     ]);
 
                 $stockCount->update([
-                    'status' =>
-                        'requested',
+                    'status' => 'requested',
 
-                    'recount_requested_by' =>
-                        auth()->id(),
+                    'recount_requested_by' => auth()->id(),
 
-                    'recount_requested_at' =>
-                        now(),
+                    'recount_requested_at' => now(),
 
-                    'rejection_reason' =>
-                        $reason,
+                    'rejection_reason' => $reason,
 
-                    'submitted_by' =>
-                        null,
+                    'submitted_by' => null,
 
-                    'submitted_at' =>
-                        null,
+                    'submitted_at' => null,
                 ]);
             }
         );
@@ -1028,11 +930,9 @@ class StockCountService extends BaseService
                 $stockCount
             )
             ->withProperties([
-                'title' =>
-                    'Recount Requested',
+                'title' => 'Recount Requested',
 
-                'description' =>
-                    $reason
+                'description' => $reason
                     ?? 'A recount was requested for this stock count.',
             ])
             ->log(
@@ -1052,11 +952,9 @@ class StockCountService extends BaseService
                 'Recount Requested',
                 "A recount has been requested for Stock Count {$stockCount->count_number}.",
                 [
-                    'stock_count_id' =>
-                        $stockCount->id,
+                    'stock_count_id' => $stockCount->id,
 
-                    'reason' =>
-                        $reason,
+                    'reason' => $reason,
                 ]
             );
         }
@@ -1075,8 +973,7 @@ class StockCountService extends BaseService
             ->with('item')
             ->get()
             ->filter(
-                fn (StockCountItem $item) =>
-                    (float) $item->variance_quantity
+                fn (StockCountItem $item) => (float) $item->variance_quantity
                     != 0.0
             )
             ->map(
@@ -1087,31 +984,23 @@ class StockCountService extends BaseService
                         (float) $item->variance_quantity;
 
                     return [
-                        'item_id' =>
-                            $item->item_id,
+                        'item_id' => $item->item_id,
 
-                        'item_name' =>
-                            $item->item->name
+                        'item_name' => $item->item->name
                             ?? null,
 
-                        'sku' =>
-                            $item->item->sku
+                        'sku' => $item->item->sku
                             ?? null,
 
-                        'system_quantity' =>
-                            (float) $item->system_quantity,
+                        'system_quantity' => (float) $item->system_quantity,
 
-                        'counted_quantity' =>
-                            (float) $item->counted_quantity,
+                        'counted_quantity' => (float) $item->counted_quantity,
 
-                        'difference' =>
-                            $variance,
+                        'difference' => $variance,
 
-                        'reason' =>
-                            $item->remarks,
+                        'reason' => $item->remarks,
 
-                        'adjustment_recommendation' =>
-                            $variance > 0
+                        'adjustment_recommendation' => $variance > 0
                                 ? 'Increase system quantity by '
                                     .abs($variance)
                                     .' to match the physical count.'
@@ -1129,24 +1018,19 @@ class StockCountService extends BaseService
         StockCount $stockCount
     ): void {
         foreach (
-            $stockCount->items
-            as $item
+            $stockCount->items as $item
         ) {
             $item->update([
-                'system_quantity' =>
-                    StockBalance::where([
-                        'item_id' =>
-                            $item->item_id,
+                'system_quantity' => StockBalance::where([
+                    'item_id' => $item->item_id,
 
-                        'warehouse_id' =>
-                            $stockCount->warehouse_id,
+                    'warehouse_id' => $stockCount->warehouse_id,
 
-                        'warehouse_location_id' =>
-                            $item->warehouse_location_id
-                            ?? $stockCount->warehouse_location_id,
-                    ])->value(
-                        'quantity_on_hand'
-                    ) ?? 0,
+                    'warehouse_location_id' => $item->warehouse_location_id
+                        ?? $stockCount->warehouse_location_id,
+                ])->value(
+                    'quantity_on_hand'
+                ) ?? 0,
             ]);
         }
     }
@@ -1158,26 +1042,24 @@ class StockCountService extends BaseService
         return Item::active()
             ->when(
                 $search !== '',
-                fn ($q) =>
-                    $q->where(
-                        fn ($qq) =>
-                            $qq
-                                ->where(
-                                    'name',
-                                    'like',
-                                    "%{$search}%"
-                                )
-                                ->orWhere(
-                                    'sku',
-                                    'like',
-                                    "%{$search}%"
-                                )
-                                ->orWhere(
-                                    'barcode',
-                                    'like',
-                                    "%{$search}%"
-                                )
-                    )
+                fn ($q) => $q->where(
+                    fn ($qq) => $qq
+                        ->where(
+                            'name',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'sku',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'barcode',
+                            'like',
+                            "%{$search}%"
+                        )
+                )
             )
             ->orderBy('name')
             ->limit($limit)

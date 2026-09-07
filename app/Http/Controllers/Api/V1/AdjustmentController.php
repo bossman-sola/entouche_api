@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
+use App\Models\Item;
 use App\Models\Setting;
 use App\Services\BaseService;
 use App\Services\NotificationService;
@@ -20,12 +21,28 @@ class AdjustmentController extends BaseApiController
 
     public function index(Request $request)
     {
-        return $this->paginated(Adjustment::with('items')->latest()->paginate($request->integer('per_page', 15)));
+        return $this->paginated(Adjustment::with([
+            'items.item',
+            'items.location',
+            'warehouse',
+            'location',
+            'adjustedBy',
+            'approvedBy',
+        ])->latest()->paginate($request->integer('per_page', 15)));
     }
 
     public function show(Adjustment $adjustment)
     {
-        return $this->success($adjustment->load('items'));
+        return $this->success(
+            $adjustment->load([
+                'items.item',
+                'items.location',
+                'warehouse',
+                'location',
+                'adjustedBy',
+                'approvedBy',
+            ])
+        );
     }
 
     public function store(Request $request)
@@ -40,13 +57,42 @@ class AdjustmentController extends BaseApiController
             'items.*.adjustment_quantity' => ['required', 'numeric', 'min:0'],
             'items.*.quantity_before' => ['sometimes', 'numeric'],
             'items.*.quantity_after' => ['sometimes', 'numeric'],
+            'items.*.unit_cost' => ['sometimes', 'nullable', 'numeric', 'min:0'],
         ]);
         $items = $data['items'];
         unset($data['items']);
         $number = (new class extends BaseService {})->generateNumber('adjustments', 'adjustment_number', Setting::get('numbering.adjustment_prefix', 'ADJ'), 6);
         $adjustment = Adjustment::create($data + ['adjustment_number' => $number, 'adjusted_by' => auth()->id(), 'created_by' => auth()->id(), 'status' => 'draft', 'adjustment_date' => now()->toDateString()]);
         foreach ($items as $row) {
-            AdjustmentItem::create($row + ['adjustment_id' => $adjustment->id, 'warehouse_location_id' => $data['warehouse_location_id'] ?? null]);
+            $item = Item::findOrFail(
+                $row['item_id']
+            );
+
+            $unitCost = (float) (
+                $row['unit_cost']
+                ?? $item->unit_cost
+                ?? 0
+            );
+
+            AdjustmentItem::create([
+                'adjustment_id' => $adjustment->id,
+
+                'item_id' => $row['item_id'],
+
+                'warehouse_location_id' => $row['warehouse_location_id']
+                    ?? $data['warehouse_location_id']
+                    ?? null,
+
+                'quantity_before' => $row['quantity_before']
+                    ?? 0,
+
+                'adjustment_quantity' => $row['adjustment_quantity'],
+
+                'quantity_after' => $row['quantity_after']
+                    ?? null,
+
+                'unit_cost' => $unitCost,
+            ]);
         }
 
         return $this->created($adjustment->load('items'), 'Adjustment created');
