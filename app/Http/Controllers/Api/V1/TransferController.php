@@ -58,7 +58,14 @@ class TransferController extends BaseApiController
 
     public function show(Transfer $transfer)
     {
-        return $this->success($transfer->load('items'));
+        return $this->success(
+            $transfer->load([
+                'items',
+                'requester.roles',
+                'approver.roles',
+                'completer.roles',
+            ])
+        );
     }
 
     public function update(Request $request, Transfer $transfer)
@@ -153,7 +160,7 @@ class TransferController extends BaseApiController
             $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $transfer->from_warehouse_id, 'warehouse_location_id' => $transfer->from_location_id, 'transaction_type' => 'transfer_out', 'direction' => 'out', 'quantity' => $item->quantity, 'reference_type' => Transfer::class, 'reference_id' => $transfer->id]);
             $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $transfer->to_warehouse_id, 'warehouse_location_id' => $transfer->to_location_id, 'transaction_type' => 'transfer_in', 'direction' => 'in', 'quantity' => $item->quantity, 'reference_type' => Transfer::class, 'reference_id' => $transfer->id]);
         }
-        $transfer->update(['status' => 'completed', 'completed_at' => now()]);
+        $transfer->update(['status' => 'completed', 'completed_by' => auth()->id(), 'completed_at' => now()]);
         $this->notifications->notifyAdmins(
             'transfer_completed',
             'Transfer Completed',

@@ -17,6 +17,7 @@ class Transfer extends Model
         'to_location_id',
         'requested_by',
         'approved_by',
+        'completed_by',
         'created_by',
         'transfer_date',
         'approved_at',
@@ -28,11 +29,47 @@ class Transfer extends Model
 
     protected function casts(): array
     {
-        return ['transfer_date' => 'date', 'approved_at' => 'datetime', 'completed_at' => 'datetime'];
+        return [
+            'transfer_date' => 'date',
+            'approved_at' => 'datetime',
+            'completed_at' => 'datetime',
+        ];
     }
 
     public function items()
     {
         return $this->hasMany(TransferItem::class);
+    }
+
+    public function requester()
+    {
+        return $this->belongsTo(
+            User::class,
+            'requested_by'
+        );
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(
+            User::class,
+            'approved_by'
+        );
+    }
+
+    public function completer()
+    {
+        return $this->belongsTo(
+            User::class,
+            'completed_by'
+        );
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(
+            User::class,
+            'created_by'
+        );
     }
 }
