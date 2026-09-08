@@ -11,42 +11,121 @@ class TransactionController extends BaseApiController
 {
     public function index(Request $request)
     {
-        $transactions = InventoryTransaction::with(['item', 'warehouse', 'location', 'performer'])
-            ->when($request->item_id, fn ($q, $v) => $q->where('item_id', $v))
-            ->when($request->warehouse_id, fn ($q, $v) => $q->where('warehouse_id', $v))
-            ->when($request->transaction_type, fn ($q, $v) => $q->where('transaction_type', $v))
+        $transactions = InventoryTransaction::with([
+            'item.category',
+            'item.unit',
+            'warehouse',
+            'location',
+            'performer',
+        ])
+            ->when(
+                $request->item_id,
+                fn ($q, $v) => $q->where('item_id', $v)
+            )
+            ->when(
+                $request->warehouse_id,
+                fn ($q, $v) => $q->where('warehouse_id', $v)
+            )
+            ->when(
+                $request->transaction_type,
+                fn ($q, $v) => $q->where('transaction_type', $v)
+            )
+            ->when(
+                $request->direction,
+                fn ($q, $v) => $q->where('direction', $v)
+            )
+            ->when(
+                $request->date_from,
+                fn ($q, $v) => $q->whereDate('transaction_date', '>=', $v)
+            )
+            ->when(
+                $request->date_to,
+                fn ($q, $v) => $q->whereDate('transaction_date', '<=', $v)
+            )
             ->latest('transaction_date')
-            ->paginate($request->integer('per_page', 20));
+            ->paginate(
+                $request->integer('per_page', 20)
+            );
 
-        return $this->paginated($transactions);
-    }
+        /*
+         * Attach transfer route information to every transfer ledger row.
+         *
+         * InventoryTransaction itself only knows the warehouse/location
+         * involved in that individual movement. The full From -> To route
+         * belongs to the parent Transfer record.
+         */
+        $transferIds = $transactions->getCollection()
+            ->filter(
+                fn ($transaction) =>
+                    $transaction->reference_type === Transfer::class &&
+                    $transaction->reference_id
+            )
+            ->pluck('reference_id')
+            ->unique()
+            ->values();
 
-  public function show(InventoryTransaction $txn)
-{
-    $txn->load([
-        'item.category',
-        'item.unit',
-        'warehouse',
-        'location',
-        'performer',
-    ]);
-
-    $data = $txn->toArray();
-
-    if (
-        $txn->reference_type === Transfer::class &&
-        $txn->reference_id
-    ) {
-        $transfer = Transfer::with([
+        $transfers = Transfer::with([
             'fromWarehouse',
             'fromLocation',
             'toWarehouse',
             'toLocation',
-        ])->find($txn->reference_id);
+        ])
+            ->whereIn('id', $transferIds)
+            ->get()
+            ->keyBy('id');
 
-        $data['transfer'] = $transfer;
+        $transactions->getCollection()->transform(
+            function ($transaction) use ($transfers) {
+                $data = $transaction->toArray();
+
+                if (
+                    $transaction->reference_type === Transfer::class &&
+                    $transaction->reference_id
+                ) {
+                    $transfer = $transfers->get(
+                        $transaction->reference_id
+                    );
+
+                    $data['transfer'] = $transfer
+                        ? $transfer->toArray()
+                        : null;
+                }
+
+                return $data;
+            }
+        );
+
+        return $this->paginated($transactions);
     }
 
-    return $this->success($data);
-}
+    public function show(InventoryTransaction $txn)
+    {
+        $txn->load([
+            'item.category',
+            'item.unit',
+            'warehouse',
+            'location',
+            'performer',
+        ]);
+
+        $data = $txn->toArray();
+
+        if (
+            $txn->reference_type === Transfer::class &&
+            $txn->reference_id
+        ) {
+            $transfer = Transfer::with([
+                'fromWarehouse',
+                'fromLocation',
+                'toWarehouse',
+                'toLocation',
+            ])->find($txn->reference_id);
+
+            $data['transfer'] = $transfer
+                ? $transfer->toArray()
+                : null;
+        }
+
+        return $this->success($data);
+    }
 }

@@ -1,4 +1,5 @@
 $kind: http-request
+name: Get Transaction
 auth:
   type: bearer
   credentials:
@@ -6,6 +7,6 @@ auth:
 examples: .resources/Get Transaction.resources/examples
 order: 2000
 method: GET
-url: "{{base_url}}/api/v1/transactions/{{txn_id}}"
+url: "{{staging_url}}/api/v1/transactions/{{txn_id}}"
 headers:
   Accept: application/json
