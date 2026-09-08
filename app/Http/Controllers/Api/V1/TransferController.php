@@ -151,66 +151,66 @@ class TransferController extends BaseApiController
         return $this->success($transfer->fresh('items'), 'Transfer approved');
     }
 
-public function complete(Transfer $transfer)
-{
-    if ($transfer->status !== 'approved') {
-        return $this->error(
-            'Only approved transfers can be completed.',
-            null,
-            422
+    public function complete(Transfer $transfer)
+    {
+        if ($transfer->status !== 'approved') {
+            return $this->error(
+                'Only approved transfers can be completed.',
+                null,
+                422
+            );
+        }
+
+        foreach ($transfer->items as $transferItem) {
+            $item = \App\Models\Item::findOrFail($transferItem->item_id);
+
+            $quantity = (float) $transferItem->quantity;
+            $unitCost = (float) ($item->unit_cost ?? 0);
+            $totalValue = $quantity * $unitCost;
+
+            $this->stock->move([
+                'item_id' => $transferItem->item_id,
+                'warehouse_id' => $transfer->from_warehouse_id,
+                'warehouse_location_id' => $transfer->from_location_id,
+                'transaction_type' => 'transfer_out',
+                'direction' => 'out',
+                'quantity' => $quantity,
+                'unit_cost' => $unitCost,
+                'total_value' => $totalValue,
+                'reference_type' => Transfer::class,
+                'reference_id' => $transfer->id,
+            ]);
+
+            $this->stock->move([
+                'item_id' => $transferItem->item_id,
+                'warehouse_id' => $transfer->to_warehouse_id,
+                'warehouse_location_id' => $transfer->to_location_id,
+                'transaction_type' => 'transfer_in',
+                'direction' => 'in',
+                'quantity' => $quantity,
+                'unit_cost' => $unitCost,
+                'total_value' => $totalValue,
+                'reference_type' => Transfer::class,
+                'reference_id' => $transfer->id,
+            ]);
+        }
+
+        $transfer->update([
+            'status' => 'completed',
+            'completed_by' => auth()->id(),
+            'completed_at' => now(),
+        ]);
+
+        $this->notifications->notifyAdmins(
+            'transfer_completed',
+            'Transfer Completed',
+            "Transfer {$transfer->transfer_number} has been completed successfully.",
+            ['transfer_id' => $transfer->id],
+        );
+
+        return $this->success(
+            $transfer,
+            'Transfer completed'
         );
     }
-
-    foreach ($transfer->items as $transferItem) {
-        $item = \App\Models\Item::findOrFail($transferItem->item_id);
-
-        $quantity = (float) $transferItem->quantity;
-        $unitCost = (float) ($item->unit_cost ?? 0);
-        $totalValue = $quantity * $unitCost;
-
-        $this->stock->move([
-            'item_id' => $transferItem->item_id,
-            'warehouse_id' => $transfer->from_warehouse_id,
-            'warehouse_location_id' => $transfer->from_location_id,
-            'transaction_type' => 'transfer_out',
-            'direction' => 'out',
-            'quantity' => $quantity,
-            'unit_cost' => $unitCost,
-            'total_value' => $totalValue,
-            'reference_type' => Transfer::class,
-            'reference_id' => $transfer->id,
-        ]);
-
-        $this->stock->move([
-            'item_id' => $transferItem->item_id,
-            'warehouse_id' => $transfer->to_warehouse_id,
-            'warehouse_location_id' => $transfer->to_location_id,
-            'transaction_type' => 'transfer_in',
-            'direction' => 'in',
-            'quantity' => $quantity,
-            'unit_cost' => $unitCost,
-            'total_value' => $totalValue,
-            'reference_type' => Transfer::class,
-            'reference_id' => $transfer->id,
-        ]);
-    }
-
-    $transfer->update([
-        'status' => 'completed',
-        'completed_by' => auth()->id(),
-        'completed_at' => now(),
-    ]);
-
-    $this->notifications->notifyAdmins(
-        'transfer_completed',
-        'Transfer Completed',
-        "Transfer {$transfer->transfer_number} has been completed successfully.",
-        ['transfer_id' => $transfer->id],
-    );
-
-    return $this->success(
-        $transfer,
-        'Transfer completed'
-    );
-}
 }
