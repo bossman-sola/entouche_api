@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\InventoryTransaction;
+use App\Models\Transfer;
 use Illuminate\Http\Request;
 
 class TransactionController extends BaseApiController
@@ -20,8 +21,32 @@ class TransactionController extends BaseApiController
         return $this->paginated($transactions);
     }
 
-    public function show(InventoryTransaction $txn)
-    {
-        return $this->success($txn->load(['item', 'warehouse', 'location', 'performer']));
+  public function show(InventoryTransaction $txn)
+{
+    $txn->load([
+        'item.category',
+        'item.unit',
+        'warehouse',
+        'location',
+        'performer',
+    ]);
+
+    $data = $txn->toArray();
+
+    if (
+        $txn->reference_type === Transfer::class &&
+        $txn->reference_id
+    ) {
+        $transfer = Transfer::with([
+            'fromWarehouse',
+            'fromLocation',
+            'toWarehouse',
+            'toLocation',
+        ])->find($txn->reference_id);
+
+        $data['transfer'] = $transfer;
     }
+
+    return $this->success($data);
+}
 }

@@ -179,6 +179,7 @@ class TransferController extends BaseApiController
                 'total_value' => $totalValue,
                 'reference_type' => Transfer::class,
                 'reference_id' => $transfer->id,
+                'remarks' => $transfer->notes,
             ]);
 
             $this->stock->move([
@@ -192,6 +193,7 @@ class TransferController extends BaseApiController
                 'total_value' => $totalValue,
                 'reference_type' => Transfer::class,
                 'reference_id' => $transfer->id,
+                'remarks' => $transfer->notes,
             ]);
         }
 

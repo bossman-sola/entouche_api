@@ -72,4 +72,36 @@ class Transfer extends Model
             'created_by'
         );
     }
+
+    public function fromWarehouse()
+    {
+        return $this->belongsTo(
+            Warehouse::class,
+            'from_warehouse_id'
+        );
+    }
+
+    public function fromLocation()
+    {
+        return $this->belongsTo(
+            Location::class,
+            'from_location_id'
+        );
+    }
+
+    public function toWarehouse()
+    {
+        return $this->belongsTo(
+            Warehouse::class,
+            'to_warehouse_id'
+        );
+    }
+
+    public function toLocation()
+    {
+        return $this->belongsTo(
+            Location::class,
+            'to_location_id'
+        );
+    }
 }
