@@ -125,6 +125,12 @@ class TransferController extends BaseApiController
     public function submit(Transfer $transfer)
     {
         $transfer->update(['status' => 'pending_approval']);
+        $this->notifications->notifyAdmins(
+            'transfer_pending',
+            'Transfer Pending Approval',
+            "Transfer {$transfer->transfer_number} has been submitted and is pending approval.",
+            ['transfer_id' => $transfer->id],
+        );
 
         return $this->success($transfer, 'Transfer submitted');
     }
