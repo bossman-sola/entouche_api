@@ -139,12 +139,29 @@ class TransferController extends BaseApiController
     {
         $transfer->update(['status' => 'rejected', 'rejection_reason' => $request->reason]);
 
+        $this->notifications->notifyAdmins(
+            'transfer_rejected',
+            'Transfer Rejected',
+            "Transfer {$transfer->transfer_number} has been rejected.",
+            ['transfer_id' => $transfer->id],
+        );
+
         return $this->success($transfer, 'Transfer rejected');
     }
 
     public function cancel(Transfer $transfer)
     {
         $transfer->update(['status' => 'cancelled']);
+
+        //send notification if status is not draft
+        if ($transfer->status !== 'draft') {
+            $this->notifications->notifyAdmins(
+                'transfer_cancelled',
+                'Transfer Cancelled',
+                "Transfer {$transfer->transfer_number} has been cancelled.",
+                ['transfer_id' => $transfer->id],
+            );
+        }
 
         return $this->success($transfer, 'Transfer cancelled');
     }
