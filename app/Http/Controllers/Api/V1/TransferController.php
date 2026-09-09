@@ -135,18 +135,45 @@ class TransferController extends BaseApiController
         return $this->success($transfer, 'Transfer submitted');
     }
 
-    public function reject(Request $request, Transfer $transfer)
-    {
-        $transfer->update(['status' => 'rejected', 'rejection_reason' => $request->reason]);
+    public function reject(
+        Request $request,
+        Transfer $transfer
+    ) {
+        $data = $request->validate([
+            'reason' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
+        ]);
+
+        if ($transfer->status !== 'pending_approval') {
+            return $this->error(
+                'Only transfers pending approval can be rejected.',
+                null,
+                422
+            );
+        }
+
+        $transfer->update([
+            'status' => 'rejected',
+            'rejection_reason' => $data['reason'],
+        ]);
 
         $this->notifications->notifyAdmins(
             'transfer_rejected',
             'Transfer Rejected',
             "Transfer {$transfer->transfer_number} has been rejected.",
-            ['transfer_id' => $transfer->id],
+            [
+                'transfer_id' => $transfer->id,
+                'reason' => $data['reason'],
+            ],
         );
 
-        return $this->success($transfer, 'Transfer rejected');
+        return $this->success(
+            $transfer,
+            'Transfer rejected'
+        );
     }
 
     public function cancel(Transfer $transfer)
