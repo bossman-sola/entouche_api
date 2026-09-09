@@ -151,10 +151,13 @@ class TransferController extends BaseApiController
 
     public function cancel(Transfer $transfer)
     {
-        $transfer->update(['status' => 'cancelled']);
+        $previousStatus = $transfer->status;
 
-        //send notification if status is not draft
-        if ($transfer->status !== 'draft') {
+        $transfer->update([
+            'status' => 'cancelled',
+        ]);
+
+        if ($previousStatus !== 'draft') {
             $this->notifications->notifyAdmins(
                 'transfer_cancelled',
                 'Transfer Cancelled',
@@ -163,7 +166,10 @@ class TransferController extends BaseApiController
             );
         }
 
-        return $this->success($transfer, 'Transfer cancelled');
+        return $this->success(
+            $transfer,
+            'Transfer cancelled'
+        );
     }
 
     public function approve(Transfer $transfer)
