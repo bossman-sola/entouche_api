@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Models\Item;
 use App\Models\Setting;
 use App\Models\Transfer;
 use App\Models\TransferItem;
@@ -60,7 +61,14 @@ class TransferController extends BaseApiController
     {
         return $this->success(
             $transfer->load([
-                'items',
+                'items.item.category',
+                'items.item.unit',
+
+                'fromWarehouse',
+                'fromLocation',
+                'toWarehouse',
+                'toLocation',
+
                 'requester.roles',
                 'approver.roles',
                 'completer.roles',
@@ -162,7 +170,7 @@ class TransferController extends BaseApiController
         }
 
         foreach ($transfer->items as $transferItem) {
-            $item = \App\Models\Item::findOrFail($transferItem->item_id);
+            $item = Item::findOrFail($transferItem->item_id);
 
             $quantity = (float) $transferItem->quantity;
             $unitCost = (float) ($item->unit_cost ?? 0);
