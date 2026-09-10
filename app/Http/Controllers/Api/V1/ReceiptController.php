@@ -244,6 +244,15 @@ class ReceiptController extends BaseApiController
             'status' => 'approved',
         ]);
 
+        $this->notifications->notifyAdmins(
+            'receipt_approved',
+            'Receipt Approved',
+            "Receipt {$receipt->receipt_number} has been approved.",
+            [
+                'receipt_id' => $receipt->id,
+            ],
+        );
+
         return $this->success(
             $receipt->fresh()->load(
                 $this->receiptRelations()
