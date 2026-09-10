@@ -9,6 +9,6 @@ auth:
 examples: .resources/List Transfers.resources/examples
 order: 1000
 method: GET
-url: "{{base_url}}/api/v1/transfers?page=1"
+url: "{{staging_url}}/api/v1/transfers?page=1"
 headers:
   Accept: application/json
