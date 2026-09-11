@@ -35,12 +35,13 @@ class AdjustmentController extends BaseApiController
     {
         return $this->success(
             $adjustment->load([
-                'items.item',
+                'items.item.category',
+                'items.item.unit',
                 'items.location',
                 'warehouse',
                 'location',
-                'adjustedBy',
-                'approvedBy',
+                'adjustedBy.roles',
+                'approvedBy.roles',
             ])
         );
     }
