@@ -119,44 +119,169 @@ class AdjustmentController extends BaseApiController
         return $this->success(null, 'Adjustment deleted');
     }
 
-    public function submit(Adjustment $adjustment)
-    {
-        $adjustment->update(['status' => 'pending_approval']);
-        $this->notifications->notifyAdmins(
-            'adjustment_pending',
-            'Adjustment Pending',
-            "Adjustment {$adjustment->adjustment_number} has been submitted and is awaiting approval.",
-            ['adjustment_id' => $adjustment->id],
+   public function submit(Adjustment $adjustment)
+{
+    if ($adjustment->status !== 'draft') {
+        return $this->error(
+            'Only draft adjustments can be submitted.',
+            null,
+            422
         );
-
-        return $this->success($adjustment, 'Adjustment submitted');
     }
 
-    public function reject(Request $request, Adjustment $adjustment)
-    {
-        $adjustment->update([
-            'status' => 'rejected',
-            'rejection_reason' => $request->reason,
-        ]);
+    $adjustment->update([
+        'status' => 'pending_approval',
+    ]);
 
-        return $this->success($adjustment, 'Adjustment rejected');
+    $this->notifications->notifyAdmins(
+        'adjustment_pending',
+        'Adjustment Pending',
+        "Adjustment {$adjustment->adjustment_number} has been submitted and is awaiting approval.",
+        [
+            'adjustment_id' => $adjustment->id,
+        ],
+    );
+
+    return $this->success(
+        $adjustment->fresh('items'),
+        'Adjustment submitted'
+    );
+}
+
+   public function reject(Request $request, Adjustment $adjustment)
+{
+    if ($adjustment->status !== 'pending_approval') {
+        return $this->error(
+            'Only adjustments pending approval can be rejected.',
+            null,
+            422
+        );
     }
+
+    $data = $request->validate([
+        'reason' => ['required', 'string'],
+    ]);
+
+    $adjustment->update([
+        'status' => 'rejected',
+        'rejection_reason' => $data['reason'],
+    ]);
+
+    $this->notifications->notifyAdmins(
+        'adjustment_rejected',
+        'Adjustment Rejected',
+        "Adjustment {$adjustment->adjustment_number} has been rejected.",
+        [
+            'adjustment_id' => $adjustment->id,
+            'reason' => $data['reason'],
+        ],
+    );
+
+    return $this->success(
+        $adjustment->fresh('items'),
+        'Adjustment rejected'
+    );
+}
 
     public function cancel(Adjustment $adjustment)
     {
+        $previousStatus = $adjustment->status;
+
         $adjustment->update(['status' => 'cancelled']);
 
-        return $this->success($adjustment, 'Adjustment cancelled');
-    }
-
-    public function approve(Adjustment $adjustment)
-    {
-        foreach ($adjustment->items as $item) {
-            $direction = $adjustment->adjustment_type === 'decrease' ? 'out' : 'in';
-            $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $adjustment->warehouse_id, 'warehouse_location_id' => $item->warehouse_location_id ?? $adjustment->warehouse_location_id, 'transaction_type' => $direction === 'in' ? 'adjustment_in' : 'adjustment_out', 'direction' => $direction, 'quantity' => $item->adjustment_quantity, 'reference_type' => Adjustment::class, 'reference_id' => $adjustment->id]);
+        // Do not send a notification when cancelling a draft.
+        if($previousStatus !== 'draft'){
+             $this->notifications->notifyAdmins(
+                'adjustment_cancelled',
+                'Adjustment Cancelled',
+                "Adjustment {$adjustment->adjustment_number} has been cancelled.",
+                [
+                    'adjustment_id' => $adjustment->id,
+                ],
+            );
         }
-        $adjustment->update(['status' => 'approved', 'approved_by' => auth()->id(), 'approved_at' => now()]);
 
-        return $this->success($adjustment->fresh('items'), 'Adjustment approved');
+        return $this->success(
+            $adjustment->fresh(),
+            'Adjustment cancelled'
+        );
     }
+
+public function approve(Adjustment $adjustment)
+{
+    if ($adjustment->status !== 'pending_approval') {
+        return $this->error(
+            'Only adjustments pending approval can be approved.',
+            null,
+            422
+        );
+    }
+
+    foreach ($adjustment->items as $item) {
+        $direction =
+            $adjustment->adjustment_type === 'decrease'
+                ? 'out'
+                : 'in';
+
+        $this->stock->move([
+            'item_id' => $item->item_id,
+
+            'warehouse_id' =>
+                $adjustment->warehouse_id,
+
+            'warehouse_location_id' =>
+                $item->warehouse_location_id
+                ?? $adjustment->warehouse_location_id,
+
+            'transaction_type' =>
+                $direction === 'in'
+                    ? 'adjustment_in'
+                    : 'adjustment_out',
+
+            'direction' => $direction,
+
+            'quantity' =>
+                $item->adjustment_quantity,
+
+            'unit_cost' =>
+                $item->unit_cost ?? 0,
+
+            'reference_type' =>
+                Adjustment::class,
+
+            'reference_id' =>
+                $adjustment->id,
+
+            'remarks' =>
+                $adjustment->reason,
+        ]);
+    }
+
+    $adjustment->update([
+        'status' => 'approved',
+        'approved_by' => auth()->id(),
+        'approved_at' => now(),
+    ]);
+
+    $this->notifications->notifyAdmins(
+        'adjustment_approved',
+        'Adjustment Approved',
+        "Adjustment {$adjustment->adjustment_number} has been approved and inventory has been updated.",
+        [
+            'adjustment_id' => $adjustment->id,
+        ],
+    );
+
+    return $this->success(
+        $adjustment->fresh([
+            'items.item',
+            'items.location',
+            'warehouse',
+            'location',
+            'adjustedBy',
+            'approvedBy',
+        ]),
+        'Adjustment approved'
+    );
+}
 }
