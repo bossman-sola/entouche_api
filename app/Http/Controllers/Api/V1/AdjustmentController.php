@@ -7,6 +7,7 @@ use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
 use App\Models\Item;
 use App\Models\Setting;
+use App\Models\StockBalance;
 use App\Services\BaseService;
 use App\Services\NotificationService;
 use App\Services\StockMovementService;
@@ -105,12 +106,6 @@ class AdjustmentController extends BaseApiController
                 'min:0',
             ],
 
-            'items.*.quantity_before' => [
-                'sometimes',
-                'numeric',
-                'min:0',
-            ],
-
             'items.*.unit_cost' => [
                 'sometimes',
                 'nullable',
@@ -156,8 +151,31 @@ class AdjustmentController extends BaseApiController
                 ?? 0
             );
 
+            $locationId =
+                $row['warehouse_location_id']
+                ?? $data['warehouse_location_id']
+                ?? null;
+
+            /*
+             * Always get current stock from the database.
+             * Do not trust quantity_before from the frontend.
+             */
+            $stockBalance = StockBalance::where(
+                'item_id',
+                $row['item_id']
+            )
+                ->where(
+                    'warehouse_id',
+                    $data['warehouse_id']
+                )
+                ->where(
+                    'warehouse_location_id',
+                    $locationId
+                )
+                ->first();
+
             $quantityBefore = (float) (
-                $row['quantity_before']
+                $stockBalance?->quantity_on_hand
                 ?? 0
             );
 
@@ -209,9 +227,7 @@ class AdjustmentController extends BaseApiController
                     $row['item_id'],
 
                 'warehouse_location_id' =>
-                    $row['warehouse_location_id']
-                    ?? $data['warehouse_location_id']
-                    ?? null,
+                    $locationId,
 
                 'quantity_before' =>
                     $quantityBefore,
@@ -422,10 +438,6 @@ class AdjustmentController extends BaseApiController
                 'cancelled',
         ]);
 
-        /*
-         * Do not send a notification
-         * when cancelling a draft.
-         */
         if (
             $previousStatus !==
             'draft'
@@ -475,10 +487,6 @@ class AdjustmentController extends BaseApiController
             $adjustment->items
             as $item
         ) {
-            /*
-             * Determine the actual stock
-             * movement required.
-             */
             if (
                 $adjustment->adjustment_type
                 === 'set_stock'
