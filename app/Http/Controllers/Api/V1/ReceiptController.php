@@ -263,8 +263,10 @@ class ReceiptController extends BaseApiController
 
     public function cancel(Receipt $receipt)
     {
+        $previousStatus = $receipt->status;
+
         if (! in_array(
-            $receipt->status,
+            $previousStatus,
             ['draft', 'submitted', 'approved'],
             true
         )) {
@@ -278,6 +280,17 @@ class ReceiptController extends BaseApiController
         $receipt->update([
             'status' => 'cancelled',
         ]);
+
+        if( $previousStatus !== 'draft') {
+            $this->notifications->notifyAdmins(
+                'receipt_cancelled',
+                'Receipt Cancelled',
+                "Receipt {$receipt->receipt_number} has been cancelled.",
+                [
+                    'receipt_id' => $receipt->id,
+                ],
+            );
+        }
 
         return $this->success(
             $receipt->fresh(),
