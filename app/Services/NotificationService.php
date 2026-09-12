@@ -27,7 +27,7 @@ class NotificationService extends BaseService
 
     public function notifyUser(User $user, string $type, string $title, string $description, array $data = []): void
     {
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             return;
         }
 
@@ -46,5 +46,30 @@ class NotificationService extends BaseService
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function notifyRoles(
+        array $roles,
+        string $type,
+        string $title,
+        string $description,
+        array $data = []
+    ): void {
+        $users = User::role($roles)
+            ->where('status', 'active')
+            ->get()
+            ->unique('id');
+
+        if ($users->isEmpty()) {
+            return;
+        }
+
+        $this->send(
+            $users,
+            $type,
+            $title,
+            $description,
+            $data
+        );
     }
 }

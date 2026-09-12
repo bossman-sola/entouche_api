@@ -1,4 +1,5 @@
 $kind: http-request
+name: Create Stock Count
 auth:
   type: bearer
   credentials:
@@ -6,7 +7,7 @@ auth:
 examples: .resources/Create Stock Count.resources/examples
 order: 2000
 method: POST
-url: "{{base_url}}/api/v1/stock-counts"
+url: http://127.0.0.1:8000/api/v1/stock-counts
 headers:
   Accept: application/json
   Content-Type: application/json

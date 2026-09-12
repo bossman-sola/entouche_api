@@ -1,0 +1,63 @@
+$kind: http-example
+request:
+  url: http://127.0.0.1:8000/api/v1/maintenance
+  method: POST
+  body:
+    type: json
+    content: |-
+      {
+          "title": "Scheduled System Maintenance",
+          "message": "The inventory management system will be temporarily unavailable while scheduled maintenance is performed.",
+          "starts_at": "2026-08-22 06:15:00",
+          "ends_at": "2026-08-22 06:30:00",
+          "notify_before_minutes": 5,
+          "affected_service": "entire_system",
+          "send_email_notifications": true,
+          "show_maintenance_page": true
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Sat, 22 Aug 2026 01:14:20 GMT
+    content-type: application/json
+    vary: Origin
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Maintenance scheduled successfully",
+        "data": {
+          "title": "Scheduled System Maintenance",
+          "message": "The inventory management system will be temporarily unavailable while scheduled maintenance is performed.",
+          "starts_at": "2026-08-22T06:15:00.000000Z",
+          "ends_at": "2026-08-22T06:30:00.000000Z",
+          "notify_before_minutes": 5,
+          "affected_service": "entire_system",
+          "send_email_notifications": true,
+          "show_maintenance_page": true,
+          "status": "scheduled",
+          "created_by": 2,
+          "updated_at": "2026-08-22T01:14:20.000000Z",
+          "created_at": "2026-08-22T01:14:20.000000Z",
+          "id": 2,
+          "creator": {
+            "id": 2,
+            "name": "System Administrator",
+            "email": "admin@inventory.local",
+            "phone": null,
+            "status": "active",
+            "email_verified_at": null,
+            "created_at": "2026-06-30T03:38:09.000000Z",
+            "updated_at": "2026-06-30T14:14:15.000000Z",
+            "deleted_at": null
+          }
+        },
+        "errors": null
+      }
+order: 1787361265325

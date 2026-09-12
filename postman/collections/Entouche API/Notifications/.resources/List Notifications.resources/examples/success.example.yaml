@@ -1,0 +1,280 @@
+$kind: http-example
+request:
+  url: "{{staging_url}}/api/v1/notifications?page=1&per_page=15"
+  method: GET
+  queryParams:
+    page: "1"
+    per_page: "15"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    cache-control: no-cache, private
+    content-type: application/json
+    date: Tue, 08 Sep 2026 01:20:25 GMT
+    nel: '{"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}'
+    report-to: '{"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=qU3BBtrls7suu6uJKOAMv4HouxBFx8L3NM1bl8QyDIg%3D\u0026sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d\u0026ts=1788830425"}],"max_age":3600}'
+    reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=qU3BBtrls7suu6uJKOAMv4HouxBFx8L3NM1bl8QyDIg%3D&sid=e11707d5-02a7-43ef-b45e-2cf4d2036f7d&ts=1788830425"
+    server: Heroku
+    vary: Origin,Authorization
+    via: 1.1 heroku-router
+    transfer-encoding: chunked
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Success",
+        "data": [
+          {
+            "id": "c59deec8-b0a6-49d4-ba21-deb0282d9aae",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "transfer_approved",
+              "title": "Transfer Approved",
+              "description": "Transfer TRF-000001 has been approved and is ready for completion.",
+              "transfer_id": 1
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T21:41:49.000000Z",
+            "updated_at": "2026-09-07T21:41:49.000000Z"
+          },
+          {
+            "id": "1fade809-2476-4092-8701-c481a27c235f",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_cancelled",
+              "title": "Stock Count Cancelled",
+              "description": "Stock Count SC-000006 has been cancelled.",
+              "stock_count_id": 6
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T21:04:56.000000Z",
+            "updated_at": "2026-09-07T21:04:56.000000Z"
+          },
+          {
+            "id": "c859aa8f-64c6-4556-a112-bf50540ec3e7",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_approved",
+              "title": "Stock Count Approved",
+              "description": "Stock Count SC-000007 has been approved and completed.",
+              "stock_count_id": 7
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T21:02:46.000000Z",
+            "updated_at": "2026-09-07T21:02:46.000000Z"
+          },
+          {
+            "id": "f5771bc0-b6bd-4b49-85f7-db9a11c810cf",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_pending_review",
+              "title": "Stock Count Pending Review",
+              "description": "Stock Count SC-000007 has been submitted and is awaiting approval.",
+              "stock_count_id": 7
+            },
+            "read_at": "2026-09-07T14:01:08.000000Z",
+            "created_at": "2026-09-07T13:45:58.000000Z",
+            "updated_at": "2026-09-07T14:01:08.000000Z"
+          },
+          {
+            "id": "e64825e7-7f2e-41c5-961e-bb1f437fcf7e",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_started",
+              "title": "Stock Count Started",
+              "description": "Stock Count SC-000007 has been started.",
+              "stock_count_id": 7
+            },
+            "read_at": "2026-09-07T14:02:10.000000Z",
+            "created_at": "2026-09-07T13:45:51.000000Z",
+            "updated_at": "2026-09-07T14:02:10.000000Z"
+          },
+          {
+            "id": "b81e7fea-5321-4c13-9ae6-b94e37d1e8f6",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_recount_requested",
+              "title": "Recount Requested",
+              "reason": null,
+              "description": "A recount has been requested for Stock Count SC-000007.",
+              "stock_count_id": 7
+            },
+            "read_at": "2026-09-07T14:02:13.000000Z",
+            "created_at": "2026-09-07T13:45:48.000000Z",
+            "updated_at": "2026-09-07T14:02:13.000000Z"
+          },
+          {
+            "id": "a2cfa38b-41d8-4d3c-b93c-ddf7e772536a",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_pending_review",
+              "title": "Stock Count Pending Review",
+              "description": "Stock Count SC-000007 has been submitted and is awaiting approval.",
+              "stock_count_id": 7
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:45:44.000000Z",
+            "updated_at": "2026-09-07T13:45:44.000000Z"
+          },
+          {
+            "id": "d2c9d2fb-54c6-438a-b9a8-c2bc0563eeb6",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_approved",
+              "title": "Stock Count Approved",
+              "description": "Stock Count SC-000008 has been approved and completed.",
+              "stock_count_id": 8
+            },
+            "read_at": "2026-09-07T13:56:41.000000Z",
+            "created_at": "2026-09-07T13:45:34.000000Z",
+            "updated_at": "2026-09-07T13:56:41.000000Z"
+          },
+          {
+            "id": "5a25029a-6aa8-4092-965f-9cca324cc27e",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_variance",
+              "title": "Stock Count Variance",
+              "item_id": 5,
+              "variance": -1,
+              "description": "Stock Count SC-000008 has a variance of -1 for Cisco 24-Port Network Switch.",
+              "stock_count_id": 8,
+              "system_quantity": "1.000",
+              "counted_quantity": "0.000"
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:45:34.000000Z",
+            "updated_at": "2026-09-07T13:45:34.000000Z"
+          },
+          {
+            "id": "44b23406-7e63-4efa-9517-320ef1ef6efc",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_variance",
+              "title": "Stock Count Variance",
+              "item_id": 9,
+              "variance": 1,
+              "description": "Stock Count SC-000008 has a variance of 1 for Industrial Air Compressor.",
+              "stock_count_id": 8,
+              "system_quantity": "0.000",
+              "counted_quantity": "1.000"
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:45:34.000000Z",
+            "updated_at": "2026-09-07T13:45:34.000000Z"
+          },
+          {
+            "id": "9ad8bee0-2954-4ebc-a90d-fce1c3a7d67b",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_pending_review",
+              "title": "Stock Count Pending Review",
+              "description": "Stock Count SC-000008 has been submitted and is awaiting approval.",
+              "stock_count_id": 8
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:44:05.000000Z",
+            "updated_at": "2026-09-07T13:44:05.000000Z"
+          },
+          {
+            "id": "a65218cc-1874-4b17-8a28-e2c7729ba080",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_started",
+              "title": "Stock Count Started",
+              "description": "Stock Count SC-000007 has been started.",
+              "stock_count_id": 7
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:43:10.000000Z",
+            "updated_at": "2026-09-07T13:43:10.000000Z"
+          },
+          {
+            "id": "05cca530-d156-4183-ae05-83889f4b006d",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_started",
+              "title": "Stock Count Started",
+              "description": "Stock Count SC-000008 has been started.",
+              "stock_count_id": 8
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:42:15.000000Z",
+            "updated_at": "2026-09-07T13:42:15.000000Z"
+          },
+          {
+            "id": "2d8e8a16-1f46-4008-af6b-6a8f0767312c",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_recount_requested",
+              "title": "Recount Requested",
+              "reason": null,
+              "description": "A recount has been requested for Stock Count SC-000007.",
+              "stock_count_id": 7
+            },
+            "read_at": "2026-09-07T13:44:25.000000Z",
+            "created_at": "2026-09-07T13:42:05.000000Z",
+            "updated_at": "2026-09-07T13:44:25.000000Z"
+          },
+          {
+            "id": "4bba6166-5665-499d-8c64-faa58f69d910",
+            "type": "App\\Notifications\\ActivityNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": 1,
+            "data": {
+              "type": "stock_count_recount_requested",
+              "title": "Recount Requested",
+              "reason": null,
+              "description": "A recount has been requested for Stock Count SC-000006.",
+              "stock_count_id": 6
+            },
+            "read_at": null,
+            "created_at": "2026-09-07T13:41:54.000000Z",
+            "updated_at": "2026-09-07T13:41:54.000000Z"
+          }
+        ],
+        "errors": null,
+        "meta": {
+          "current_page": 1,
+          "last_page": 3,
+          "per_page": 15,
+          "total": 39
+        },
+        "links": {
+          "first": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/notifications?page=1",
+          "last": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/notifications?page=3",
+          "prev": null,
+          "next": "http://entouche-staging-api-16910c236bc5.herokuapp.com/api/v1/notifications?page=2"
+        }
+      }
+order: 1788830437682

@@ -6,6 +6,6 @@ auth:
     token: "{{access_token}}"
 order: 1000
 method: GET
-url: "{{base_url}}/api/v1/transactions"
+url: "{{staging_url}}/api/v1/transactions"
 headers:
   Accept: application/json

@@ -1,28 +1,20 @@
 $kind: http-example
 request:
-  url: "{{base_url}}/api/v1/items/{{item_id}}/stock-balance"
+  url: "{{staging_url}}/api/v1/items/{{item_id}}/stock-balance"
   method: GET
   headers:
-    - key: Accept
-      value: application/json
+    Accept: application/json
 response:
   statusCode: 200
   statusText: OK
   headers:
-    - key: host
-      value: 127.0.0.1:8000
-    - key: connection
-      value: close
-    - key: x-powered-by
-      value: PHP/8.5.7
-    - key: cache-control
-      value: no-cache, private
-    - key: date
-      value: Tue, 30 Jun 2026 20:16:57 GMT
-    - key: content-type
-      value: application/json
-    - key: access-control-allow-origin
-      value: "*"
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Tue, 30 Jun 2026 20:16:57 GMT
+    content-type: application/json
+    access-control-allow-origin: "*"
   body:
     type: json
     content: |-
@@ -38,4 +30,3 @@ response:
         "errors": null
       }
 order: 1782850622712
-name: success

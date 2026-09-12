@@ -44,7 +44,7 @@ class StockCountController extends BaseApiController
             'warehouse_location_id' => ['nullable', 'exists:warehouse_locations,id'],
             'count_type' => ['nullable', 'in:Cycle Count,Spot Check,Full Physical,Recount'],
             'priority' => ['nullable', 'in:low,medium,high'],
-            'count_date' => ['nullable', 'date'],
+            'count_date' => ['required', 'date_format:Y-m-d'],
             'start_time' => ['nullable', 'date_format:H:i'],
             'assigned_to' => ['nullable', 'exists:users,id'],
             'notes' => ['nullable', 'string', 'max:500'],
@@ -55,37 +55,62 @@ class StockCountController extends BaseApiController
 
         $items = $data['items'] ?? [];
         unset($data['items']);
+
         $assignedTo = $data['assigned_to'] ?? auth()->id();
         unset($data['assigned_to']);
 
-        $number = (new class extends BaseService {})->generateNumber('stock_counts', 'count_number', Setting::get('numbering.stock_count_prefix', 'SC'), 6);
+        $number = (new class extends BaseService {})->generateNumber(
+            'stock_counts',
+            'count_number',
+            Setting::get('numbering.stock_count_prefix', 'SC'),
+            6
+        );
 
         $count = StockCount::create($data + [
             'count_number' => $number,
             'counted_by' => $assignedTo,
             'created_by' => auth()->id(),
             'status' => 'draft',
-            'count_date' => $data['count_date'] ?? now()->toDateString(),
+            'count_date' => $data['count_date'],
         ]);
 
         if (! empty($items)) {
             $this->stockCounts->addItems($count, $items);
         }
 
-        activity()->causedBy(auth()->user())->performedOn($count)->withProperties([
-            'title' => 'Stock Count Created',
-            'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
-        ])->log('stock_count.created');
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($count)
+            ->withProperties([
+                'title' => 'Stock Count Created',
+                'description' => 'Created by '.(auth()->user()->name ?? 'a user'),
+            ])
+            ->log('stock_count.created');
 
-        // 💡 Hooked: Broadcasts new stock count to the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_created',
-            'New Stock Count Created',
-            "Stock Count {$count->count_number} has been created.",
-            ['stock_count_id' => $count->id]
+        $count = $count->fresh('items');
+        $response = $count->toArray();
+
+        $response['items'] = $count->items->map(function ($item) {
+            return [
+                'id' => $item->item_id,
+                'stock_count_id' => $item->stock_count_id,
+                'warehouse_location_id' => $item->warehouse_location_id,
+                'system_quantity' => $item->system_quantity,
+                'counted_quantity' => $item->counted_quantity,
+                'counted_at' => $item->counted_at,
+                'counted_by' => $item->counted_by,
+                'variance_quantity' => $item->variance_quantity,
+                'adjustment_created' => $item->adjustment_created,
+                'remarks' => $item->remarks,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        })->values()->all();
+
+        return $this->created(
+            $response,
+            'Stock count created'
         );
-
-        return $this->created($count->fresh('items'), 'Stock count created');
     }
 
     public function update(Request $request, StockCount $stockCount)
@@ -112,14 +137,6 @@ class StockCountController extends BaseApiController
 
         $stockCount->update($data);
 
-        // 💡 Hooked: Broadcasts adjustments to details on the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_updated',
-            'Stock Count Updated',
-            "Stock Count {$stockCount->count_number} details were updated.",
-            ['stock_count_id' => $stockCount->id]
-        );
-
         return $this->success($stockCount->fresh('items'), 'Stock count updated');
     }
 
@@ -135,17 +152,47 @@ class StockCountController extends BaseApiController
 
     public function cancel(StockCount $stockCount)
     {
-        $stockCount->update(['status' => 'cancelled']);
+        if (in_array($stockCount->status, ['completed', 'cancelled'], true)) {
+            return $this->error(
+                'This stock count cannot be cancelled.',
+                null,
+                422
+            );
+        }
 
-        // 💡 Hooked: Broadcasts the cancellation to the dashboard timeline log
-        $this->notifications->notifyAdmins(
-            'stock_count_cancelled',
-            'Stock Count Cancelled',
-            "Stock Count {$stockCount->count_number} has been cancelled.",
-            ['stock_count_id' => $stockCount->id]
+        $previousStatus = $stockCount->status;
+
+        $stockCount->update([
+            'status' => 'cancelled',
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Cancelled',
+                'description' => 'Cancelled by '.(auth()->user()->name ?? 'a user'),
+                'previous_status' => $previousStatus,
+            ])
+            ->log('stock_count.cancelled');
+
+        // Drafts have not entered the workflow yet,
+        // so cancelling one should not notify other users.
+        if ($previousStatus !== 'draft') {
+            $this->notifications->notifyAdmins(
+                'stock_count_cancelled',
+                'Stock Count Cancelled',
+                "Stock Count {$stockCount->count_number} has been cancelled.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count cancelled'
         );
-
-        return $this->success($stockCount, 'Stock count cancelled');
     }
 
     public function addItems(Request $request, StockCount $stockCount)
@@ -213,25 +260,52 @@ class StockCountController extends BaseApiController
     public function submit(StockCount $stockCount)
     {
         try {
-            $stockCount = $this->stockCounts->submit($stockCount, $this->notifications);
+            $stockCount = $this->stockCounts->submit(
+                $stockCount,
+                $this->notifications
+            );
+
         } catch (StockCountValidationException $e) {
-            return $this->error($e->getMessage(), $e->progress, 422);
+            return $this->error(
+                $e->getMessage(),
+                $e->progress,
+                422
+            );
+
         } catch (\RuntimeException $e) {
-            return $this->error($e->getMessage(), null, 422);
+            return $this->error(
+                $e->getMessage(),
+                null,
+                422
+            );
         }
 
-        return $this->success($stockCount, 'Stock count submitted for review');
+        return $this->success(
+            $stockCount,
+            'Stock count submitted for review'
+        );
     }
 
     public function approve(StockCount $stockCount)
     {
         try {
-            $stockCount = $this->stockCounts->approveAndComplete($stockCount, $this->notifications);
+            $stockCount = $this->stockCounts->approveAndComplete(
+                $stockCount,
+                $this->notifications
+            );
+
         } catch (\RuntimeException $e) {
-            return $this->error($e->getMessage(), null, 422);
+            return $this->error(
+                $e->getMessage(),
+                null,
+                422
+            );
         }
 
-        return $this->success($stockCount, 'Stock count approved and completed');
+        return $this->success(
+            $stockCount,
+            'Stock count approved and completed'
+        );
     }
 
     public function reject(Request $request, StockCount $stockCount)
@@ -307,9 +381,100 @@ class StockCountController extends BaseApiController
             ->map(fn ($log) => [
                 'title' => $log->properties['title'] ?? $log->description,
                 'detail' => $log->properties['description'] ?? '',
-                'time' => $log->created_at->format('M j, Y \a\t g:i A'),
+                'timestamp' => $log->created_at?->toISOString(),
                 'done' => true,
             ])
             ->all();
+    }
+
+    public function requestCount(StockCount $stockCount)
+    {
+        if ($stockCount->status !== 'draft') {
+            return $this->error(
+                'Only draft stock counts can be requested.',
+                null,
+                422
+            );
+        }
+
+        if ($stockCount->items()->count() === 0) {
+            return $this->error(
+                'Add at least one item before requesting the stock count.',
+                null,
+                422
+            );
+        }
+
+        $stockCount->update([
+            'status' => 'requested',
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Requested',
+                'description' => 'Stock count sent to the assigned counter.',
+            ])
+            ->log('stock_count.requested');
+
+        if ($stockCount->assignedCounter) {
+            $this->notifications->notifyUser(
+                $stockCount->assignedCounter,
+                'stock_count_requested',
+                'Stock Count Requested',
+                "Stock Count {$stockCount->count_number} has been requested for counting.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count requested'
+        );
+    }
+
+    public function start(StockCount $stockCount)
+    {
+        if ($stockCount->status !== 'requested') {
+            return $this->error(
+                'Only requested stock counts can be started.',
+                null,
+                422
+            );
+        }
+
+        $stockCount->update([
+            'status' => 'in_progress',
+            'started_at' => now(),
+        ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($stockCount)
+            ->withProperties([
+                'title' => 'Stock Count Started',
+                'description' => 'Physical counting has started.',
+            ])
+            ->log('stock_count.started');
+
+        if ($stockCount->assignedCounter) {
+            $this->notifications->notifyUser(
+                $stockCount->assignedCounter,
+                'stock_count_started',
+                'Stock Count Started',
+                "Stock Count {$stockCount->count_number} has been started.",
+                [
+                    'stock_count_id' => $stockCount->id,
+                ]
+            );
+        }
+
+        return $this->success(
+            $stockCount->fresh(),
+            'Stock count started'
+        );
     }
 }

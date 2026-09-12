@@ -1,4 +1,5 @@
 $kind: http-request
+name: Get Stock Count
 auth:
   type: bearer
   credentials:
@@ -6,6 +7,6 @@ auth:
 examples: .resources/Get Stock Count.resources/examples
 order: 3000
 method: GET
-url: "{{base_url}}/api/v1/stock-counts/{{stock_count_id}}"
+url: "{{staging_url}}/api/v1/stock-counts/{{stock_count_id}}"
 headers:
   Accept: application/json

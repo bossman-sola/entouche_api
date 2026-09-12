@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ImportController;
 use App\Http\Controllers\Api\V1\ItemController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\MaintenanceController;
 use App\Http\Controllers\Api\V1\ReceiptController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\RoleController;
@@ -121,17 +122,24 @@ Route::prefix('v1')->group(function (): void {
         Route::get('stock-counts/items/search', [StockCountController::class, 'searchItems'])->middleware('permission:stock_counts.view');
         Route::apiResource('stock-counts', StockCountController::class)->parameters(['stock-counts' => 'stockCount'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/cancel', [StockCountController::class, 'cancel'])->middleware('permission:stock_counts.create');
-
         Route::post('stock-counts/{stockCount}/items', [StockCountController::class, 'addItems'])->middleware('permission:stock_counts.create');
         Route::patch('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'updateItem'])->middleware('permission:stock_counts.create');
         Route::delete('stock-counts/{stockCount}/items/{item}', [StockCountController::class, 'removeItem'])->middleware('permission:stock_counts.create');
-
         Route::get('stock-counts/{stockCount}/progress', [StockCountController::class, 'progress'])->middleware('permission:stock_counts.view');
         Route::get('stock-counts/{stockCount}/variance', [StockCountController::class, 'varianceBreakdown'])->middleware('permission:stock_counts.view');
         Route::post('stock-counts/{stockCount}/submit', [StockCountController::class, 'submit'])->middleware('permission:stock_counts.create');
         Route::post('stock-counts/{stockCount}/approve', [StockCountController::class, 'approve'])->middleware('permission:stock_counts.approve');
         Route::post('stock-counts/{stockCount}/reject', [StockCountController::class, 'reject'])->middleware('permission:stock_counts.approve');
         Route::post('stock-counts/{stockCount}/request-recount', [StockCountController::class, 'requestRecount'])->middleware('permission:stock_counts.approve');
+        Route::post(
+            'stock-counts/{stockCount}/request',
+            [StockCountController::class, 'requestCount']
+        )->middleware('permission:stock_counts.create');
+
+        Route::post(
+            'stock-counts/{stockCount}/start',
+            [StockCountController::class, 'start']
+        )->middleware('permission:stock_counts.create');
 
         Route::prefix('reports')->middleware('permission:reports.view')->group(function (): void {
             Route::get('dashboard-stats', [ReportController::class, 'dashboardStats']);
@@ -144,6 +152,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('imports', [ImportController::class, 'index'])->middleware('permission:data_import.manage');
         Route::get('imports/{import}', [ImportController::class, 'show'])->middleware('permission:data_import.manage');
         Route::get('imports/templates/{type}', [ImportController::class, 'downloadTemplate'])->middleware('permission:data_import.manage');
+        Route::get('/imports/{import}/error-report', [ImportController::class, 'downloadErrorReport'])->middleware('permission:data_import.manage');
 
         Route::get('audit-logs', [AuditLogController::class, 'index'])->middleware('permission:audit_logs.view');
         Route::get('audit-logs/{log}', [AuditLogController::class, 'show'])->middleware('permission:audit_logs.view');
@@ -151,5 +160,15 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings', [SettingController::class, 'index'])->middleware('permission:settings.manage');
         Route::put('settings', [SettingController::class, 'bulkUpdate'])->middleware('permission:settings.manage');
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
+
+        Route::prefix('maintenance')
+            ->middleware('permission:settings.manage')
+            ->group(function () {
+                Route::get('/', [MaintenanceController::class, 'index']);
+                Route::post('/', [MaintenanceController::class, 'store']);
+                Route::get('/{maintenance}', [MaintenanceController::class, 'show']);
+                Route::put('/{maintenance}', [MaintenanceController::class, 'update']);
+                Route::post('/{maintenance}/cancel', [MaintenanceController::class, 'cancel']);
+            });
     });
 });

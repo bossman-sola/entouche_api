@@ -18,6 +18,7 @@ return [
     'allowed_origins' => [
         // Local Vite development
         'http://localhost:5173',
+        'http://localhost:5174',
 
         // Nelity staging
         'https://staging--entouche-inventory.netlify.app',

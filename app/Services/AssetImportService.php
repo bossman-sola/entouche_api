@@ -63,6 +63,8 @@ class AssetImportService extends BaseService
                 'import_id' => $import->id,
             ]);
 
+            $this->updateItemUnitCost($item);
+
             if ($receipt) {
                 ReceiptItem::create([
                     'receipt_id' => $receipt->id,
@@ -235,5 +237,22 @@ class AssetImportService extends BaseService
         }
 
         return (float) preg_replace('/[^0-9.\-]/', '', (string) $value);
+    }
+
+    private function updateItemUnitCost(Item $item): void
+    {
+        $averageCost = Asset::where(
+            'item_id',
+            $item->id
+        )
+            ->whereNotNull('acquisition_cost')
+            ->avg('acquisition_cost');
+
+        $item->update([
+            'unit_cost' => round(
+                (float) ($averageCost ?? 0),
+                2
+            ),
+        ]);
     }
 }

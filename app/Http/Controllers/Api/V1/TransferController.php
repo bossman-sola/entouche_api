@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Models\Item;
 use App\Models\Setting;
 use App\Models\Transfer;
 use App\Models\TransferItem;
@@ -58,7 +59,21 @@ class TransferController extends BaseApiController
 
     public function show(Transfer $transfer)
     {
-        return $this->success($transfer->load('items'));
+        return $this->success(
+            $transfer->load([
+                'items.item.category',
+                'items.item.unit',
+
+                'fromWarehouse',
+                'fromLocation',
+                'toWarehouse',
+                'toLocation',
+
+                'requester.roles',
+                'approver.roles',
+                'completer.roles',
+            ])
+        );
     }
 
     public function update(Request $request, Transfer $transfer)
@@ -109,23 +124,95 @@ class TransferController extends BaseApiController
 
     public function submit(Transfer $transfer)
     {
-        $transfer->update(['status' => 'pending_approval']);
+        if ($transfer->status !== 'draft') {
+            return $this->error(
+                'Only draft transfers can be submitted.',
+                null,
+                422
+            );
+        }
 
-        return $this->success($transfer, 'Transfer submitted');
+        $transfer->update([
+            'status' => 'pending_approval',
+        ]);
+
+        $this->notifications->notifyAdmins(
+            'transfer_pending_approval',
+            'Transfer Pending Approval',
+            "Transfer {$transfer->transfer_number} has been submitted and is awaiting approval.",
+            [
+                'transfer_id' => $transfer->id,
+            ],
+        );
+
+        return $this->success(
+            $transfer->fresh('items'),
+            'Transfer submitted'
+        );
     }
 
-    public function reject(Request $request, Transfer $transfer)
-    {
-        $transfer->update(['status' => 'rejected', 'rejection_reason' => $request->reason]);
+    public function reject(
+        Request $request,
+        Transfer $transfer
+    ) {
+        $data = $request->validate([
+            'reason' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
+        ]);
 
-        return $this->success($transfer, 'Transfer rejected');
+        if ($transfer->status !== 'pending_approval') {
+            return $this->error(
+                'Only transfers pending approval can be rejected.',
+                null,
+                422
+            );
+        }
+
+        $transfer->update([
+            'status' => 'rejected',
+            'rejection_reason' => $data['reason'],
+        ]);
+
+        $this->notifications->notifyAdmins(
+            'transfer_rejected',
+            'Transfer Rejected',
+            "Transfer {$transfer->transfer_number} has been rejected.",
+            [
+                'transfer_id' => $transfer->id,
+                'reason' => $data['reason'],
+            ],
+        );
+
+        return $this->success(
+            $transfer,
+            'Transfer rejected'
+        );
     }
 
     public function cancel(Transfer $transfer)
     {
-        $transfer->update(['status' => 'cancelled']);
+        $previousStatus = $transfer->status;
 
-        return $this->success($transfer, 'Transfer cancelled');
+        $transfer->update([
+            'status' => 'cancelled',
+        ]);
+
+        if ($previousStatus !== 'draft') {
+            $this->notifications->notifyAdmins(
+                'transfer_cancelled',
+                'Transfer Cancelled',
+                "Transfer {$transfer->transfer_number} has been cancelled.",
+                ['transfer_id' => $transfer->id],
+            );
+        }
+
+        return $this->success(
+            $transfer,
+            'Transfer cancelled'
+        );
     }
 
     public function approve(Transfer $transfer)
@@ -147,13 +234,55 @@ class TransferController extends BaseApiController
     public function complete(Transfer $transfer)
     {
         if ($transfer->status !== 'approved') {
-            return $this->error('Only approved transfers can be completed.', null, 422);
+            return $this->error(
+                'Only approved transfers can be completed.',
+                null,
+                422
+            );
         }
-        foreach ($transfer->items as $item) {
-            $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $transfer->from_warehouse_id, 'warehouse_location_id' => $transfer->from_location_id, 'transaction_type' => 'transfer_out', 'direction' => 'out', 'quantity' => $item->quantity, 'reference_type' => Transfer::class, 'reference_id' => $transfer->id]);
-            $this->stock->move(['item_id' => $item->item_id, 'warehouse_id' => $transfer->to_warehouse_id, 'warehouse_location_id' => $transfer->to_location_id, 'transaction_type' => 'transfer_in', 'direction' => 'in', 'quantity' => $item->quantity, 'reference_type' => Transfer::class, 'reference_id' => $transfer->id]);
+
+        foreach ($transfer->items as $transferItem) {
+            $item = Item::findOrFail($transferItem->item_id);
+
+            $quantity = (float) $transferItem->quantity;
+            $unitCost = (float) ($item->unit_cost ?? 0);
+            $totalValue = $quantity * $unitCost;
+
+            $this->stock->move([
+                'item_id' => $transferItem->item_id,
+                'warehouse_id' => $transfer->from_warehouse_id,
+                'warehouse_location_id' => $transfer->from_location_id,
+                'transaction_type' => 'transfer_out',
+                'direction' => 'out',
+                'quantity' => $quantity,
+                'unit_cost' => $unitCost,
+                'total_value' => $totalValue,
+                'reference_type' => Transfer::class,
+                'reference_id' => $transfer->id,
+                'remarks' => $transfer->notes,
+            ]);
+
+            $this->stock->move([
+                'item_id' => $transferItem->item_id,
+                'warehouse_id' => $transfer->to_warehouse_id,
+                'warehouse_location_id' => $transfer->to_location_id,
+                'transaction_type' => 'transfer_in',
+                'direction' => 'in',
+                'quantity' => $quantity,
+                'unit_cost' => $unitCost,
+                'total_value' => $totalValue,
+                'reference_type' => Transfer::class,
+                'reference_id' => $transfer->id,
+                'remarks' => $transfer->notes,
+            ]);
         }
-        $transfer->update(['status' => 'completed', 'completed_at' => now()]);
+
+        $transfer->update([
+            'status' => 'completed',
+            'completed_by' => auth()->id(),
+            'completed_at' => now(),
+        ]);
+
         $this->notifications->notifyAdmins(
             'transfer_completed',
             'Transfer Completed',
@@ -161,6 +290,9 @@ class TransferController extends BaseApiController
             ['transfer_id' => $transfer->id],
         );
 
-        return $this->success($transfer, 'Transfer completed');
+        return $this->success(
+            $transfer,
+            'Transfer completed'
+        );
     }
 }

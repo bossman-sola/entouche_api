@@ -1,9 +1,13 @@
 $kind: http-request
 name: List Notifications
-url: "{{base_url}}/api/v1/notifications"
+url: "{{staging_url}}/api/v1/notifications?page=1&per_page=15"
 method: GET
+queryParams:
+  page: "1"
+  per_page: "15"
 auth:
   type: bearer
   credentials:
     token: "{{access_token}}"
+examples: .resources/List Notifications.resources/examples
 order: 1786653807524

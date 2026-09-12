@@ -1,0 +1,440 @@
+$kind: http-example
+request:
+  url: "{{base_url}}/api/v1/imports"
+  method: POST
+  headers:
+    Accept: application/json
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: file
+        src:
+          - postman-cloud:///1f1a9485-bdbf-4fc0-bad2-37453d4a0b61
+        description: CSV/XLSX/XLS file to import
+        disabled: false
+      - type: text
+        key: import_type
+        value: inventory
+        description: "Type of import: items or inventory"
+        disabled: false
+      - type: text
+        key: warehouse_id
+        value: "1"
+        description: ""
+        disabled: false
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    host: 127.0.0.1:8000
+    connection: close
+    x-powered-by: PHP/8.5.7
+    cache-control: no-cache, private
+    date: Sat, 05 Sep 2026 16:45:55 GMT
+    content-type: application/json
+    vary: Origin
+  body:
+    type: json
+    content: |-
+      {
+        "success": true,
+        "message": "Import completed successfully.",
+        "data": {
+          "id": 12,
+          "import_type": "inventory",
+          "warehouse_id": 1,
+          "file_name": "SPtVtMJkjHJuy322hMl27vvVNcVrIXnrwHY05cqf.xlsx",
+          "file_path": "imports/inventory/SPtVtMJkjHJuy322hMl27vvVNcVrIXnrwHY05cqf.xlsx",
+          "original_name": "Inventory_Current_Template_Completed (1).xlsx",
+          "file_size": 12100,
+          "status": "completed",
+          "total_rows": 12,
+          "successful_rows": 12,
+          "failed_rows": 0,
+          "skipped_rows": 0,
+          "error_summary": null,
+          "uploaded_by": 2,
+          "started_at": "2026-09-05T16:45:55.000000Z",
+          "completed_at": "2026-09-05T16:45:55.000000Z",
+          "created_at": "2026-09-05T16:45:55.000000Z",
+          "updated_at": "2026-09-05T16:45:55.000000Z",
+          "errors": [],
+          "rows": [
+            {
+              "id": 25,
+              "import_id": 12,
+              "row_number": 2,
+              "status": "success",
+              "asset_id": 13,
+              "error_message": null,
+              "row_data": {
+                "sn": 1,
+                "asset_tag_no": "AST-0001",
+                "asset_description": "Dell Latitude 5440 Laptop",
+                "equipment_serial_number": "DL5440-SN-1001",
+                "cost": 1250,
+                "asset_life": 4,
+                "date_acquired": 45337,
+                "manufacturer": "Dell",
+                "model_number": "Latitude 5440",
+                "api_number": "API-IT-0001",
+                "field_location": "Storage",
+                "vendor_name": "Technology Distributors Ltd.",
+                "delivery_date_to_locationyard": 45342,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-TD-240201",
+                "po_number_from_vendor": "VPO-TD-24001",
+                "po_number_issued_by_api": "API-PO-24001",
+                "payment_date": 45356,
+                "notes": "Assigned to general IT inventory"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 26,
+              "import_id": 12,
+              "row_number": 3,
+              "status": "success",
+              "asset_id": 14,
+              "error_message": null,
+              "row_data": {
+                "sn": 2,
+                "asset_tag_no": "AST-0002",
+                "asset_description": "Dell Latitude 5440 Laptop",
+                "equipment_serial_number": "DL5440-SN-1002",
+                "cost": 1250,
+                "asset_life": 4,
+                "date_acquired": 45337,
+                "manufacturer": "Dell",
+                "model_number": "Latitude 5440",
+                "api_number": "API-IT-0002",
+                "field_location": "Storage",
+                "vendor_name": "Technology Distributors Ltd.",
+                "delivery_date_to_locationyard": 45342,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-TD-240201",
+                "po_number_from_vendor": "VPO-TD-24001",
+                "po_number_issued_by_api": "API-PO-24001",
+                "payment_date": 45356,
+                "notes": "Ready for allocation"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 27,
+              "import_id": 12,
+              "row_number": 4,
+              "status": "success",
+              "asset_id": 15,
+              "error_message": null,
+              "row_data": {
+                "sn": 3,
+                "asset_tag_no": "AST-0003",
+                "asset_description": "HP LaserJet Pro Printer",
+                "equipment_serial_number": "HPLJ-SN-2103",
+                "cost": 480,
+                "asset_life": 5,
+                "date_acquired": 45238,
+                "manufacturer": "HP",
+                "model_number": "LaserJet Pro M404dn",
+                "api_number": "API-IT-0003",
+                "field_location": "Storage",
+                "vendor_name": "Office Systems Nigeria Ltd.",
+                "delivery_date_to_locationyard": 45244,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-OSN-231108",
+                "po_number_from_vendor": "VPO-OSN-2311",
+                "po_number_issued_by_api": "API-PO-23117",
+                "payment_date": 45260,
+                "notes": "Network printer"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 28,
+              "import_id": 12,
+              "row_number": 5,
+              "status": "success",
+              "asset_id": 16,
+              "error_message": null,
+              "row_data": {
+                "sn": 4,
+                "asset_tag_no": "AST-0004",
+                "asset_description": "Cisco 24-Port Network Switch",
+                "equipment_serial_number": "CS2960-SN-4404",
+                "cost": 890,
+                "asset_life": 5,
+                "date_acquired": 45181,
+                "manufacturer": "Cisco",
+                "model_number": "Catalyst 2960-X",
+                "api_number": "API-NET-0004",
+                "field_location": "Storage",
+                "vendor_name": "Network Solutions Ltd.",
+                "delivery_date_to_locationyard": 45187,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-NSL-230912",
+                "po_number_from_vendor": "VPO-NSL-2309",
+                "po_number_issued_by_api": "API-PO-23091",
+                "payment_date": 45201,
+                "notes": "Spare network switch"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 29,
+              "import_id": 12,
+              "row_number": 6,
+              "status": "success",
+              "asset_id": 17,
+              "error_message": null,
+              "row_data": {
+                "sn": 5,
+                "asset_tag_no": "AST-0005",
+                "asset_description": "Epson Projector",
+                "equipment_serial_number": "EPS-SN-5505",
+                "cost": 720,
+                "asset_life": 5,
+                "date_acquired": 45301,
+                "manufacturer": "Epson",
+                "model_number": "EB-X06",
+                "api_number": "API-AV-0005",
+                "field_location": "Dispatch",
+                "vendor_name": "AV Equipment Services Ltd.",
+                "delivery_date_to_locationyard": 45307,
+                "status": "In Transit",
+                "invoice_number_from_vendor": "INV-AVS-240110",
+                "po_number_from_vendor": "VPO-AVS-2401",
+                "po_number_issued_by_api": "API-PO-24005",
+                "payment_date": 45322,
+                "notes": "Scheduled for delivery to conference room"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 30,
+              "import_id": 12,
+              "row_number": 7,
+              "status": "success",
+              "asset_id": 18,
+              "error_message": null,
+              "row_data": {
+                "sn": 6,
+                "asset_tag_no": "AST-0006",
+                "asset_description": "Samsung 55-inch Smart Television",
+                "equipment_serial_number": "SAM55-SN-6606",
+                "cost": 650,
+                "asset_life": 5,
+                "date_acquired": 45127,
+                "manufacturer": "Samsung",
+                "model_number": "CU7000",
+                "api_number": "API-AV-0006",
+                "field_location": "Storage",
+                "vendor_name": "Electronics Hub Ltd.",
+                "delivery_date_to_locationyard": 45134,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-EHL-230720",
+                "po_number_from_vendor": "VPO-EHL-2307",
+                "po_number_issued_by_api": "API-PO-23073",
+                "payment_date": 45148,
+                "notes": "For training room"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 31,
+              "import_id": 12,
+              "row_number": 8,
+              "status": "success",
+              "asset_id": 19,
+              "error_message": null,
+              "row_data": {
+                "sn": 7,
+                "asset_tag_no": "AST-0007",
+                "asset_description": "Portable Diesel Generator",
+                "equipment_serial_number": "CATGEN-SN-7707",
+                "cost": 5400,
+                "asset_life": 8,
+                "date_acquired": 44699,
+                "manufacturer": "Caterpillar",
+                "model_number": "DE110E2",
+                "api_number": "API-PWR-0007",
+                "field_location": "Storage",
+                "vendor_name": "Power Equipment Services Ltd.",
+                "delivery_date_to_locationyard": 44707,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-PES-220518",
+                "po_number_from_vendor": "VPO-PES-2205",
+                "po_number_issued_by_api": "API-PO-22052",
+                "payment_date": 44727,
+                "notes": "Preventive maintenance completed"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 32,
+              "import_id": 12,
+              "row_number": 9,
+              "status": "success",
+              "asset_id": 20,
+              "error_message": null,
+              "row_data": {
+                "sn": 8,
+                "asset_tag_no": "AST-0008",
+                "asset_description": "Industrial Air Compressor",
+                "equipment_serial_number": "ATL-SN-8808",
+                "cost": 7800,
+                "asset_life": 10,
+                "date_acquired": 44782,
+                "manufacturer": "Atlas Copco",
+                "model_number": "GA 11",
+                "api_number": "API-MEC-0008",
+                "field_location": "Receiving",
+                "vendor_name": "Industrial Machines Ltd.",
+                "delivery_date_to_locationyard": 44789,
+                "status": "Under Inspection",
+                "invoice_number_from_vendor": "INV-IML-220809",
+                "po_number_from_vendor": "VPO-IML-2208",
+                "po_number_issued_by_api": "API-PO-22084",
+                "payment_date": 44805,
+                "notes": "Awaiting inspection clearance"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 33,
+              "import_id": 12,
+              "row_number": 10,
+              "status": "success",
+              "asset_id": 21,
+              "error_message": null,
+              "row_data": {
+                "sn": 9,
+                "asset_tag_no": "AST-0009",
+                "asset_description": "Fluke Digital Multimeter",
+                "equipment_serial_number": "FLUKE-SN-9909",
+                "cost": 395,
+                "asset_life": 6,
+                "date_acquired": 45385,
+                "manufacturer": "Fluke",
+                "model_number": "87V",
+                "api_number": "API-INS-0009",
+                "field_location": "Storage",
+                "vendor_name": "Instrumentation Supplies Ltd.",
+                "delivery_date_to_locationyard": 45391,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-ISL-240403",
+                "po_number_from_vendor": "VPO-ISL-2404",
+                "po_number_issued_by_api": "API-PO-24042",
+                "payment_date": 45404,
+                "notes": "Calibration certificate received"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 34,
+              "import_id": 12,
+              "row_number": 11,
+              "status": "success",
+              "asset_id": 22,
+              "error_message": null,
+              "row_data": {
+                "sn": 10,
+                "asset_tag_no": "AST-0010",
+                "asset_description": "Makita Cordless Drill",
+                "equipment_serial_number": "MAK-SN-1010",
+                "cost": 275,
+                "asset_life": 5,
+                "date_acquired": 45091,
+                "manufacturer": "Makita",
+                "model_number": "DHP484",
+                "api_number": "API-TOL-0010",
+                "field_location": "Storage",
+                "vendor_name": "Tools and Hardware Ltd.",
+                "delivery_date_to_locationyard": 45097,
+                "status": "Available",
+                "invoice_number_from_vendor": "INV-THL-230614",
+                "po_number_from_vendor": "VPO-THL-2306",
+                "po_number_issued_by_api": "API-PO-23062",
+                "payment_date": 45112,
+                "notes": "Includes two batteries and charger"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 35,
+              "import_id": 12,
+              "row_number": 12,
+              "status": "success",
+              "asset_id": 23,
+              "error_message": null,
+              "row_data": {
+                "sn": 11,
+                "asset_tag_no": "AST-0011",
+                "asset_description": "Heavy-Duty Office Shredder",
+                "equipment_serial_number": "FEL-SN-1111",
+                "cost": 610,
+                "asset_life": 5,
+                "date_acquired": 45007,
+                "manufacturer": "Fellowes",
+                "model_number": "225Ci",
+                "api_number": "API-OFF-0011",
+                "field_location": "Damaged Goods",
+                "vendor_name": "Office Systems Nigeria Ltd.",
+                "delivery_date_to_locationyard": 45014,
+                "status": "Damaged",
+                "invoice_number_from_vendor": "INV-OSN-230322",
+                "po_number_from_vendor": "VPO-OSN-2303",
+                "po_number_issued_by_api": "API-PO-23035",
+                "payment_date": 45028,
+                "notes": "Motor fault; awaiting repair assessment"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            },
+            {
+              "id": 36,
+              "import_id": 12,
+              "row_number": 13,
+              "status": "success",
+              "asset_id": 24,
+              "error_message": null,
+              "row_data": {
+                "sn": 12,
+                "asset_tag_no": "AST-0012",
+                "asset_description": "Lenovo ThinkCentre Desktop",
+                "equipment_serial_number": "LEN-SN-1212",
+                "cost": 980,
+                "asset_life": 4,
+                "date_acquired": 45418,
+                "manufacturer": "Lenovo",
+                "model_number": "ThinkCentre M90q",
+                "api_number": "API-IT-0012",
+                "field_location": "Receiving",
+                "vendor_name": "Technology Distributors Ltd.",
+                "delivery_date_to_locationyard": 45422,
+                "status": "Under Inspection",
+                "invoice_number_from_vendor": "INV-TD-240506",
+                "po_number_from_vendor": "VPO-TD-24005",
+                "po_number_issued_by_api": "API-PO-24056",
+                "payment_date": 45436,
+                "notes": "New delivery awaiting acceptance testing"
+              },
+              "created_at": "2026-09-05T16:45:55.000000Z",
+              "updated_at": "2026-09-05T16:45:55.000000Z"
+            }
+          ]
+        },
+        "errors": null
+      }
+order: 4030377291513697

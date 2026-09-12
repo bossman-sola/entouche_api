@@ -20,7 +20,18 @@ class ReceiptController extends BaseApiController
 
     public function index(Request $request)
     {
-        return $this->paginated(Receipt::with(['items.item'])->latest()->paginate($request->integer('per_page', 15)));
+        return $this->paginated(
+            Receipt::with(
+                $this->receiptRelations()
+            )
+                ->latest()
+                ->paginate(
+                    $request->integer(
+                        'per_page',
+                        15
+                    )
+                )
+        );
     }
 
     public function store(Request $request)
@@ -60,12 +71,21 @@ class ReceiptController extends BaseApiController
             ]);
         }
 
-        return $this->created($receipt->load('items'), 'Receipt created');
+        return $this->created(
+            $receipt->load(
+                $this->receiptRelations()
+            ),
+            'Receipt created'
+        );
     }
 
     public function show(Receipt $receipt)
     {
-        return $this->success($receipt->load('items.item'));
+        return $this->success(
+            $receipt->load(
+                $this->receiptRelations()
+            )
+        );
     }
 
     public function update(Request $request, Receipt $receipt)
@@ -104,7 +124,12 @@ class ReceiptController extends BaseApiController
             }
         }
 
-        return $this->success($receipt->fresh('items.item'), 'Receipt updated');
+        return $this->success(
+            $receipt->fresh()->load(
+                $this->receiptRelations()
+            ),
+            'Receipt updated'
+        );
     }
 
     public function destroy(Receipt $receipt)
@@ -159,7 +184,9 @@ class ReceiptController extends BaseApiController
         );
 
         return $this->success(
-            $receipt->fresh('items.item'),
+            $receipt->fresh()->load(
+                $this->receiptRelations()
+            ),
             'Receipt received'
         );
     }
@@ -196,7 +223,9 @@ class ReceiptController extends BaseApiController
         );
 
         return $this->success(
-            $receipt->fresh('items.item'),
+            $receipt->fresh()->load(
+                $this->receiptRelations()
+            ),
             'Receipt submitted for approval'
         );
     }
@@ -215,8 +244,19 @@ class ReceiptController extends BaseApiController
             'status' => 'approved',
         ]);
 
+        $this->notifications->notifyAdmins(
+            'receipt_approved',
+            'Receipt Approved',
+            "Receipt {$receipt->receipt_number} has been approved.",
+            [
+                'receipt_id' => $receipt->id,
+            ],
+        );
+
         return $this->success(
-            $receipt->fresh('items.item'),
+            $receipt->fresh()->load(
+                $this->receiptRelations()
+            ),
             'Receipt approved'
         );
     }
@@ -243,5 +283,21 @@ class ReceiptController extends BaseApiController
             $receipt->fresh(),
             'Receipt cancelled'
         );
+    }
+
+    private function receiptRelations(): array
+    {
+        return [
+            'supplier',
+            'warehouse',
+            'receivingLocation',
+
+            'receiver.roles',
+            'creator.roles',
+
+            'items.location',
+            'items.item.category',
+            'items.item.unit',
+        ];
     }
 }

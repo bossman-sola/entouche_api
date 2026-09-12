@@ -18,3 +18,6 @@ variables:
   - key: json_web_token_0scg
     secret: true
     disabled: false
+  - key: staging_url
+    value: ""
+    disabled: false

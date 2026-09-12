@@ -3,7 +3,7 @@ name: Login
 examples: .resources/Login.resources/examples
 order: 1000
 method: POST
-url: "{{base_url}}/api/v1/auth/login"
+url: "{{staging_url}}/api/v1/auth/login"
 auth:
   type: noauth
 headers:
