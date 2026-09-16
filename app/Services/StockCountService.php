@@ -606,20 +606,6 @@ class StockCountService extends BaseService
             ]
         );
 
-        $recipients = User::role($roles)
-            ->where('status', 'active')
-            ->whereNotNull('email')
-            ->get();
-
-        foreach ($recipients as $recipient) {
-            Mail::to($recipient->email)->send(
-                new SystemNotificationMail(
-                    $title,
-                    $message
-                )
-            );
-        }
-
         return $stockCount->fresh([
             'items.item',
             'submittedBy',
@@ -843,20 +829,6 @@ class StockCountService extends BaseService
                             'stock_count_id' => $stockCount->id,
                         ]
                     );
-
-                    if (
-                        $recipient->status === 'active' &&
-                        ! empty($recipient->email)
-                    ) {
-                        Mail::to(
-                            $recipient->email
-                        )->send(
-                            new SystemNotificationMail(
-                                $title,
-                                $message
-                            )
-                        );
-                    }
                 }
 
                 return $stockCount->fresh([
@@ -933,20 +905,6 @@ class StockCountService extends BaseService
                     'reason' => $reason,
                 ]
             );
-
-            if (
-                $recipient->status === 'active' &&
-                ! empty($recipient->email)
-            ) {
-                Mail::to(
-                    $recipient->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $message
-                    )
-                );
-            }
         }
 
         return $stockCount->fresh([
@@ -1041,20 +999,6 @@ class StockCountService extends BaseService
                     'reason' => $reason,
                 ]
             );
-
-            if (
-                $recipient->status === 'active' &&
-                ! empty($recipient->email)
-            ) {
-                Mail::to(
-                    $recipient->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $message
-                    )
-                );
-            }
         }
 
         return $stockCount->fresh([
