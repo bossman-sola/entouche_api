@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\SystemNotificationMail;
 use App\Models\User;
 use App\Notifications\ActivityNotification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationService extends BaseService
@@ -96,8 +98,8 @@ class NotificationService extends BaseService
         $users = collect($users)
             ->filter(
                 fn ($user) =>
-                    $user instanceof User
-                    && $user->status === 'active'
+                    $user instanceof User &&
+                    $user->status === 'active'
             )
             ->unique('id')
             ->values();
@@ -121,16 +123,15 @@ class NotificationService extends BaseService
         $users = collect($notifiables)
             ->filter(
                 fn ($user) =>
-                    $user instanceof User
-                    && $user->status === 'active'
-                    && ! empty($user->email)
+                    $user instanceof User &&
+                    $user->status === 'active'
             )
             ->unique('id')
             ->values();
 
         if ($users->isEmpty()) {
             Log::warning(
-                'Notification not sent: no active recipients found.',
+                'Notification skipped: no active recipients.',
                 [
                     'type' => $type,
                     'title' => $title,
@@ -139,6 +140,12 @@ class NotificationService extends BaseService
 
             return;
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | IN-APP NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
 
         try {
             Notification::send(
@@ -152,30 +159,70 @@ class NotificationService extends BaseService
             );
 
             Log::info(
-                'Activity notification sent.',
+                'In-app notification sent.',
                 [
                     'type' => $type,
-                    'title' => $title,
-                    'recipients' => $users
-                        ->pluck('email')
-                        ->values()
-                        ->all(),
+                    'user_ids' => $users->pluck('id')->all(),
                 ]
             );
         } catch (\Throwable $e) {
             Log::error(
-                'Activity notification failed.',
+                'In-app notification failed.',
                 [
                     'type' => $type,
                     'title' => $title,
-                    'recipients' => $users
-                        ->pluck('email')
-                        ->values()
-                        ->all(),
                     'error' => $e->getMessage(),
-                    'exception' => get_class($e),
                 ]
             );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMAIL NOTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
+        foreach ($users as $user) {
+            if (empty($user->email)) {
+                Log::warning(
+                    'Email notification skipped: user has no email.',
+                    [
+                        'user_id' => $user->id,
+                        'type' => $type,
+                    ]
+                );
+
+                continue;
+            }
+
+            try {
+                Mail::to($user->email)->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $description
+                    )
+                );
+
+                Log::info(
+                    'Email notification sent.',
+                    [
+                        'type' => $type,
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                Log::error(
+                    'Email notification failed.',
+                    [
+                        'type' => $type,
+                        'title' => $title,
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                        'error' => $e->getMessage(),
+                    ]
+                );
+            }
         }
     }
 }
