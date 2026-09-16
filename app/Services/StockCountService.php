@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\StockCountValidationException;
-use App\Mail\SystemNotificationMail;
 use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
 use App\Models\Item;
@@ -16,7 +15,6 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class StockCountService extends BaseService
 {
@@ -790,22 +788,6 @@ class StockCountService extends BaseService
                         $message,
                         $notificationData
                     );
-
-                    $recipients = User::role($roles)
-                        ->where('status', 'active')
-                        ->whereNotNull('email')
-                        ->get();
-
-                    foreach ($recipients as $recipient) {
-                        Mail::to(
-                            $recipient->email
-                        )->send(
-                            new SystemNotificationMail(
-                                $title,
-                                $message
-                            )
-                        );
-                    }
                 }
 
                 $stockCount->update([
