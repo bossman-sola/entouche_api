@@ -21,105 +21,243 @@ class TransferController extends BaseApiController
 
     public function index(Request $request)
     {
-        return $this->paginated(Transfer::with('items')->latest()->paginate($request->integer('per_page', 15)));
+        return $this->paginated(
+            Transfer::with([
+                'items.item',
+                'fromWarehouse',
+                'fromLocation',
+                'toWarehouse',
+                'toLocation',
+                'requester',
+                'approver',
+                'completer',
+            ])
+                ->latest()
+                ->paginate(
+                    $request->integer('per_page', 15)
+                )
+        );
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'from_warehouse_id' => ['required', 'exists:warehouses,id'],
-            'from_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'to_warehouse_id' => ['required', 'exists:warehouses,id'],
-            'to_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'notes' => ['nullable', 'string'],
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.item_id' => ['required', 'exists:items,id'],
-            'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
+            'from_warehouse_id' => [
+                'required',
+                'exists:warehouses,id',
+            ],
+
+            'from_location_id' => [
+                'nullable',
+                'exists:warehouse_locations,id',
+            ],
+
+            'to_warehouse_id' => [
+                'required',
+                'exists:warehouses,id',
+            ],
+
+            'to_location_id' => [
+                'nullable',
+                'exists:warehouse_locations,id',
+            ],
+
+            'notes' => [
+                'nullable',
+                'string',
+            ],
+
+            'items' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'items.*.item_id' => [
+                'required',
+                'exists:items,id',
+            ],
+
+            'items.*.quantity' => [
+                'required',
+                'numeric',
+                'min:0.001',
+            ],
         ]);
 
         $items = $data['items'];
+
         unset($data['items']);
-        $number = (new class extends BaseService {})->generateNumber('transfers', 'transfer_number', Setting::get('numbering.transfer_prefix', 'TRF'), 6);
+
+        $number = (
+            new class extends BaseService {}
+        )->generateNumber(
+            'transfers',
+            'transfer_number',
+            Setting::get(
+                'numbering.transfer_prefix',
+                'TRF'
+            ),
+            6
+        );
+
         $transfer = Transfer::create(
-            $data +
-            [
+            $data + [
                 'transfer_number' => $number,
-                'transfer_date' => $data['transfer_date'] ?? now()->toDateString(),
-                'requested_by' => auth()->id(),
-                'created_by' => auth()->id(),
-                'status' => 'draft',
-            ]);
+
+                'transfer_date' =>
+                    $data['transfer_date']
+                    ?? now()->toDateString(),
+
+                'requested_by' =>
+                    auth()->id(),
+
+                'created_by' =>
+                    auth()->id(),
+
+                'status' =>
+                    'draft',
+            ]
+        );
 
         foreach ($items as $row) {
-            TransferItem::create($row + ['transfer_id' => $transfer->id]);
+            TransferItem::create(
+                $row + [
+                    'transfer_id' =>
+                        $transfer->id,
+                ]
+            );
         }
 
-        return $this->created($transfer->load('items'), 'Transfer created');
+        return $this->created(
+            $transfer->load([
+                'items.item',
+                'fromWarehouse',
+                'fromLocation',
+                'toWarehouse',
+                'toLocation',
+                'requester',
+            ]),
+            'Transfer created'
+        );
     }
 
     public function show(Transfer $transfer)
     {
         return $this->success(
-            $transfer->load([
-                'items.item.category',
-                'items.item.unit',
-
-                'fromWarehouse',
-                'fromLocation',
-                'toWarehouse',
-                'toLocation',
-
-                'requester.roles',
-                'approver.roles',
-                'completer.roles',
-            ])
+            $transfer->load(
+                $this->transferRelations()
+            )
         );
     }
 
-    public function update(Request $request, Transfer $transfer)
-    {
+    public function update(
+        Request $request,
+        Transfer $transfer
+    ) {
         if ($transfer->status !== 'draft') {
-            return $this->error('Only draft transfers can be updated.', null, 422);
+            return $this->error(
+                'Only draft transfers can be updated.',
+                null,
+                422
+            );
         }
 
         $data = $request->validate([
-            'from_warehouse_id' => ['nullable', 'exists:warehouses,id'],
-            'from_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'to_warehouse_id' => ['nullable', 'exists:warehouses,id'],
-            'to_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'notes' => ['nullable', 'string'],
-            'items' => ['nullable', 'array', 'min:1'],
-            'items.*.item_id' => ['required', 'exists:items,id'],
-            'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
+            'from_warehouse_id' => [
+                'nullable',
+                'exists:warehouses,id',
+            ],
+
+            'from_location_id' => [
+                'nullable',
+                'exists:warehouse_locations,id',
+            ],
+
+            'to_warehouse_id' => [
+                'nullable',
+                'exists:warehouses,id',
+            ],
+
+            'to_location_id' => [
+                'nullable',
+                'exists:warehouse_locations,id',
+            ],
+
+            'notes' => [
+                'nullable',
+                'string',
+            ],
+
+            'items' => [
+                'nullable',
+                'array',
+                'min:1',
+            ],
+
+            'items.*.item_id' => [
+                'required',
+                'exists:items,id',
+            ],
+
+            'items.*.quantity' => [
+                'required',
+                'numeric',
+                'min:0.001',
+            ],
         ]);
 
-        $transfer->update(collect($data)->except('items')->toArray());
+        $transfer->update(
+            collect($data)
+                ->except('items')
+                ->toArray()
+        );
 
         if (! empty($data['items'])) {
+            /*
+             * Replace the transfer item list so that
+             * removed items do not remain attached.
+             */
+            $transfer->items()->delete();
+
             foreach ($data['items'] as $row) {
-                TransferItem::updateOrCreate(
-                    [
-                        'transfer_id' => $transfer->id,
-                        'item_id' => $row['item_id'],
-                    ],
-                    [
-                        'quantity' => $row['quantity'],
-                    ]
-                );
+                TransferItem::create([
+                    'transfer_id' =>
+                        $transfer->id,
+
+                    'item_id' =>
+                        $row['item_id'],
+
+                    'quantity' =>
+                        $row['quantity'],
+                ]);
             }
         }
 
-        return $this->success($transfer->fresh('items'), 'Transfer updated');
+        return $this->success(
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
+            'Transfer updated'
+        );
     }
 
     public function destroy(Transfer $transfer)
     {
         if ($transfer->status !== 'draft') {
-            return $this->error('Only draft transfers can be deleted.', null, 422);
+            return $this->error(
+                'Only draft transfers can be deleted.',
+                null,
+                422
+            );
         }
+
         $transfer->delete();
 
-        return $this->success(null, 'Transfer deleted');
+        return $this->success(
+            null,
+            'Transfer deleted'
+        );
     }
 
     public function submit(Transfer $transfer)
@@ -132,21 +270,45 @@ class TransferController extends BaseApiController
             );
         }
 
+        if ($transfer->items()->count() === 0) {
+            return $this->error(
+                'Transfer must contain at least one item before submission.',
+                null,
+                422
+            );
+        }
+
         $transfer->update([
-            'status' => 'pending_approval',
+            'status' =>
+                'pending_approval',
         ]);
 
-        $this->notifications->notifyAdmins(
-            'transfer_pending_approval',
+        /*
+         * Only users who can approve transfers
+         * need the pending approval notification.
+         *
+         * NotificationService sends:
+         * - in-app
+         * - email
+         */
+        $this->notifications->notifyRoles(
+            [
+                'system_administrator',
+                'warehouse_manager',
+            ],
+            'transfer_pending',
             'Transfer Pending Approval',
             "Transfer {$transfer->transfer_number} has been submitted and is awaiting approval.",
             [
-                'transfer_id' => $transfer->id,
-            ],
+                'transfer_id' =>
+                    $transfer->id,
+            ]
         );
 
         return $this->success(
-            $transfer->fresh('items'),
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
             'Transfer submitted'
         );
     }
@@ -155,6 +317,17 @@ class TransferController extends BaseApiController
         Request $request,
         Transfer $transfer
     ) {
+        if (
+            $transfer->status !==
+            'pending_approval'
+        ) {
+            return $this->error(
+                'Only transfers pending approval can be rejected.',
+                null,
+                422
+            );
+        }
+
         $data = $request->validate([
             'reason' => [
                 'required',
@@ -163,77 +336,171 @@ class TransferController extends BaseApiController
             ],
         ]);
 
-        if ($transfer->status !== 'pending_approval') {
-            return $this->error(
-                'Only transfers pending approval can be rejected.',
-                null,
-                422
+        $transfer->update([
+            'status' =>
+                'rejected',
+
+            'rejection_reason' =>
+                $data['reason'],
+        ]);
+
+        /*
+         * Notify the person who requested
+         * the transfer.
+         */
+        $transfer->loadMissing(
+            'requester'
+        );
+
+        if ($transfer->requester) {
+            $this->notifications->notifyUser(
+                $transfer->requester,
+                'transfer_rejected',
+                'Transfer Rejected',
+                "Transfer {$transfer->transfer_number} has been rejected.",
+                [
+                    'transfer_id' =>
+                        $transfer->id,
+
+                    'reason' =>
+                        $data['reason'],
+                ]
             );
         }
 
-        $transfer->update([
-            'status' => 'rejected',
-            'rejection_reason' => $data['reason'],
-        ]);
-
-        $this->notifications->notifyAdmins(
-            'transfer_rejected',
-            'Transfer Rejected',
-            "Transfer {$transfer->transfer_number} has been rejected.",
-            [
-                'transfer_id' => $transfer->id,
-                'reason' => $data['reason'],
-            ],
-        );
-
         return $this->success(
-            $transfer,
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
             'Transfer rejected'
         );
     }
 
     public function cancel(Transfer $transfer)
     {
-        $previousStatus = $transfer->status;
+        $previousStatus =
+            $transfer->status;
 
-        $transfer->update([
-            'status' => 'cancelled',
-        ]);
-
-        if ($previousStatus !== 'draft') {
-            $this->notifications->notifyAdmins(
-                'transfer_cancelled',
-                'Transfer Cancelled',
-                "Transfer {$transfer->transfer_number} has been cancelled.",
-                ['transfer_id' => $transfer->id],
+        if (! in_array(
+            $previousStatus,
+            [
+                'draft',
+                'pending_approval',
+                'approved',
+            ],
+            true
+        )) {
+            return $this->error(
+                'Transfer cannot be cancelled.',
+                null,
+                422
             );
         }
 
+        $transfer->update([
+            'status' =>
+                'cancelled',
+        ]);
+
+        /*
+         * Cancelling a draft remains silent because
+         * the transfer had not entered the workflow.
+         */
+        if ($previousStatus !== 'draft') {
+            $transfer->loadMissing(
+                'requester'
+            );
+
+            if ($transfer->requester) {
+                $this->notifications->notifyUser(
+                    $transfer->requester,
+                    'transfer_cancelled',
+                    'Transfer Cancelled',
+                    "Transfer {$transfer->transfer_number} has been cancelled.",
+                    [
+                        'transfer_id' =>
+                            $transfer->id,
+
+                        'previous_status' =>
+                            $previousStatus,
+                    ]
+                );
+            }
+        }
+
         return $this->success(
-            $transfer,
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
             'Transfer cancelled'
         );
     }
 
     public function approve(Transfer $transfer)
     {
-        if (! in_array($transfer->status, ['draft', 'pending_approval'], true)) {
-            return $this->error('Transfer cannot be approved.', null, 422);
+        /*
+         * Approval should only happen after
+         * submission.
+         *
+         * Do not allow direct draft -> approved.
+         */
+        if (
+            $transfer->status !==
+            'pending_approval'
+        ) {
+            return $this->error(
+                'Only transfers pending approval can be approved.',
+                null,
+                422
+            );
         }
-        $transfer->update(['status' => 'approved', 'approved_by' => auth()->id(), 'approved_at' => now()]);
-        $this->notifications->notifyAdmins(
-            'transfer_approved',
-            'Transfer Approved',
-            "Transfer {$transfer->transfer_number} has been approved and is ready for completion.",
-            ['transfer_id' => $transfer->id],
+
+        $transfer->update([
+            'status' =>
+                'approved',
+
+            'approved_by' =>
+                auth()->id(),
+
+            'approved_at' =>
+                now(),
+        ]);
+
+        /*
+         * Tell the requester that their transfer
+         * has been approved.
+         */
+        $transfer->loadMissing(
+            'requester'
         );
 
-        return $this->success($transfer->fresh('items'), 'Transfer approved');
+        if ($transfer->requester) {
+            $this->notifications->notifyUser(
+                $transfer->requester,
+                'transfer_approved',
+                'Transfer Approved',
+                "Transfer {$transfer->transfer_number} has been approved and is ready for completion.",
+                [
+                    'transfer_id' =>
+                        $transfer->id,
+                ]
+            );
+        }
+
+        return $this->success(
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
+            'Transfer approved'
+        );
     }
 
     public function complete(Transfer $transfer)
     {
-        if ($transfer->status !== 'approved') {
+        if (
+            $transfer->status !==
+            'approved'
+        ) {
             return $this->error(
                 'Only approved transfers can be completed.',
                 null,
@@ -241,58 +508,167 @@ class TransferController extends BaseApiController
             );
         }
 
-        foreach ($transfer->items as $transferItem) {
-            $item = Item::findOrFail($transferItem->item_id);
+        /*
+         * Load everything needed before performing
+         * inventory movements.
+         */
+        $transfer->loadMissing([
+            'items.item',
+            'requester',
+        ]);
 
-            $quantity = (float) $transferItem->quantity;
-            $unitCost = (float) ($item->unit_cost ?? 0);
-            $totalValue = $quantity * $unitCost;
+        foreach (
+            $transfer->items
+            as $transferItem
+        ) {
+            $item =
+                $transferItem->item
+                ?? Item::findOrFail(
+                    $transferItem->item_id
+                );
 
+            $quantity =
+                (float)
+                $transferItem->quantity;
+
+            $unitCost =
+                (float) (
+                    $item->unit_cost ?? 0
+                );
+
+            $totalValue =
+                $quantity * $unitCost;
+
+            /*
+             * Remove inventory from the
+             * source location.
+             */
             $this->stock->move([
-                'item_id' => $transferItem->item_id,
-                'warehouse_id' => $transfer->from_warehouse_id,
-                'warehouse_location_id' => $transfer->from_location_id,
-                'transaction_type' => 'transfer_out',
-                'direction' => 'out',
-                'quantity' => $quantity,
-                'unit_cost' => $unitCost,
-                'total_value' => $totalValue,
-                'reference_type' => Transfer::class,
-                'reference_id' => $transfer->id,
-                'remarks' => $transfer->notes,
+                'item_id' =>
+                    $transferItem->item_id,
+
+                'warehouse_id' =>
+                    $transfer->from_warehouse_id,
+
+                'warehouse_location_id' =>
+                    $transfer->from_location_id,
+
+                'transaction_type' =>
+                    'transfer_out',
+
+                'direction' =>
+                    'out',
+
+                'quantity' =>
+                    $quantity,
+
+                'unit_cost' =>
+                    $unitCost,
+
+                'total_value' =>
+                    $totalValue,
+
+                'reference_type' =>
+                    Transfer::class,
+
+                'reference_id' =>
+                    $transfer->id,
+
+                'remarks' =>
+                    $transfer->notes,
             ]);
 
+            /*
+             * Add inventory to the
+             * destination location.
+             */
             $this->stock->move([
-                'item_id' => $transferItem->item_id,
-                'warehouse_id' => $transfer->to_warehouse_id,
-                'warehouse_location_id' => $transfer->to_location_id,
-                'transaction_type' => 'transfer_in',
-                'direction' => 'in',
-                'quantity' => $quantity,
-                'unit_cost' => $unitCost,
-                'total_value' => $totalValue,
-                'reference_type' => Transfer::class,
-                'reference_id' => $transfer->id,
-                'remarks' => $transfer->notes,
+                'item_id' =>
+                    $transferItem->item_id,
+
+                'warehouse_id' =>
+                    $transfer->to_warehouse_id,
+
+                'warehouse_location_id' =>
+                    $transfer->to_location_id,
+
+                'transaction_type' =>
+                    'transfer_in',
+
+                'direction' =>
+                    'in',
+
+                'quantity' =>
+                    $quantity,
+
+                'unit_cost' =>
+                    $unitCost,
+
+                'total_value' =>
+                    $totalValue,
+
+                'reference_type' =>
+                    Transfer::class,
+
+                'reference_id' =>
+                    $transfer->id,
+
+                'remarks' =>
+                    $transfer->notes,
             ]);
         }
 
         $transfer->update([
-            'status' => 'completed',
-            'completed_by' => auth()->id(),
-            'completed_at' => now(),
+            'status' =>
+                'completed',
+
+            'completed_by' =>
+                auth()->id(),
+
+            'completed_at' =>
+                now(),
         ]);
 
-        $this->notifications->notifyAdmins(
-            'transfer_completed',
-            'Transfer Completed',
-            "Transfer {$transfer->transfer_number} has been completed successfully.",
-            ['transfer_id' => $transfer->id],
-        );
+        /*
+         * Tell the requester the transfer has
+         * been completed.
+         */
+        if ($transfer->requester) {
+            $this->notifications->notifyUser(
+                $transfer->requester,
+                'transfer_completed',
+                'Transfer Completed',
+                "Transfer {$transfer->transfer_number} has been completed successfully.",
+                [
+                    'transfer_id' =>
+                        $transfer->id,
+                ]
+            );
+        }
 
         return $this->success(
-            $transfer,
+            $transfer->fresh()->load(
+                $this->transferRelations()
+            ),
             'Transfer completed'
         );
+    }
+
+    private function transferRelations(): array
+    {
+        return [
+            'items.item.category',
+            'items.item.unit',
+
+            'fromWarehouse',
+            'fromLocation',
+
+            'toWarehouse',
+            'toLocation',
+
+            'requester.roles',
+            'approver.roles',
+            'completer.roles',
+        ];
     }
 }

@@ -8,6 +8,8 @@ use App\Models\Import;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\SystemNotificationMail;
+use Illuminate\Support\Facades\Mail;
 
 class ImportService extends BaseService
 {
@@ -54,58 +56,182 @@ class ImportService extends BaseService
     };
 }
 
-    public function process(Import $import): void
-    {
-        $import->update(['status' => 'processing', 'started_at' => now()]);
+ public function process(Import $import): void
+{
+    $import->update([
+        'status' => 'processing',
+        'started_at' => now(),
+    ]);
 
-        try {
-            match ($import->import_type) {
-                'items' => Excel::import(new ItemsImport($import), Storage::disk('local')->path($import->file_path)),
-                'inventory' => Excel::import(new AssetsImport($import), Storage::disk('local')->path($import->file_path)),
-                default => throw new \InvalidArgumentException('Unsupported import type: '.$import->import_type),
-            };
+    try {
+        match ($import->import_type) {
+            'items' => Excel::import(
+                new ItemsImport($import),
+                Storage::disk('local')->path(
+                    $import->file_path
+                )
+            ),
 
-            $import->refresh();
-            $import->update([
-                'total_rows' => $import->successful_rows + $import->failed_rows + $import->skipped_rows,
-                'status' => $import->failed_rows > 0 ? 'partial' : 'completed',
-                'completed_at' => now(),
-            ]);
+            'inventory' => Excel::import(
+                new AssetsImport($import),
+                Storage::disk('local')->path(
+                    $import->file_path
+                )
+            ),
 
-            if ($import->status === 'completed') {
-                $this->notifications->notifyAdmins(
-                    'import_completed',
-                    'Import Completed',
-                    "Import of {$import->import_type} completed successfully - {$import->successful_rows} row(s) imported.",
-                    ['import_id' => $import->id],
-                );
-            } else {
-                $this->notifications->notifyAdmins(
-                    'import_failed',
-                    'Import Failed',
-                    "Import of {$import->import_type} finished with {$import->failed_rows} failed row(s) out of {$import->total_rows}.",
-                    ['import_id' => $import->id],
-                );
-            }
-        } catch (\Throwable $e) {
-            $import->update([
-                'status' => 'failed',
-                'error_summary' => $e->getMessage(),
-                'completed_at' => now(),
-            ]);
+            default => throw new \InvalidArgumentException(
+                'Unsupported import type: '
+                . $import->import_type
+            ),
+        };
 
-            $this->notifications->notifyAdmins(
+        $import->refresh();
+
+        $import->update([
+            'total_rows' =>
+                $import->successful_rows
+                + $import->failed_rows
+                + $import->skipped_rows,
+
+            'status' =>
+                $import->failed_rows > 0
+                    ? 'partial'
+                    : 'completed',
+
+            'completed_at' => now(),
+        ]);
+
+        /*
+         * The uploader is the primary recipient
+         * of import result notifications.
+         */
+        $import->loadMissing('uploader');
+
+        $recipient = $import->uploader;
+
+      if ($import->status === 'completed') {
+    $type = 'import_completed';
+
+    $title = 'Import Completed';
+
+    $message =
+        "Import of {$import->import_type} completed successfully - "
+        . "{$import->successful_rows} row(s) imported.";
+
+} elseif ($import->status === 'partial') {
+    $type = 'import_partial';
+
+    $title = 'Import Completed With Errors';
+
+    $message =
+        "Import of {$import->import_type} completed with errors - "
+        . "{$import->successful_rows} row(s) imported successfully and "
+        . "{$import->failed_rows} row(s) failed out of "
+        . "{$import->total_rows} total row(s).";
+
+} else {
+    $type = 'import_failed';
+
+    $title = 'Import Failed';
+
+    $message =
+        "Import of {$import->import_type} failed. "
+        . "{$import->failed_rows} row(s) failed out of "
+        . "{$import->total_rows} total row(s).";
+}
+
+        /*
+         * In-app notification
+         */
+        if ($recipient) {
+            $this->notifications->notifyUser(
+                $recipient,
+                $type,
+                $title,
+                $message,
+                [
+                    'import_id' => $import->id,
+                ],
+            );
+        }
+
+        /*
+         * Email notification
+         */
+        if (
+            $recipient &&
+            $recipient->status === 'active' &&
+            ! empty($recipient->email)
+        ) {
+            Mail::to(
+                $recipient->email
+            )->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
+            );
+        }
+    } catch (\Throwable $e) {
+        $import->update([
+            'status' => 'failed',
+
+            'error_summary' =>
+                $e->getMessage(),
+
+            'completed_at' =>
+                now(),
+        ]);
+
+        $import->loadMissing('uploader');
+
+        $recipient = $import->uploader;
+
+        $title = 'Import Failed';
+
+        $message =
+            "Import of {$import->import_type} failed: "
+            . $e->getMessage();
+
+        /*
+         * In-app failure notification
+         */
+        if ($recipient) {
+            $this->notifications->notifyUser(
+                $recipient,
                 'import_failed',
-                'Import Failed',
-                "Import of {$import->import_type} failed: {$e->getMessage()}",
-                ['import_id' => $import->id],
+                $title,
+                $message,
+                [
+                    'import_id' =>
+                        $import->id,
+                ],
+            );
+        }
+
+        /*
+         * Email failure notification
+         */
+        if (
+            $recipient &&
+            $recipient->status === 'active' &&
+            ! empty($recipient->email)
+        ) {
+            Mail::to(
+                $recipient->email
+            )->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
             );
         }
     }
+}
 
     public function list(array $filters = [])
     {
-        return Import::with('uploader:id,name')
+        return Import::with('uploader:id,name,email,status')
             ->withCount('errors')
             ->when($filters['import_type'] ?? null, fn ($q, $v) => $q->where('import_type', $v))
             ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))

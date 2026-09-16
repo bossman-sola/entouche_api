@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Mail\SystemNotificationMail;
 use App\Models\Receipt;
 use App\Models\ReceiptItem;
 use App\Models\Setting;
+use App\Models\User;
 use App\Services\BaseService;
 use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ReceiptController extends BaseApiController
 {
@@ -142,55 +145,96 @@ class ReceiptController extends BaseApiController
         return $this->success(null, 'Receipt deleted');
     }
 
-    public function receive(Receipt $receipt)
-    {
-        if ($receipt->status !== 'approved') {
-            return $this->error(
-                'Only approved receipts can be received.',
-                null,
-                422
-            );
-        }
+public function receive(Receipt $receipt)
+{
+    if ($receipt->status !== 'approved') {
+        return $this->error(
+            'Only approved receipts can be received.',
+            null,
+            422
+        );
+    }
 
-        foreach ($receipt->items as $item) {
-            $this->stock->move([
-                'item_id' => $item->item_id,
-                'warehouse_id' => $receipt->warehouse_id,
-                'warehouse_location_id' => $item->warehouse_location_id
-                    ?? $receipt->receiving_location_id,
-                'transaction_type' => 'receipt',
-                'direction' => 'in',
-                'quantity' => $item->quantity,
-                'unit_cost' => $item->unit_cost,
-                'total_value' => $item->total_cost,
-                'reference_type' => Receipt::class,
-                'reference_id' => $receipt->id,
-            ]);
-        }
+    foreach ($receipt->items as $item) {
+        $this->stock->move([
+            'item_id' => $item->item_id,
 
-        $receipt->update([
-            'status' => 'received',
-            'received_by' => auth()->id(),
-            'received_at' => now(),
+            'warehouse_id' =>
+                $receipt->warehouse_id,
+
+            'warehouse_location_id' =>
+                $item->warehouse_location_id
+                ?? $receipt->receiving_location_id,
+
+            'transaction_type' =>
+                'receipt',
+
+            'direction' =>
+                'in',
+
+            'quantity' =>
+                $item->quantity,
+
+            'unit_cost' =>
+                $item->unit_cost,
+
+            'total_value' =>
+                $item->total_cost,
+
+            'reference_type' =>
+                Receipt::class,
+
+            'reference_id' =>
+                $receipt->id,
         ]);
+    }
 
-        $this->notifications->notifyAdmins(
+    $receipt->update([
+        'status' => 'received',
+        'received_by' => auth()->id(),
+        'received_at' => now(),
+    ]);
+
+    $recipient = $receipt->creator;
+
+    $title = 'Receipt Completed';
+
+    $message =
+        "Receipt {$receipt->receipt_number} has been completed and added to inventory.";
+
+    if ($recipient) {
+        // In-app
+        $this->notifications->notifyUser(
+            $recipient,
             'receipt_completed',
-            'Receipt Completed',
-            "Receipt {$receipt->receipt_number} has been completed and added to inventory.",
+            $title,
+            $message,
             [
                 'receipt_id' => $receipt->id,
             ],
         );
 
-        return $this->success(
-            $receipt->fresh()->load(
-                $this->receiptRelations()
-            ),
-            'Receipt received'
-        );
+        // Email
+        if (
+            $recipient->status === 'active' &&
+            ! empty($recipient->email)
+        ) {
+            Mail::to($recipient->email)->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
+            );
+        }
     }
 
+    return $this->success(
+        $receipt->fresh()->load(
+            $this->receiptRelations()
+        ),
+        'Receipt received'
+    );
+}
     public function submit(Receipt $receipt)
     {
         if ($receipt->status !== 'draft') {
@@ -213,14 +257,44 @@ class ReceiptController extends BaseApiController
             'status' => 'submitted',
         ]);
 
-        $this->notifications->notifyAdmins(
-            'new_receipt_awaiting_approval',
-            'New Receipt Awaiting Approval',
-            "Receipt {$receipt->receipt_number} has been submitted and is awaiting approval.",
-            [
-                'receipt_id' => $receipt->id,
-            ],
-        );
+        $title = 'New Receipt Awaiting Approval';
+
+        $message =
+            "Receipt {$receipt->receipt_number} has been submitted and is awaiting approval.";
+
+        /*
+         * Users allowed to approve receipts:
+         * System Administrator + Warehouse Manager
+         */
+        $approvers = User::role([
+            'system_administrator',
+            'warehouse_manager',
+        ])
+            ->where('status', 'active')
+            ->get();
+
+        foreach ($approvers as $user) {
+            // In-app
+            $this->notifications->notifyUser(
+                $user,
+                'new_receipt_awaiting_approval',
+                $title,
+                $message,
+                [
+                    'receipt_id' => $receipt->id,
+                ],
+            );
+
+            // Email
+            if (! empty($user->email)) {
+                Mail::to($user->email)->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
+        }
 
         return $this->success(
             $receipt->fresh()->load(
@@ -242,16 +316,41 @@ class ReceiptController extends BaseApiController
 
         $receipt->update([
             'status' => 'approved',
+            'approved_at' => now(),
         ]);
 
-        $this->notifications->notifyAdmins(
-            'receipt_approved',
-            'Receipt Approved',
-            "Receipt {$receipt->receipt_number} has been approved.",
-            [
-                'receipt_id' => $receipt->id,
-            ],
-        );
+        $recipient = $receipt->creator;
+
+        $title = 'Receipt Approved';
+
+        $message =
+            "Receipt {$receipt->receipt_number} has been approved and is ready to be received.";
+
+        if ($recipient) {
+            // In-app
+            $this->notifications->notifyUser(
+                $recipient,
+                'receipt_approved',
+                $title,
+                $message,
+                [
+                    'receipt_id' => $receipt->id,
+                ],
+            );
+
+            // Email
+            if (
+                $recipient->status === 'active' &&
+                ! empty($recipient->email)
+            ) {
+                Mail::to($recipient->email)->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
+        }
 
         return $this->success(
             $receipt->fresh()->load(
@@ -261,42 +360,84 @@ class ReceiptController extends BaseApiController
         );
     }
 
-    public function cancel(Receipt $receipt)
-    {
-        $previousStatus = $receipt->status;
+  public function cancel(Receipt $receipt)
+{
+    $previousStatus =
+        $receipt->status;
 
-        if (! in_array(
-            $previousStatus,
-            ['draft', 'submitted', 'approved'],
-            true
-        )) {
-            return $this->error(
-                'Receipt cannot be cancelled.',
-                null,
-                422
-            );
-        }
-
-        $receipt->update([
-            'status' => 'cancelled',
-        ]);
-
-        if( $previousStatus !== 'draft') {
-            $this->notifications->notifyAdmins(
-                'receipt_cancelled',
-                'Receipt Cancelled',
-                "Receipt {$receipt->receipt_number} has been cancelled.",
-                [
-                    'receipt_id' => $receipt->id,
-                ],
-            );
-        }
-
-        return $this->success(
-            $receipt->fresh(),
-            'Receipt cancelled'
+    if (! in_array(
+        $previousStatus,
+        [
+            'draft',
+            'submitted',
+            'approved',
+        ],
+        true
+    )) {
+        return $this->error(
+            'Receipt cannot be cancelled.',
+            null,
+            422
         );
     }
+
+    $receipt->update([
+        'status' => 'cancelled',
+    ]);
+
+    /*
+     * Draft cancellation remains silent.
+     */
+    if ($previousStatus !== 'draft') {
+        $recipient =
+            $receipt->creator;
+
+        $title =
+            'Receipt Cancelled';
+
+        $message =
+            "Receipt {$receipt->receipt_number} has been cancelled.";
+
+        if ($recipient) {
+            // In-app
+            $this->notifications->notifyUser(
+                $recipient,
+                'receipt_cancelled',
+                $title,
+                $message,
+                [
+                    'receipt_id' =>
+                        $receipt->id,
+
+                    'previous_status' =>
+                        $previousStatus,
+                ],
+            );
+
+            // Email
+            if (
+                $recipient->status === 'active' &&
+                ! empty($recipient->email)
+            ) {
+                Mail::to(
+                    $recipient->email
+                )->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
+        }
+    }
+
+    return $this->success(
+        $receipt->fresh()->load(
+            $this->receiptRelations()
+        ),
+        'Receipt cancelled'
+    );
+}
 
     private function receiptRelations(): array
     {

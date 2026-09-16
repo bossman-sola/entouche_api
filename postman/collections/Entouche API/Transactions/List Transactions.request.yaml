@@ -1,11 +1,14 @@
 $kind: http-request
 name: List Transactions
+queryParams:
+  page: "1"
 auth:
   type: bearer
   credentials:
     token: "{{access_token}}"
+examples: .resources/List Transactions.resources/examples
 order: 1000
 method: GET
-url: "{{staging_url}}/api/v1/transactions"
+url: "{{staging_url}}/api/v1/transactions?page=1"
 headers:
   Accept: application/json

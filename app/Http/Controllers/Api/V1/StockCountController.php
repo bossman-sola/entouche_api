@@ -14,6 +14,8 @@ use App\Services\StockCountService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
+use App\Mail\SystemNotificationMail;
+use Illuminate\Support\Facades\Mail;
 
 class StockCountController extends BaseApiController
 {
@@ -150,50 +152,107 @@ class StockCountController extends BaseApiController
         return $this->success(null, 'Stock count deleted');
     }
 
-    public function cancel(StockCount $stockCount)
-    {
-        if (in_array($stockCount->status, ['completed', 'cancelled'], true)) {
-            return $this->error(
-                'This stock count cannot be cancelled.',
-                null,
-                422
-            );
-        }
-
-        $previousStatus = $stockCount->status;
-
-        $stockCount->update([
-            'status' => 'cancelled',
-        ]);
-
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($stockCount)
-            ->withProperties([
-                'title' => 'Stock Count Cancelled',
-                'description' => 'Cancelled by '.(auth()->user()->name ?? 'a user'),
-                'previous_status' => $previousStatus,
-            ])
-            ->log('stock_count.cancelled');
-
-        // Drafts have not entered the workflow yet,
-        // so cancelling one should not notify other users.
-        if ($previousStatus !== 'draft') {
-            $this->notifications->notifyAdmins(
-                'stock_count_cancelled',
-                'Stock Count Cancelled',
-                "Stock Count {$stockCount->count_number} has been cancelled.",
-                [
-                    'stock_count_id' => $stockCount->id,
-                ]
-            );
-        }
-
-        return $this->success(
-            $stockCount->fresh(),
-            'Stock count cancelled'
+public function cancel(StockCount $stockCount)
+{
+    if (
+        in_array(
+            $stockCount->status,
+            [
+                'completed',
+                'cancelled',
+            ],
+            true
+        )
+    ) {
+        return $this->error(
+            'This stock count cannot be cancelled.',
+            null,
+            422
         );
     }
+
+    $previousStatus =
+        $stockCount->status;
+
+    $stockCount->update([
+        'status' => 'cancelled',
+    ]);
+
+    activity()
+        ->causedBy(auth()->user())
+        ->performedOn($stockCount)
+        ->withProperties([
+            'title' =>
+                'Stock Count Cancelled',
+
+            'description' =>
+                'Cancelled by '
+                . (
+                    auth()->user()->name
+                    ?? 'a user'
+                ),
+
+            'previous_status' =>
+                $previousStatus,
+        ])
+        ->log('stock_count.cancelled');
+
+    /*
+     * Draft stock counts have not entered
+     * the workflow, so no notification.
+     */
+    if ($previousStatus !== 'draft') {
+        $stockCount->loadMissing(
+            'assignedCounter'
+        );
+
+        $recipient =
+            $stockCount->assignedCounter;
+
+        if ($recipient) {
+            $title =
+                'Stock Count Cancelled';
+
+            $message =
+                "Stock Count {$stockCount->count_number} has been cancelled.";
+
+            // In-app
+            $this->notifications->notifyUser(
+                $recipient,
+                'stock_count_cancelled',
+                $title,
+                $message,
+                [
+                    'stock_count_id' =>
+                        $stockCount->id,
+
+                    'previous_status' =>
+                        $previousStatus,
+                ]
+            );
+
+            // Email
+            if (
+                $recipient->status === 'active' &&
+                ! empty($recipient->email)
+            ) {
+                Mail::to(
+                    $recipient->email
+                )->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
+        }
+    }
+
+    return $this->success(
+        $stockCount->fresh(),
+        'Stock count cancelled'
+    );
+}
 
     public function addItems(Request $request, StockCount $stockCount)
     {
@@ -387,94 +446,156 @@ class StockCountController extends BaseApiController
             ->all();
     }
 
-    public function requestCount(StockCount $stockCount)
-    {
-        if ($stockCount->status !== 'draft') {
-            return $this->error(
-                'Only draft stock counts can be requested.',
-                null,
-                422
-            );
-        }
-
-        if ($stockCount->items()->count() === 0) {
-            return $this->error(
-                'Add at least one item before requesting the stock count.',
-                null,
-                422
-            );
-        }
-
-        $stockCount->update([
-            'status' => 'requested',
-        ]);
-
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($stockCount)
-            ->withProperties([
-                'title' => 'Stock Count Requested',
-                'description' => 'Stock count sent to the assigned counter.',
-            ])
-            ->log('stock_count.requested');
-
-        if ($stockCount->assignedCounter) {
-            $this->notifications->notifyUser(
-                $stockCount->assignedCounter,
-                'stock_count_requested',
-                'Stock Count Requested',
-                "Stock Count {$stockCount->count_number} has been requested for counting.",
-                [
-                    'stock_count_id' => $stockCount->id,
-                ]
-            );
-        }
-
-        return $this->success(
-            $stockCount->fresh(),
-            'Stock count requested'
+ public function requestCount(StockCount $stockCount)
+{
+    if ($stockCount->status !== 'draft') {
+        return $this->error(
+            'Only draft stock counts can be requested.',
+            null,
+            422
         );
     }
 
-    public function start(StockCount $stockCount)
-    {
-        if ($stockCount->status !== 'requested') {
-            return $this->error(
-                'Only requested stock counts can be started.',
-                null,
-                422
-            );
-        }
-
-        $stockCount->update([
-            'status' => 'in_progress',
-            'started_at' => now(),
-        ]);
-
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($stockCount)
-            ->withProperties([
-                'title' => 'Stock Count Started',
-                'description' => 'Physical counting has started.',
-            ])
-            ->log('stock_count.started');
-
-        if ($stockCount->assignedCounter) {
-            $this->notifications->notifyUser(
-                $stockCount->assignedCounter,
-                'stock_count_started',
-                'Stock Count Started',
-                "Stock Count {$stockCount->count_number} has been started.",
-                [
-                    'stock_count_id' => $stockCount->id,
-                ]
-            );
-        }
-
-        return $this->success(
-            $stockCount->fresh(),
-            'Stock count started'
+    if ($stockCount->items()->count() === 0) {
+        return $this->error(
+            'Add at least one item before requesting the stock count.',
+            null,
+            422
         );
     }
+
+    $stockCount->update([
+        'status' => 'requested',
+    ]);
+
+    activity()
+        ->causedBy(auth()->user())
+        ->performedOn($stockCount)
+        ->withProperties([
+            'title' => 'Stock Count Requested',
+            'description' =>
+                'Stock count sent to the assigned counter.',
+        ])
+        ->log('stock_count.requested');
+
+    $stockCount->loadMissing(
+        'assignedCounter'
+    );
+
+    $recipient =
+        $stockCount->assignedCounter;
+
+    if ($recipient) {
+        $title =
+            'Stock Count Requested';
+
+        $message =
+            "Stock Count {$stockCount->count_number} has been requested for counting.";
+
+        // In-app
+        $this->notifications->notifyUser(
+            $recipient,
+            'stock_count_requested',
+            $title,
+            $message,
+            [
+                'stock_count_id' =>
+                    $stockCount->id,
+            ]
+        );
+
+        // Email
+        if (
+            $recipient->status === 'active' &&
+            ! empty($recipient->email)
+        ) {
+            Mail::to(
+                $recipient->email
+            )->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
+            );
+        }
+    }
+
+    return $this->success(
+        $stockCount->fresh(),
+        'Stock count requested'
+    );
+}
+
+public function start(StockCount $stockCount)
+{
+    if ($stockCount->status !== 'requested') {
+        return $this->error(
+            'Only requested stock counts can be started.',
+            null,
+            422
+        );
+    }
+
+    $stockCount->update([
+        'status' => 'in_progress',
+        'started_at' => now(),
+    ]);
+
+    activity()
+        ->causedBy(auth()->user())
+        ->performedOn($stockCount)
+        ->withProperties([
+            'title' => 'Stock Count Started',
+            'description' =>
+                'Physical counting has started.',
+        ])
+        ->log('stock_count.started');
+
+    $stockCount->loadMissing(
+        'assignedCounter'
+    );
+
+    $recipient =
+        $stockCount->assignedCounter;
+
+    if ($recipient) {
+        $title =
+            'Stock Count Started';
+
+        $message =
+            "Stock Count {$stockCount->count_number} has been started.";
+
+        // In-app
+        $this->notifications->notifyUser(
+            $recipient,
+            'stock_count_started',
+            $title,
+            $message,
+            [
+                'stock_count_id' =>
+                    $stockCount->id,
+            ]
+        );
+
+        // Email
+        if (
+            $recipient->status === 'active' &&
+            ! empty($recipient->email)
+        ) {
+            Mail::to(
+                $recipient->email
+            )->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
+            );
+        }
+    }
+
+    return $this->success(
+        $stockCount->fresh(),
+        'Stock count started'
+    );
+}
 }

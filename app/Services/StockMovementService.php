@@ -8,6 +8,9 @@ use App\Models\Location;
 use App\Models\Setting;
 use App\Models\StockBalance;
 use App\Models\Warehouse;
+use App\Mail\SystemNotificationMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class StockMovementService extends BaseService
 {
@@ -64,52 +67,152 @@ class StockMovementService extends BaseService
         });
     }
 
-    private function maybeNotifyStockThreshold(float $before, float $after, array $data): void
-    {
-        if (! Setting::get('inventory.low_stock_alerts', true)) {
-            return;
-        }
+ private function maybeNotifyStockThreshold(
+    float $before,
+    float $after,
+    array $data
+): void {
+    if (! Setting::get(
+        'inventory.low_stock_alerts',
+        true
+    )) {
+        return;
+    }
 
-        $item = Item::find($data['item_id']);
-        $reorderLevel = (float) ($item->reorder_level ?? 0);
+    $item = Item::find(
+        $data['item_id']
+    );
 
-        if (! $item || $reorderLevel <= 0) {
-            return;
-        }
+    if (! $item) {
+        return;
+    }
 
-        $wasAboveThreshold = $before > $reorderLevel;
-        $isAtOrBelowNow = $after <= $reorderLevel;
+    $reorderLevel =
+        (float) (
+            $item->reorder_level ?? 0
+        );
 
-        if (! $wasAboveThreshold || ! $isAtOrBelowNow) {
-            return;
-        }
+    if ($reorderLevel <= 0) {
+        return;
+    }
 
-        $warehouse = Warehouse::find($data['warehouse_id']);
-        $location = ! empty($data['warehouse_location_id']) ? Location::find($data['warehouse_location_id']) : null;
-        $place = $location ? "{$warehouse?->name} ({$location->name})" : ($warehouse->name ?? 'a warehouse');
+    $wasAboveThreshold =
+        $before > $reorderLevel;
 
-        $notificationData = [
-            'item_id' => $item->id,
-            'warehouse_id' => $data['warehouse_id'],
-            'warehouse_location_id' => $data['warehouse_location_id'] ?? null,
-            'current_stock' => $after,
-            'reorder_level' => $reorderLevel,
-        ];
+    $isAtOrBelowNow =
+        $after <= $reorderLevel;
 
-        if ($after == $reorderLevel) {
-            $this->notifications->notifyAdmins(
-                'reorder_level_reached',
-                'Reorder Level Reached',
-                "{$item->name} has reached reorder level at {$place}.",
-                $notificationData,
-            );
-        } else {
-            $this->notifications->notifyAdmins(
-                'low_stock_alert',
-                'Low Stock Alert',
-                "{$item->name} is low on stock at {$place}.",
-                $notificationData,
+    /*
+     * Only notify when stock crosses
+     * the threshold.
+     */
+    if (
+        ! $wasAboveThreshold ||
+        ! $isAtOrBelowNow
+    ) {
+        return;
+    }
+
+    $warehouse = Warehouse::find(
+        $data['warehouse_id']
+    );
+
+    $location =
+        ! empty(
+            $data['warehouse_location_id']
+        )
+            ? Location::find(
+                $data[
+                    'warehouse_location_id'
+                ]
+            )
+            : null;
+
+    $place = $location
+        ? "{$warehouse?->name} ({$location->name})"
+        : ($warehouse?->name ?? 'a warehouse');
+
+    $notificationData = [
+        'item_id' =>
+            $item->id,
+
+        'warehouse_id' =>
+            $data['warehouse_id'],
+
+        'warehouse_location_id' =>
+            $data[
+                'warehouse_location_id'
+            ] ?? null,
+
+        'current_stock' =>
+            $after,
+
+        'reorder_level' =>
+            $reorderLevel,
+    ];
+
+    if ($after == $reorderLevel) {
+        $type =
+            'reorder_level_reached';
+
+        $title =
+            'Reorder Level Reached';
+
+        $message =
+            "{$item->name} has reached reorder level at {$place}.";
+    } else {
+        $type =
+            'low_stock_alert';
+
+        $title =
+            'Low Stock Alert';
+
+        $message =
+            "{$item->name} is low on stock at {$place}.";
+    }
+
+    /*
+     * Operational recipients:
+     * - System Administrator
+     * - Warehouse Manager
+     * - Inventory Officer
+     */
+    $recipients = User::role([
+        'system_administrator',
+        'warehouse_manager',
+        'inventory_officer',
+    ])
+        ->where(
+            'status',
+            'active'
+        )
+        ->get();
+
+    foreach ($recipients as $user) {
+        /*
+         * In-app
+         */
+        $this->notifications->notifyUser(
+            $user,
+            $type,
+            $title,
+            $message,
+            $notificationData,
+        );
+
+        /*
+         * Email
+         */
+        if (! empty($user->email)) {
+            Mail::to(
+                $user->email
+            )->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
             );
         }
     }
+}
 }

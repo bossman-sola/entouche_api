@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\StockCountValidationException;
+use App\Mail\SystemNotificationMail;
 use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
 use App\Models\Item;
@@ -15,6 +16,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class StockCountService extends BaseService
 {
@@ -586,18 +588,39 @@ class StockCountService extends BaseService
                 'stock_count.submitted'
             );
 
+        $title = 'Stock Count Pending Review';
+
+        $message =
+            "Stock Count {$stockCount->count_number} has been submitted and is awaiting approval.";
+
+        $roles = [
+            'warehouse_manager',
+            'system_administrator',
+        ];
+
         $notifications->notifyRoles(
-            [
-                'warehouse_manager',
-                'system_administrator',
-            ],
+            $roles,
             'stock_count_pending_review',
-            'Stock Count Pending Review',
-            "Stock Count {$stockCount->count_number} has been submitted and is awaiting approval.",
+            $title,
+            $message,
             [
                 'stock_count_id' => $stockCount->id,
             ]
         );
+
+        $recipients = User::role($roles)
+            ->where('status', 'active')
+            ->whereNotNull('email')
+            ->get();
+
+        foreach ($recipients as $recipient) {
+            Mail::to($recipient->email)->send(
+                new SystemNotificationMail(
+                    $title,
+                    $message
+                )
+            );
+        }
 
         return $stockCount->fresh([
             'items.item',
@@ -737,26 +760,52 @@ class StockCountService extends BaseService
                         $countItem->item->name
                         ?? 'an item';
 
+                    $roles = [
+                        'warehouse_manager',
+                        'system_administrator',
+                    ];
+
+                    $title =
+                        'Stock Count Variance';
+
+                    $message =
+                        "Stock Count {$stockCount->count_number} has a variance of {$variance} for {$itemName}.";
+
+                    $notificationData = [
+                        'stock_count_id' => $stockCount->id,
+
+                        'item_id' => $countItem->item_id,
+
+                        'system_quantity' => $countItem->system_quantity,
+
+                        'counted_quantity' => $countItem->counted_quantity,
+
+                        'variance' => $variance,
+                    ];
+
                     $notifications->notifyRoles(
-                        [
-                            'warehouse_manager',
-                            'system_administrator',
-                        ],
+                        $roles,
                         'stock_count_variance',
-                        'Stock Count Variance',
-                        "Stock Count {$stockCount->count_number} has a variance of {$variance} for {$itemName}.",
-                        [
-                            'stock_count_id' => $stockCount->id,
-
-                            'item_id' => $countItem->item_id,
-
-                            'system_quantity' => $countItem->system_quantity,
-
-                            'counted_quantity' => $countItem->counted_quantity,
-
-                            'variance' => $variance,
-                        ]
+                        $title,
+                        $message,
+                        $notificationData
                     );
+
+                    $recipients = User::role($roles)
+                        ->where('status', 'active')
+                        ->whereNotNull('email')
+                        ->get();
+
+                    foreach ($recipients as $recipient) {
+                        Mail::to(
+                            $recipient->email
+                        )->send(
+                            new SystemNotificationMail(
+                                $title,
+                                $message
+                            )
+                        );
+                    }
                 }
 
                 $stockCount->update([
@@ -794,15 +843,38 @@ class StockCountService extends BaseService
                 );
 
                 if ($stockCount->assignedCounter) {
+                    $recipient =
+                        $stockCount->assignedCounter;
+
+                    $title =
+                        'Stock Count Approved';
+
+                    $message =
+                        "Stock Count {$stockCount->count_number} has been approved and completed.";
+
                     $notifications->notifyUser(
-                        $stockCount->assignedCounter,
+                        $recipient,
                         'stock_count_approved',
-                        'Stock Count Approved',
-                        "Stock Count {$stockCount->count_number} has been approved and completed.",
+                        $title,
+                        $message,
                         [
                             'stock_count_id' => $stockCount->id,
                         ]
                     );
+
+                    if (
+                        $recipient->status === 'active' &&
+                        ! empty($recipient->email)
+                    ) {
+                        Mail::to(
+                            $recipient->email
+                        )->send(
+                            new SystemNotificationMail(
+                                $title,
+                                $message
+                            )
+                        );
+                    }
                 }
 
                 return $stockCount->fresh([
@@ -858,18 +930,41 @@ class StockCountService extends BaseService
             'assignedCounter'
         );
 
-        if (
-            $stockCount->assignedCounter
-        ) {
+        if ($stockCount->assignedCounter) {
+            $recipient =
+                $stockCount->assignedCounter;
+
+            $title =
+                'Stock Count Rejected';
+
+            $message =
+                "Stock Count {$stockCount->count_number} was rejected: {$reason}";
+
             $notifications->notifyUser(
-                $stockCount->assignedCounter,
+                $recipient,
                 'stock_count_rejected',
-                'Stock Count Rejected',
-                "Stock Count {$stockCount->count_number} was rejected: {$reason}",
+                $title,
+                $message,
                 [
                     'stock_count_id' => $stockCount->id,
+
+                    'reason' => $reason,
                 ]
             );
+
+            if (
+                $recipient->status === 'active' &&
+                ! empty($recipient->email)
+            ) {
+                Mail::to(
+                    $recipient->email
+                )->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
         }
 
         return $stockCount->fresh([
@@ -943,20 +1038,41 @@ class StockCountService extends BaseService
             'assignedCounter'
         );
 
-        if (
-            $stockCount->assignedCounter
-        ) {
+        if ($stockCount->assignedCounter) {
+            $recipient =
+                $stockCount->assignedCounter;
+
+            $title =
+                'Recount Requested';
+
+            $message =
+                "A recount has been requested for Stock Count {$stockCount->count_number}.";
+
             $notifications->notifyUser(
-                $stockCount->assignedCounter,
+                $recipient,
                 'stock_count_recount_requested',
-                'Recount Requested',
-                "A recount has been requested for Stock Count {$stockCount->count_number}.",
+                $title,
+                $message,
                 [
                     'stock_count_id' => $stockCount->id,
 
                     'reason' => $reason,
                 ]
             );
+
+            if (
+                $recipient->status === 'active' &&
+                ! empty($recipient->email)
+            ) {
+                Mail::to(
+                    $recipient->email
+                )->send(
+                    new SystemNotificationMail(
+                        $title,
+                        $message
+                    )
+                );
+            }
         }
 
         return $stockCount->fresh([
