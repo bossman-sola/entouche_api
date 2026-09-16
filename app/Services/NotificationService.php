@@ -2,23 +2,13 @@
 
 namespace App\Services;
 
-use App\Mail\SystemNotificationMail;
 use App\Models\User;
 use App\Notifications\ActivityNotification;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationService extends BaseService
 {
-    /**
-     * Notify all active System Administrators.
-     *
-     * Sends:
-     * - In-app notification
-     * - Email notification
-     */
     public function notifyAdmins(
         string $type,
         string $title,
@@ -34,13 +24,6 @@ class NotificationService extends BaseService
         );
     }
 
-    /**
-     * Notify all active users belonging to one role.
-     *
-     * Sends:
-     * - In-app notification
-     * - Email notification
-     */
     public function notifyRole(
         string $role,
         string $type,
@@ -52,10 +35,6 @@ class NotificationService extends BaseService
             ->where('status', 'active')
             ->get();
 
-        if ($users->isEmpty()) {
-            return;
-        }
-
         $this->send(
             $users,
             $type,
@@ -65,16 +44,6 @@ class NotificationService extends BaseService
         );
     }
 
-    /**
-     * Notify all active users belonging to any of the supplied roles.
-     *
-     * Duplicate users are removed in case a user belongs
-     * to more than one of the supplied roles.
-     *
-     * Sends:
-     * - In-app notification
-     * - Email notification
-     */
     public function notifyRoles(
         array $roles,
         string $type,
@@ -88,10 +57,6 @@ class NotificationService extends BaseService
             ->unique('id')
             ->values();
 
-        if ($users->isEmpty()) {
-            return;
-        }
-
         $this->send(
             $users,
             $type,
@@ -101,13 +66,6 @@ class NotificationService extends BaseService
         );
     }
 
-    /**
-     * Notify one active user.
-     *
-     * Sends:
-     * - In-app notification
-     * - Email notification
-     */
     public function notifyUser(
         User $user,
         string $type,
@@ -115,7 +73,7 @@ class NotificationService extends BaseService
         string $description,
         array $data = []
     ): void {
-        if (! $user->is_active) {
+        if ($user->status !== 'active') {
             return;
         }
 
@@ -128,12 +86,6 @@ class NotificationService extends BaseService
         );
     }
 
-    /**
-     * Notify a collection/iterable of users.
-     *
-     * Useful when recipients are determined outside
-     * of the standard role helpers.
-     */
     public function notifyUsers(
         iterable $users,
         string $type,
@@ -143,15 +95,12 @@ class NotificationService extends BaseService
     ): void {
         $users = collect($users)
             ->filter(
-                fn ($user) => $user instanceof User
-                    && $user->is_active
+                fn ($user) =>
+                    $user instanceof User
+                    && $user->status === 'active'
             )
             ->unique('id')
             ->values();
-
-        if ($users->isEmpty()) {
-            return;
-        }
 
         $this->send(
             $users,
@@ -162,12 +111,6 @@ class NotificationService extends BaseService
         );
     }
 
-    /**
-     * Deliver both in-app and email notifications.
-     *
-     * A failure in one delivery channel does not stop
-     * the other delivery channel.
-     */
     private function send(
         iterable $notifiables,
         string $type,
@@ -177,19 +120,26 @@ class NotificationService extends BaseService
     ): void {
         $users = collect($notifiables)
             ->filter(
-                fn ($user) => $user instanceof User
+                fn ($user) =>
+                    $user instanceof User
                     && $user->status === 'active'
+                    && ! empty($user->email)
             )
             ->unique('id')
             ->values();
 
         if ($users->isEmpty()) {
+            Log::warning(
+                'Notification not sent: no active recipients found.',
+                [
+                    'type' => $type,
+                    'title' => $title,
+                ]
+            );
+
             return;
         }
 
-        /*
-         * IN-APP NOTIFICATIONS
-         */
         try {
             Notification::send(
                 $users,
@@ -200,56 +150,32 @@ class NotificationService extends BaseService
                     $data
                 )
             );
-        } catch (\Throwable $e) {
-            Log::error(
-                'Failed to send in-app activity notification.',
+
+            Log::info(
+                'Activity notification sent.',
                 [
                     'type' => $type,
                     'title' => $title,
-                    'user_ids' => $users
-                        ->pluck('id')
+                    'recipients' => $users
+                        ->pluck('email')
+                        ->values()
+                        ->all(),
+                ]
+            );
+        } catch (\Throwable $e) {
+            Log::error(
+                'Activity notification failed.',
+                [
+                    'type' => $type,
+                    'title' => $title,
+                    'recipients' => $users
+                        ->pluck('email')
                         ->values()
                         ->all(),
                     'error' => $e->getMessage(),
+                    'exception' => get_class($e),
                 ]
             );
-        }
-
-        /*
-         * EMAIL NOTIFICATIONS
-         *
-         * Each recipient receives their own email.
-         */
-        foreach ($users as $user) {
-            if (empty($user->email)) {
-                continue;
-            }
-
-            try {
-                Mail::to(
-                    $user->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $description
-                    )
-                );
-            } catch (\Throwable $e) {
-                /*
-                 * Do not allow an email failure to break
-                 * the actual inventory operation.
-                 */
-                Log::error(
-                    'Failed to send email notification.',
-                    [
-                        'type' => $type,
-                        'title' => $title,
-                        'user_id' => $user->id,
-                        'email' => $user->email,
-                        'error' => $e->getMessage(),
-                    ]
-                );
-            }
         }
     }
 }
