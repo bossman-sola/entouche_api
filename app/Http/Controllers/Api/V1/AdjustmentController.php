@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
-use App\Mail\SystemNotificationMail;
 use App\Models\Adjustment;
 use App\Models\AdjustmentItem;
 use App\Models\Item;
@@ -14,7 +13,6 @@ use App\Services\BaseService;
 use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class AdjustmentController extends BaseApiController
 {
@@ -346,24 +344,6 @@ class AdjustmentController extends BaseApiController
             ],
         );
 
-        // Email notification
-        $approvers = User::role([
-            'system_administrator',
-            'warehouse_manager',
-        ])
-            ->where('status', 'active')
-            ->whereNotNull('email')
-            ->get();
-
-        foreach ($approvers as $user) {
-            Mail::to($user->email)->send(
-                new SystemNotificationMail(
-                    $title,
-                    $message
-                )
-            );
-        }
-
         return $this->success(
             $adjustment->fresh([
                 'items.item',
@@ -420,9 +400,6 @@ class AdjustmentController extends BaseApiController
         $message =
             "Adjustment {$adjustment->adjustment_number} has been rejected. Reason: {$data['reason']}";
 
-        /*
-         * In-app notification
-         */
         if ($recipient) {
             $this->notifications->notifyUser(
                 $recipient,
@@ -434,24 +411,6 @@ class AdjustmentController extends BaseApiController
 
                     'reason' => $data['reason'],
                 ],
-            );
-        }
-
-        /*
-         * Email notification
-         */
-        if (
-            $recipient &&
-            $recipient->status === 'active' &&
-            ! empty($recipient->email)
-        ) {
-            Mail::to(
-                $recipient->email
-            )->send(
-                new SystemNotificationMail(
-                    $title,
-                    $message
-                )
             );
         }
 
@@ -512,20 +471,6 @@ class AdjustmentController extends BaseApiController
                         'previous_status' => $previousStatus,
                     ],
                 );
-
-                if (
-                    $recipient->status === 'active' &&
-                    ! empty($recipient->email)
-                ) {
-                    Mail::to(
-                        $recipient->email
-                    )->send(
-                        new SystemNotificationMail(
-                            $title,
-                            $message
-                        )
-                    );
-                }
             }
         }
 
@@ -642,20 +587,6 @@ class AdjustmentController extends BaseApiController
                     'adjustment_id' => $adjustment->id,
                 ],
             );
-
-            if (
-                $recipient->status === 'active' &&
-                ! empty($recipient->email)
-            ) {
-                Mail::to(
-                    $recipient->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $message
-                    )
-                );
-            }
         }
 
         return $this->success(
