@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Cloudinary\Cloudinary;
 
 class SettingController extends BaseApiController
 {
@@ -80,9 +80,8 @@ class SettingController extends BaseApiController
         );
     }
 
-    public function uploadCompanyLogo(
-        Request $request
-    ) {
+    public function uploadCompanyLogo(Request $request)
+    {
         $request->validate([
             'logo' => [
                 'required',
@@ -93,35 +92,38 @@ class SettingController extends BaseApiController
         ]);
 
         try {
-            $result =
-                Cloudinary::uploadApi()->upload(
+            $cloudinaryUrl = env('CLOUDINARY_URL');
+
+            if (!$cloudinaryUrl) {
+                throw new \RuntimeException(
+                    'CLOUDINARY_URL is not configured.'
+                );
+            }
+
+            $cloudinary = new Cloudinary(
+                $cloudinaryUrl
+            );
+
+            $result = $cloudinary
+                ->uploadApi()
+                ->upload(
                     $request
                         ->file('logo')
                         ->getRealPath(),
                     [
-                        'folder' =>
-                        'entouche/company',
-
-                        'public_id' =>
-                        'company-logo',
-
-                        'overwrite' =>
-                        true,
-
-                        'resource_type' =>
-                        'image',
+                        'folder' => 'entouche/company',
+                        'public_id' => 'company-logo',
+                        'overwrite' => true,
+                        'resource_type' => 'image',
                     ]
                 );
 
             $logoUrl =
-                $result['secure_url']
-                ?? null;
+                $result['secure_url'] ?? null;
 
             if (!$logoUrl) {
-                return $this->error(
-                    'Cloudinary did not return an image URL.',
-                    null,
-                    500
+                throw new \RuntimeException(
+                    'Cloudinary did not return a secure URL.'
                 );
             }
 
