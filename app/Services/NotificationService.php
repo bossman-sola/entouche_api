@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Mail\SystemNotificationMail;
 use App\Models\User;
 use App\Notifications\ActivityNotification;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationService extends BaseService
@@ -73,9 +71,10 @@ class NotificationService extends BaseService
         string $type,
         string $title,
         string $description,
-        array $data = []
+        array $data = [],
+        array $channels = ['database', 'mail'],
     ): void {
-        if ($user->status !== 'active') {
+        if (! $user->is_active) {
             return;
         }
 
@@ -84,7 +83,8 @@ class NotificationService extends BaseService
             $type,
             $title,
             $description,
-            $data
+            $data,
+            $channels
         );
     }
 
@@ -93,12 +93,12 @@ class NotificationService extends BaseService
         string $type,
         string $title,
         string $description,
-        array $data = []
+        array $data = [],
+        array $channels = ['database', 'mail'],
     ): void {
         $users = collect($users)
             ->filter(
-                fn ($user) =>
-                    $user instanceof User &&
+                fn ($user) => $user instanceof User &&
                     $user->status === 'active'
             )
             ->unique('id')
@@ -109,7 +109,8 @@ class NotificationService extends BaseService
             $type,
             $title,
             $description,
-            $data
+            $data,
+            $channels
         );
     }
 
@@ -118,34 +119,20 @@ class NotificationService extends BaseService
         string $type,
         string $title,
         string $description,
-        array $data
+        array $data,
+        array $channels = ['database', 'mail'],
     ): void {
         $users = collect($notifiables)
             ->filter(
-                fn ($user) =>
-                    $user instanceof User &&
+                fn ($user) => $user instanceof User &&
                     $user->status === 'active'
             )
             ->unique('id')
             ->values();
 
-        if ($users->isEmpty()) {
-            Log::warning(
-                'Notification skipped: no active recipients.',
-                [
-                    'type' => $type,
-                    'title' => $title,
-                ]
-            );
-
+        if ($users->isEmpty() || empty($channels)) {
             return;
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | IN-APP NOTIFICATION
-        |--------------------------------------------------------------------------
-        */
 
         try {
             Notification::send(
@@ -154,75 +141,23 @@ class NotificationService extends BaseService
                     $type,
                     $title,
                     $description,
-                    $data
+                    $data,
+                    $channels
                 )
-            );
-
-            Log::info(
-                'In-app notification sent.',
-                [
-                    'type' => $type,
-                    'user_ids' => $users->pluck('id')->all(),
-                ]
             );
         } catch (\Throwable $e) {
             Log::error(
-                'In-app notification failed.',
+                'Failed to send activity notification.',
                 [
                     'type' => $type,
                     'title' => $title,
+                    'channels' => $channels,
+                    'user_ids' => $users
+                        ->pluck('id')
+                        ->all(),
                     'error' => $e->getMessage(),
                 ]
             );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | EMAIL NOTIFICATION
-        |--------------------------------------------------------------------------
-        */
-
-        foreach ($users as $user) {
-            if (empty($user->email)) {
-                Log::warning(
-                    'Email notification skipped: user has no email.',
-                    [
-                        'user_id' => $user->id,
-                        'type' => $type,
-                    ]
-                );
-
-                continue;
-            }
-
-            try {
-                Mail::to($user->email)->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $description
-                    )
-                );
-
-                Log::info(
-                    'Email notification sent.',
-                    [
-                        'type' => $type,
-                        'user_id' => $user->id,
-                        'email' => $user->email,
-                    ]
-                );
-            } catch (\Throwable $e) {
-                Log::error(
-                    'Email notification failed.',
-                    [
-                        'type' => $type,
-                        'title' => $title,
-                        'user_id' => $user->id,
-                        'email' => $user->email,
-                        'error' => $e->getMessage(),
-                    ]
-                );
-            }
         }
     }
 }

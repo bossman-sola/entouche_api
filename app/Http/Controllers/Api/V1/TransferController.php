@@ -11,6 +11,7 @@ use App\Services\BaseService;
 use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransferController extends BaseApiController
 {
@@ -105,26 +106,21 @@ class TransferController extends BaseApiController
             $data + [
                 'transfer_number' => $number,
 
-                'transfer_date' =>
-                    $data['transfer_date']
+                'transfer_date' => $data['transfer_date']
                     ?? now()->toDateString(),
 
-                'requested_by' =>
-                    auth()->id(),
+                'requested_by' => auth()->id(),
 
-                'created_by' =>
-                    auth()->id(),
+                'created_by' => auth()->id(),
 
-                'status' =>
-                    'draft',
+                'status' => 'draft',
             ]
         );
 
         foreach ($items as $row) {
             TransferItem::create(
                 $row + [
-                    'transfer_id' =>
-                        $transfer->id,
+                    'transfer_id' => $transfer->id,
                 ]
             );
         }
@@ -222,14 +218,11 @@ class TransferController extends BaseApiController
 
             foreach ($data['items'] as $row) {
                 TransferItem::create([
-                    'transfer_id' =>
-                        $transfer->id,
+                    'transfer_id' => $transfer->id,
 
-                    'item_id' =>
-                        $row['item_id'],
+                    'item_id' => $row['item_id'],
 
-                    'quantity' =>
-                        $row['quantity'],
+                    'quantity' => $row['quantity'],
                 ]);
             }
         }
@@ -279,8 +272,7 @@ class TransferController extends BaseApiController
         }
 
         $transfer->update([
-            'status' =>
-                'pending_approval',
+            'status' => 'pending_approval',
         ]);
 
         /*
@@ -300,8 +292,7 @@ class TransferController extends BaseApiController
             'Transfer Pending Approval',
             "Transfer {$transfer->transfer_number} has been submitted and is awaiting approval.",
             [
-                'transfer_id' =>
-                    $transfer->id,
+                'transfer_id' => $transfer->id,
             ]
         );
 
@@ -337,11 +328,9 @@ class TransferController extends BaseApiController
         ]);
 
         $transfer->update([
-            'status' =>
-                'rejected',
+            'status' => 'rejected',
 
-            'rejection_reason' =>
-                $data['reason'],
+            'rejection_reason' => $data['reason'],
         ]);
 
         /*
@@ -359,11 +348,9 @@ class TransferController extends BaseApiController
                 'Transfer Rejected',
                 "Transfer {$transfer->transfer_number} has been rejected.",
                 [
-                    'transfer_id' =>
-                        $transfer->id,
+                    'transfer_id' => $transfer->id,
 
-                    'reason' =>
-                        $data['reason'],
+                    'reason' => $data['reason'],
                 ]
             );
         }
@@ -398,8 +385,7 @@ class TransferController extends BaseApiController
         }
 
         $transfer->update([
-            'status' =>
-                'cancelled',
+            'status' => 'cancelled',
         ]);
 
         /*
@@ -418,11 +404,9 @@ class TransferController extends BaseApiController
                     'Transfer Cancelled',
                     "Transfer {$transfer->transfer_number} has been cancelled.",
                     [
-                        'transfer_id' =>
-                            $transfer->id,
+                        'transfer_id' => $transfer->id,
 
-                        'previous_status' =>
-                            $previousStatus,
+                        'previous_status' => $previousStatus,
                     ]
                 );
             }
@@ -456,14 +440,11 @@ class TransferController extends BaseApiController
         }
 
         $transfer->update([
-            'status' =>
-                'approved',
+            'status' => 'approved',
 
-            'approved_by' =>
-                auth()->id(),
+            'approved_by' => auth()->id(),
 
-            'approved_at' =>
-                now(),
+            'approved_at' => now(),
         ]);
 
         /*
@@ -481,8 +462,7 @@ class TransferController extends BaseApiController
                 'Transfer Approved',
                 "Transfer {$transfer->transfer_number} has been approved and is ready for completion.",
                 [
-                    'transfer_id' =>
-                        $transfer->id,
+                    'transfer_id' => $transfer->id,
                 ]
             );
         }
@@ -517,121 +497,142 @@ class TransferController extends BaseApiController
             'requester',
         ]);
 
-        foreach (
-            $transfer->items
-            as $transferItem
-        ) {
-            $item =
-                $transferItem->item
-                ?? Item::findOrFail(
-                    $transferItem->item_id
-                );
+        /*
+         * Perform the entire transfer atomically.
+         *
+         * If any stock movement fails, all previous
+         * movements made during this transfer are
+         * automatically rolled back.
+         */
+        try {
+            DB::transaction(function () use ($transfer) {
 
-            $quantity =
-                (float)
-                $transferItem->quantity;
+                foreach (
+                    $transfer->items as $transferItem
+                ) {
+                    $item =
+                        $transferItem->item
+                        ?? Item::findOrFail(
+                            $transferItem->item_id
+                        );
 
-            $unitCost =
-                (float) (
-                    $item->unit_cost ?? 0
-                );
+                    $quantity =
+                        (float)
+                        $transferItem->quantity;
 
-            $totalValue =
-                $quantity * $unitCost;
+                    $unitCost =
+                        (float) (
+                            $item->unit_cost ?? 0
+                        );
+
+                    $totalValue =
+                        $quantity * $unitCost;
+
+                    /*
+                     * Remove inventory from the
+                     * source location.
+                     */
+                    $this->stock->move([
+                        'item_id' => $transferItem->item_id,
+
+                        'warehouse_id' => $transfer->from_warehouse_id,
+
+                        'warehouse_location_id' => $transfer->from_location_id,
+
+                        'transaction_type' => 'transfer_out',
+
+                        'direction' => 'out',
+
+                        'quantity' => $quantity,
+
+                        'unit_cost' => $unitCost,
+
+                        'total_value' => $totalValue,
+
+                        'reference_type' => Transfer::class,
+
+                        'reference_id' => $transfer->id,
+
+                        'remarks' => $transfer->notes,
+                    ]);
+
+                    /*
+                     * Add inventory to the
+                     * destination location.
+                     */
+                    $this->stock->move([
+                        'item_id' => $transferItem->item_id,
+
+                        'warehouse_id' => $transfer->to_warehouse_id,
+
+                        'warehouse_location_id' => $transfer->to_location_id,
+
+                        'transaction_type' => 'transfer_in',
+
+                        'direction' => 'in',
+
+                        'quantity' => $quantity,
+
+                        'unit_cost' => $unitCost,
+
+                        'total_value' => $totalValue,
+
+                        'reference_type' => Transfer::class,
+
+                        'reference_id' => $transfer->id,
+
+                        'remarks' => $transfer->notes,
+                    ]);
+                }
+
+                /*
+                 * Only mark the transfer as completed
+                 * after every inventory movement succeeds.
+                 */
+                $transfer->update([
+                    'status' => 'completed',
+
+                    'completed_by' => auth()->id(),
+
+                    'completed_at' => now(),
+                ]);
+            });
+        } catch (\RuntimeException $e) {
 
             /*
-             * Remove inventory from the
-             * source location.
+             * StockMovementService throws a RuntimeException
+             * when inventory is insufficient.
+             *
+             * Return a validation-style response rather
+             * than exposing it as a 500 server error.
              */
-            $this->stock->move([
-                'item_id' =>
-                    $transferItem->item_id,
-
-                'warehouse_id' =>
-                    $transfer->from_warehouse_id,
-
-                'warehouse_location_id' =>
-                    $transfer->from_location_id,
-
-                'transaction_type' =>
-                    'transfer_out',
-
-                'direction' =>
-                    'out',
-
-                'quantity' =>
-                    $quantity,
-
-                'unit_cost' =>
-                    $unitCost,
-
-                'total_value' =>
-                    $totalValue,
-
-                'reference_type' =>
-                    Transfer::class,
-
-                'reference_id' =>
-                    $transfer->id,
-
-                'remarks' =>
-                    $transfer->notes,
-            ]);
+            return $this->error(
+                $e->getMessage(),
+                null,
+                422
+            );
+        } catch (\Throwable $e) {
 
             /*
-             * Add inventory to the
-             * destination location.
+             * Unexpected failures are logged by Laravel,
+             * while the user receives a safe response.
              */
-            $this->stock->move([
-                'item_id' =>
-                    $transferItem->item_id,
+            report($e);
 
-                'warehouse_id' =>
-                    $transfer->to_warehouse_id,
-
-                'warehouse_location_id' =>
-                    $transfer->to_location_id,
-
-                'transaction_type' =>
-                    'transfer_in',
-
-                'direction' =>
-                    'in',
-
-                'quantity' =>
-                    $quantity,
-
-                'unit_cost' =>
-                    $unitCost,
-
-                'total_value' =>
-                    $totalValue,
-
-                'reference_type' =>
-                    Transfer::class,
-
-                'reference_id' =>
-                    $transfer->id,
-
-                'remarks' =>
-                    $transfer->notes,
-            ]);
+            return $this->error(
+                'The transfer could not be completed. No inventory changes were made.',
+                null,
+                500
+            );
         }
 
-        $transfer->update([
-            'status' =>
-                'completed',
-
-            'completed_by' =>
-                auth()->id(),
-
-            'completed_at' =>
-                now(),
-        ]);
-
         /*
-         * Tell the requester the transfer has
-         * been completed.
+         * Send the notification only AFTER the database
+         * transaction has successfully committed.
+         *
+         * NotificationService handles:
+         * - in-app notification
+         * - email notification
          */
         if ($transfer->requester) {
             $this->notifications->notifyUser(
@@ -640,8 +641,7 @@ class TransferController extends BaseApiController
                 'Transfer Completed',
                 "Transfer {$transfer->transfer_number} has been completed successfully.",
                 [
-                    'transfer_id' =>
-                        $transfer->id,
+                    'transfer_id' => $transfer->id,
                 ]
             );
         }

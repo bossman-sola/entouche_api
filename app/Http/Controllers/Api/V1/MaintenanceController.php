@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\BaseApiController;
-use App\Mail\SystemNotificationMail;
 use App\Models\MaintenanceWindow;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class MaintenanceController extends BaseApiController
 {
@@ -129,6 +127,20 @@ class MaintenanceController extends BaseApiController
                 'created_by' => auth()->id(),
             ]);
 
+        /*
+         * Determine which notification channels
+         * should be used for this maintenance window.
+         */
+        $channels = [];
+
+        if ($maintenance->send_in_app_notifications) {
+            $channels[] = 'database';
+        }
+
+        if ($maintenance->send_email_notifications) {
+            $channels[] = 'mail';
+        }
+
         $title =
             'Scheduled Maintenance';
 
@@ -136,18 +148,16 @@ class MaintenanceController extends BaseApiController
             $maintenance->message
             ?: "A maintenance window titled '{$maintenance->title}' has been scheduled.";
 
-        $users = User::where(
-            'status',
-            'active'
-        )->get();
-
         /*
-         * In-app notification
+         * Maintenance notifications are system-wide,
+         * so notify all active users.
          */
-        if (
-            $maintenance
-                ->send_in_app_notifications
-        ) {
+        if (! empty($channels)) {
+            $users = User::where(
+                'status',
+                'active'
+            )->get();
+
             foreach ($users as $user) {
                 $this->notifications->notifyUser(
                     $user,
@@ -167,29 +177,7 @@ class MaintenanceController extends BaseApiController
 
                         'status' => 'scheduled',
                     ],
-                );
-            }
-        }
-
-        /*
-         * Email notification
-         */
-        if (
-            $maintenance
-                ->send_email_notifications
-        ) {
-            foreach ($users as $user) {
-                if (empty($user->email)) {
-                    continue;
-                }
-
-                Mail::to(
-                    $user->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $message
-                    )
+                    $channels
                 );
             }
         }
@@ -222,24 +210,36 @@ class MaintenanceController extends BaseApiController
             'cancelled_at' => now(),
         ]);
 
+        /*
+         * Use the same notification preferences
+         * selected when the maintenance was created.
+         */
+        $channels = [];
+
+        if ($maintenance->send_in_app_notifications) {
+            $channels[] = 'database';
+        }
+
+        if ($maintenance->send_email_notifications) {
+            $channels[] = 'mail';
+        }
+
         $title =
             'Maintenance Cancelled';
 
         $message =
             "The maintenance window titled '{$maintenance->title}' has been cancelled.";
 
-        $users = User::where(
-            'status',
-            'active'
-        )->get();
-
         /*
-         * In-app notification
+         * Notify all active users using only the
+         * enabled channels.
          */
-        if (
-            $maintenance
-                ->send_in_app_notifications
-        ) {
+        if (! empty($channels)) {
+            $users = User::where(
+                'status',
+                'active'
+            )->get();
+
             foreach ($users as $user) {
                 $this->notifications->notifyUser(
                     $user,
@@ -259,29 +259,7 @@ class MaintenanceController extends BaseApiController
 
                         'status' => 'cancelled',
                     ],
-                );
-            }
-        }
-
-        /*
-         * Email notification
-         */
-        if (
-            $maintenance
-                ->send_email_notifications
-        ) {
-            foreach ($users as $user) {
-                if (empty($user->email)) {
-                    continue;
-                }
-
-                Mail::to(
-                    $user->email
-                )->send(
-                    new SystemNotificationMail(
-                        $title,
-                        $message
-                    )
+                    $channels
                 );
             }
         }
