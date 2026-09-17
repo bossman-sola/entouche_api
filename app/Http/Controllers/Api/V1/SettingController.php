@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class SettingController extends BaseApiController
 {
@@ -77,5 +78,72 @@ class SettingController extends BaseApiController
                 ->groupBy('group'),
             'Settings updated'
         );
+    }
+
+    public function uploadCompanyLogo(
+        Request $request
+    ) {
+        $request->validate([
+            'logo' => [
+                'required',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
+        ]);
+
+        try {
+            $result =
+                Cloudinary::uploadApi()->upload(
+                    $request
+                        ->file('logo')
+                        ->getRealPath(),
+                    [
+                        'folder' =>
+                        'entouche/company',
+
+                        'public_id' =>
+                        'company-logo',
+
+                        'overwrite' =>
+                        true,
+
+                        'resource_type' =>
+                        'image',
+                    ]
+                );
+
+            $logoUrl =
+                $result['secure_url']
+                ?? null;
+
+            if (!$logoUrl) {
+                return $this->error(
+                    'Cloudinary did not return an image URL.',
+                    null,
+                    500
+                );
+            }
+
+            Setting::set(
+                'company.logo',
+                $logoUrl
+            );
+
+            return $this->success(
+                [
+                    'logo' => $logoUrl,
+                ],
+                'Company logo updated successfully'
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->error(
+                'Unable to upload company logo.',
+                null,
+                500
+            );
+        }
     }
 }

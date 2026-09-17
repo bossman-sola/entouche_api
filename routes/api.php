@@ -160,6 +160,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('settings', [SettingController::class, 'index'])->middleware('permission:settings.manage');
         Route::put('settings', [SettingController::class, 'bulkUpdate'])->middleware('permission:settings.manage');
         Route::get('settings/{key}', [SettingController::class, 'show'])->middleware('permission:settings.manage');
+        Route::post('/settings/company-logo', [SettingController::class, 'uploadCompanyLogo'])->middleware('permission:settings.manage');
 
         Route::prefix('maintenance')
             ->middleware('permission:settings.manage')
