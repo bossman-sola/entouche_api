@@ -140,7 +140,7 @@ class SettingController extends BaseApiController
             report($e);
 
             return $this->error(
-                'Unable to upload company logo.',
+                $e->getMessage(),
                 null,
                 500
             );
