@@ -148,4 +148,17 @@ class SettingController extends BaseApiController
             );
         }
     }
+
+    public function branding()
+    {
+        return $this->success([
+            'company_name' => Setting::get(
+                'general.company_name',
+                'Entouche'
+            ),
+            'company_logo' => Setting::get(
+                'company.logo'
+            ),
+        ]);
+    }
 }

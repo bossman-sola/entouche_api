@@ -27,6 +27,11 @@ Route::prefix('v1')->group(function (): void {
         Route::post('login', [AuthController::class, 'login']);
     });
 
+    Route::get(
+        '/branding',
+        [SettingController::class, 'branding']
+    );
+
     Route::middleware('auth:api')->group(function (): void {
         Route::prefix('auth')->group(function (): void {
             Route::post('logout', [AuthController::class, 'logout']);
