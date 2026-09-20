@@ -37,75 +37,148 @@ class ImportService extends BaseService
         return $import->fresh(['errors', 'rows']);
     }
 
-   public function getRequiredAction(string $message): string
-{
-    return match ($message) {
-        'Item name is required.' =>
-            'Enter an item name in the "name" column. Also verify that the correct spreadsheet row is being used as the header row.',
+    public function getRequiredAction(string $message): string
+    {
+        return match ($message) {
+            'Item name is required.' => 'Enter an item name in the "name" column. Also verify that the correct spreadsheet row is being used as the header row.',
 
-        'SKU is required.' =>
-            'Enter a SKU in the "sku" column.',
+            'SKU is required.' => 'Enter a SKU in the "sku" column.',
 
-        'Unit of measure is required.' =>
-            'Enter a valid unit of measure in the "unit" column.',
+            'Unit of measure is required.' => 'Enter a valid unit of measure in the "unit" column.',
 
-        default =>
-            'Correct the invalid or missing data in this row and upload the corrected row again.',
-    };
-}
+            default => 'Correct the invalid or missing data in this row and upload the corrected row again.',
+        };
+    }
 
     public function process(Import $import): void
     {
-        $import->update(['status' => 'processing', 'started_at' => now()]);
+        $import->update([
+            'status' => 'processing',
+            'started_at' => now(),
+        ]);
 
         try {
             match ($import->import_type) {
-                'items' => Excel::import(new ItemsImport($import), Storage::disk('local')->path($import->file_path)),
-                'inventory' => Excel::import(new AssetsImport($import), Storage::disk('local')->path($import->file_path)),
-                default => throw new \InvalidArgumentException('Unsupported import type: '.$import->import_type),
+                'items' => Excel::import(
+                    new ItemsImport($import),
+                    Storage::disk('local')->path(
+                        $import->file_path
+                    )
+                ),
+
+                'inventory' => Excel::import(
+                    new AssetsImport($import),
+                    Storage::disk('local')->path(
+                        $import->file_path
+                    )
+                ),
+
+                default => throw new \InvalidArgumentException(
+                    'Unsupported import type: '
+                    .$import->import_type
+                ),
             };
 
             $import->refresh();
+
             $import->update([
-                'total_rows' => $import->successful_rows + $import->failed_rows + $import->skipped_rows,
-                'status' => $import->failed_rows > 0 ? 'partial' : 'completed',
+                'total_rows' => $import->successful_rows
+                    + $import->failed_rows
+                    + $import->skipped_rows,
+
+                'status' => $import->failed_rows > 0
+                        ? 'partial'
+                        : 'completed',
+
                 'completed_at' => now(),
             ]);
 
+            /*
+             * The uploader is the primary recipient
+             * of import result notifications.
+             */
+            $import->loadMissing('uploader');
+
+            $recipient = $import->uploader;
+
             if ($import->status === 'completed') {
-                $this->notifications->notifyAdmins(
-                    'import_completed',
-                    'Import Completed',
-                    "Import of {$import->import_type} completed successfully - {$import->successful_rows} row(s) imported.",
-                    ['import_id' => $import->id],
-                );
+                $type = 'import_completed';
+
+                $title = 'Import Completed';
+
+                $message =
+                    "Import of {$import->import_type} completed successfully - "
+                    ."{$import->successful_rows} row(s) imported.";
+
+            } elseif ($import->status === 'partial') {
+                $type = 'import_partial';
+
+                $title = 'Import Completed With Errors';
+
+                $message =
+                    "Import of {$import->import_type} completed with errors - "
+                    ."{$import->successful_rows} row(s) imported successfully and "
+                    ."{$import->failed_rows} row(s) failed out of "
+                    ."{$import->total_rows} total row(s).";
+
             } else {
-                $this->notifications->notifyAdmins(
-                    'import_failed',
-                    'Import Failed',
-                    "Import of {$import->import_type} finished with {$import->failed_rows} failed row(s) out of {$import->total_rows}.",
-                    ['import_id' => $import->id],
+                $type = 'import_failed';
+
+                $title = 'Import Failed';
+
+                $message =
+                    "Import of {$import->import_type} failed. "
+                    ."{$import->failed_rows} row(s) failed out of "
+                    ."{$import->total_rows} total row(s).";
+            }
+
+            if ($recipient) {
+                $this->notifications->notifyUser(
+                    $recipient,
+                    $type,
+                    $title,
+                    $message,
+                    [
+                        'import_id' => $import->id,
+                    ],
                 );
             }
         } catch (\Throwable $e) {
             $import->update([
                 'status' => 'failed',
+
                 'error_summary' => $e->getMessage(),
+
                 'completed_at' => now(),
             ]);
 
-            $this->notifications->notifyAdmins(
-                'import_failed',
-                'Import Failed',
-                "Import of {$import->import_type} failed: {$e->getMessage()}",
-                ['import_id' => $import->id],
-            );
+            $import->loadMissing('uploader');
+
+            $recipient = $import->uploader;
+
+            $title = 'Import Failed';
+
+            $message =
+                "Import of {$import->import_type} failed: "
+                .$e->getMessage();
+
+            if ($recipient) {
+                $this->notifications->notifyUser(
+                    $recipient,
+                    'import_failed',
+                    $title,
+                    $message,
+                    [
+                        'import_id' => $import->id,
+                    ],
+                );
+            }
         }
     }
 
     public function list(array $filters = [])
     {
-        return Import::with('uploader:id,name')
+        return Import::with('uploader:id,name,email,status')
             ->withCount('errors')
             ->when($filters['import_type'] ?? null, fn ($q, $v) => $q->where('import_type', $v))
             ->when($filters['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
@@ -157,74 +230,74 @@ class ImportService extends BaseService
         ]);
     }
 
-public function downloadErrorReport(Import $import)
-{
-    $import->loadMissing('errors');
+    public function downloadErrorReport(Import $import)
+    {
+        $import->loadMissing('errors');
 
-    if ($import->errors->isEmpty()) {
-        throw new \InvalidArgumentException(
-            'No error report is available for this import.'
-        );
-    }
-
-    $filename = sprintf(
-        'import-%s-error-report.csv',
-        $import->id
-    );
-
-    return response()->streamDownload(function () use ($import) {
-        $handle = fopen('php://output', 'w');
-
-        // Excel UTF-8 BOM
-        fwrite($handle, "\xEF\xBB\xBF");
-
-        fputcsv($handle, [
-            'Row Number',
-            'Field',
-            'Issue',
-            'Required Action',
-            'Row Data',
-        ]);
-
-        foreach ($import->errors as $error) {
-            $requiredAction = $this->getRequiredAction(
-    $error->error_message
-);
-
-            $rowData = $error->row_data;
-
-            if (is_string($rowData)) {
-                $decoded = json_decode($rowData, true);
-
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $rowData = $decoded;
-                }
-            }
-
-            if (is_array($rowData)) {
-                $rowData = collect($rowData)
-                    ->map(function ($value, $key) {
-                        $displayValue = $value === null || $value === ''
-                            ? '(empty)'
-                            : $value;
-
-                        return "{$key}: {$displayValue}";
-                    })
-                    ->implode(' | ');
-            }
-
-            fputcsv($handle, [
-                $error->row_number,
-                $error->field ?? '—',
-                $error->error_message,
-                $requiredAction,
-                $rowData,
-            ]);
+        if ($import->errors->isEmpty()) {
+            throw new \InvalidArgumentException(
+                'No error report is available for this import.'
+            );
         }
 
-        fclose($handle);
-    }, $filename, [
-        'Content-Type' => 'text/csv; charset=UTF-8',
-    ]);
-}
+        $filename = sprintf(
+            'import-%s-error-report.csv',
+            $import->id
+        );
+
+        return response()->streamDownload(function () use ($import) {
+            $handle = fopen('php://output', 'w');
+
+            // Excel UTF-8 BOM
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, [
+                'Row Number',
+                'Field',
+                'Issue',
+                'Required Action',
+                'Row Data',
+            ]);
+
+            foreach ($import->errors as $error) {
+                $requiredAction = $this->getRequiredAction(
+                    $error->error_message
+                );
+
+                $rowData = $error->row_data;
+
+                if (is_string($rowData)) {
+                    $decoded = json_decode($rowData, true);
+
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $rowData = $decoded;
+                    }
+                }
+
+                if (is_array($rowData)) {
+                    $rowData = collect($rowData)
+                        ->map(function ($value, $key) {
+                            $displayValue = $value === null || $value === ''
+                                ? '(empty)'
+                                : $value;
+
+                            return "{$key}: {$displayValue}";
+                        })
+                        ->implode(' | ');
+                }
+
+                fputcsv($handle, [
+                    $error->row_number,
+                    $error->field ?? '—',
+                    $error->error_message,
+                    $requiredAction,
+                    $rowData,
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
 }

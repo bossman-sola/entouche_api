@@ -586,14 +586,21 @@ class StockCountService extends BaseService
                 'stock_count.submitted'
             );
 
+        $title = 'Stock Count Pending Review';
+
+        $message =
+            "Stock Count {$stockCount->count_number} has been submitted and is awaiting approval.";
+
+        $roles = [
+            'warehouse_manager',
+            'system_administrator',
+        ];
+
         $notifications->notifyRoles(
-            [
-                'warehouse_manager',
-                'system_administrator',
-            ],
+            $roles,
             'stock_count_pending_review',
-            'Stock Count Pending Review',
-            "Stock Count {$stockCount->count_number} has been submitted and is awaiting approval.",
+            $title,
+            $message,
             [
                 'stock_count_id' => $stockCount->id,
             ]
@@ -737,25 +744,35 @@ class StockCountService extends BaseService
                         $countItem->item->name
                         ?? 'an item';
 
+                    $roles = [
+                        'warehouse_manager',
+                        'system_administrator',
+                    ];
+
+                    $title =
+                        'Stock Count Variance';
+
+                    $message =
+                        "Stock Count {$stockCount->count_number} has a variance of {$variance} for {$itemName}.";
+
+                    $notificationData = [
+                        'stock_count_id' => $stockCount->id,
+
+                        'item_id' => $countItem->item_id,
+
+                        'system_quantity' => $countItem->system_quantity,
+
+                        'counted_quantity' => $countItem->counted_quantity,
+
+                        'variance' => $variance,
+                    ];
+
                     $notifications->notifyRoles(
-                        [
-                            'warehouse_manager',
-                            'system_administrator',
-                        ],
+                        $roles,
                         'stock_count_variance',
-                        'Stock Count Variance',
-                        "Stock Count {$stockCount->count_number} has a variance of {$variance} for {$itemName}.",
-                        [
-                            'stock_count_id' => $stockCount->id,
-
-                            'item_id' => $countItem->item_id,
-
-                            'system_quantity' => $countItem->system_quantity,
-
-                            'counted_quantity' => $countItem->counted_quantity,
-
-                            'variance' => $variance,
-                        ]
+                        $title,
+                        $message,
+                        $notificationData
                     );
                 }
 
@@ -794,11 +811,20 @@ class StockCountService extends BaseService
                 );
 
                 if ($stockCount->assignedCounter) {
+                    $recipient =
+                        $stockCount->assignedCounter;
+
+                    $title =
+                        'Stock Count Approved';
+
+                    $message =
+                        "Stock Count {$stockCount->count_number} has been approved and completed.";
+
                     $notifications->notifyUser(
-                        $stockCount->assignedCounter,
+                        $recipient,
                         'stock_count_approved',
-                        'Stock Count Approved',
-                        "Stock Count {$stockCount->count_number} has been approved and completed.",
+                        $title,
+                        $message,
                         [
                             'stock_count_id' => $stockCount->id,
                         ]
@@ -858,16 +884,25 @@ class StockCountService extends BaseService
             'assignedCounter'
         );
 
-        if (
-            $stockCount->assignedCounter
-        ) {
+        if ($stockCount->assignedCounter) {
+            $recipient =
+                $stockCount->assignedCounter;
+
+            $title =
+                'Stock Count Rejected';
+
+            $message =
+                "Stock Count {$stockCount->count_number} was rejected: {$reason}";
+
             $notifications->notifyUser(
-                $stockCount->assignedCounter,
+                $recipient,
                 'stock_count_rejected',
-                'Stock Count Rejected',
-                "Stock Count {$stockCount->count_number} was rejected: {$reason}",
+                $title,
+                $message,
                 [
                     'stock_count_id' => $stockCount->id,
+
+                    'reason' => $reason,
                 ]
             );
         }
@@ -943,14 +978,21 @@ class StockCountService extends BaseService
             'assignedCounter'
         );
 
-        if (
-            $stockCount->assignedCounter
-        ) {
+        if ($stockCount->assignedCounter) {
+            $recipient =
+                $stockCount->assignedCounter;
+
+            $title =
+                'Recount Requested';
+
+            $message =
+                "A recount has been requested for Stock Count {$stockCount->count_number}.";
+
             $notifications->notifyUser(
-                $stockCount->assignedCounter,
+                $recipient,
                 'stock_count_recount_requested',
-                'Recount Requested',
-                "A recount has been requested for Stock Count {$stockCount->count_number}.",
+                $title,
+                $message,
                 [
                     'stock_count_id' => $stockCount->id,
 

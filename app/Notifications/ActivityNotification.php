@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ActivityNotification extends Notification
@@ -15,11 +14,12 @@ class ActivityNotification extends Notification
         public readonly string $title,
         public readonly string $description,
         public readonly array $data = [],
+        public readonly array $channels = ['database', 'mail'],
     ) {}
 
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return $this->channels;
     }
 
     public function toDatabase(object $notifiable): array
@@ -39,10 +39,15 @@ class ActivityNotification extends Notification
             ->line($this->description);
 
         if (! empty($this->data['url'])) {
-            $mail->action('View in Entouche', $this->data['url']);
+            $mail->action(
+                'View in Entouche',
+                $this->data['url']
+            );
         }
 
-        return $mail->line('You are receiving this because you have the System Administrator role in Entouche IMS.');
+        return $mail->line(
+            'This is an automated notification from Entouche IMS.'
+        );
     }
 
     public function toArray(object $notifiable): array

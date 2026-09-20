@@ -1,4 +1,5 @@
 $kind: http-request
+name: List Receipts
 auth:
   type: bearer
   credentials:
@@ -6,6 +7,6 @@ auth:
 examples: .resources/List Receipts.resources/examples
 order: 1000
 method: GET
-url: "{{base_url}}/api/v1/receipts"
+url: "{{staging_url}}/api/v1/receipts"
 headers:
   Accept: application/json
