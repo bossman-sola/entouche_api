@@ -1,6 +1,6 @@
 # entouch_api
 
-Laravel InventoryPro API for Entouch.
+Laravel Backend API for Entouche.
 
 ## Included
 
