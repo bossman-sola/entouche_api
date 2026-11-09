@@ -196,7 +196,7 @@ class ImportService extends BaseService
                 'INVOICE NUMBER FROM VENDOR', 'PO NUMBER FROM VENDOR', 'PO NUMBER ISSUED BY API',
                 'PAYMENT DATE', 'NOTES',
             ],
-            default => ['name', 'category', 'unit', 'item_type', 'barcode', 'reorder_level', 'unit_cost', 'description', 'brand', 'supplier'],
+            default => ['name', 'category', 'unit', 'item_type', 'barcode', 'reorder_level', 'unit_cost', 'description', 'brand', 'supplier', 'quantity_on_hand', 'warehouse'],
         };
 
         $sampleRows = match ($importType) {
@@ -216,7 +216,10 @@ class ImportService extends BaseService
                     'Ready for allocation',
                 ],
             ],
-            default => [],
+            default => [
+                ['Rig Wash', 'Consumables', 'Litre (LTR)', 'stock_item', '', 50, 1750, 'Industrial rig wash solution', '', '', 370, 'Main Warehouse'],
+                ['Safety Gloves', 'PPE', 'Piece (PCS)', 'stock_item', 'SKU-002', 10, 500, '', 'SafeGuard', '', 100, ''],
+            ],
         };
 
         $lines = array_map(
