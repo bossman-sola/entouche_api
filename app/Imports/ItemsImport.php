@@ -8,7 +8,9 @@ use App\Models\ImportError;
 use App\Models\Item;
 use App\Models\Supplier;
 use App\Models\Unit;
+use App\Models\Warehouse;
 use App\Services\ItemService;
+use App\Services\StockMovementService;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -146,7 +148,9 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                 /*
                  * CREATE ITEM
                  */
-                $service->create([
+                $unitCost = (float) ($row['unit_cost'] ?? 0);
+
+                $item = $service->create([
                     'name' => trim($name),
                     'category_id' => $category->id,
                     'unit_of_measure_id' => $unit->id,
@@ -154,11 +158,64 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                     'item_type' => $row['item_type'] ?? 'stock_item',
                     'barcode' => $barcode,
                     'reorder_level' => $row['reorder_level'] ?? 0,
-                    'unit_cost' => $row['unit_cost'] ?? 0,
+                    'unit_cost' => $unitCost,
                     'description' => $row['description'] ?? null,
                     'brand' => $row['brand'] ?? null,
                     'status' => 'active',
                 ]);
+
+                /*
+                 * OPENING STOCK
+                 *
+                 * If a "Quantity on Hand" (or "quantity_on_hand") column
+                 * is present and greater than zero, record an opening-stock
+                 * transaction so the balance is set immediately on import.
+                 */
+                $openingQty = (float) (
+                    $row['quantity_on_hand']
+                    ?? $row['quantity on hand']
+                    ?? $row['opening_stock']
+                    ?? 0
+                );
+
+                if ($openingQty > 0) {
+                    /*
+                     * Resolve warehouse: use the "Warehouse" /
+                     * "Warehouse Code" column if supplied, otherwise
+                     * fall back to the first active warehouse.
+                     */
+                    $warehouseValue = trim(
+                        $row['warehouse']
+                            ?? $row['warehouse_code']
+                            ?? $row['warehouse code']
+                            ?? ''
+                    );
+
+                    $warehouse = filled($warehouseValue)
+                        ? Warehouse::firstOrCreate(
+                            ['code' => strtoupper($warehouseValue)],
+                            [
+                                'name' => $warehouseValue,
+                                'status' => 'active',
+                            ]
+                        )
+                        : Warehouse::where('status', 'active')->first();
+
+                    if ($warehouse) {
+                        $stockService = app(StockMovementService::class);
+
+                        $stockService->move([
+                            'item_id' => $item->id,
+                            'warehouse_id' => $warehouse->id,
+                            'transaction_type' => 'opening_stock',
+                            'direction' => 'in',
+                            'quantity' => $openingQty,
+                            'unit_cost' => $unitCost,
+                            'total_value' => $openingQty * $unitCost,
+                            'remarks' => 'Opening stock set during bulk import.',
+                        ]);
+                    }
+                }
 
                 $this->import->increment('successful_rows');
             } catch (\Throwable $e) {
