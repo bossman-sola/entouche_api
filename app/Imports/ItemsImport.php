@@ -204,16 +204,25 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                     if ($warehouse) {
                         $stockService = app(StockMovementService::class);
 
-                        $stockService->move([
-                            'item_id' => $item->id,
-                            'warehouse_id' => $warehouse->id,
-                            'transaction_type' => 'opening_stock',
-                            'direction' => 'in',
-                            'quantity' => $openingQty,
-                            'unit_cost' => $unitCost,
-                            'total_value' => $openingQty * $unitCost,
-                            'remarks' => 'Opening stock set during bulk import.',
-                        ]);
+                        try {
+                            $stockService->move([
+                                'item_id' => $item->id,
+                                'warehouse_id' => $warehouse->id,
+                                'transaction_type' => 'opening_balance',
+                                'direction' => 'in',
+                                'quantity' => $openingQty,
+                                'unit_cost' => $unitCost,
+                                'total_value' => $openingQty * $unitCost,
+                                'remarks' => 'Opening stock set during bulk import.',
+                            ]);
+                        } catch (\Throwable $e) {
+                            // Opening stock failure is non-fatal —
+                            // the item is already created; stock can
+                            // be adjusted manually afterwards.
+                            \Illuminate\Support\Facades\Log::warning(
+                                "Import: opening stock failed for item {$item->id}: {$e->getMessage()}"
+                            );
+                        }
                     }
                 }
 
