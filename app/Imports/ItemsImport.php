@@ -43,7 +43,7 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                 /*
                  * ITEM NAME
                  */
-                $name = $row['name'] ?? $row['item_name'] ?? null;
+                $name = $row['name'] ?? $row['item_name'] ?? $row['item_description'] ?? null;
 
                 if (blank($name)) {
                     throw new \InvalidArgumentException(
@@ -164,6 +164,17 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                     'status' => 'active',
                 ]);
 
+                \Illuminate\Support\Facades\Log::info(
+                    "Import: item created",
+                    [
+                        'item_id'   => $item->id,
+                        'item_sku'  => $item->sku,
+                        'item_name' => $item->name,
+                        'deleted_at' => $item->deleted_at,
+                        'status'    => $item->status,
+                    ]
+                );
+
                 /*
                  * OPENING STOCK
                  *
@@ -204,18 +215,42 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                     if ($warehouse) {
                         $stockService = app(StockMovementService::class);
 
-                        $stockService->move([
-                            'item_id' => $item->id,
-                            'warehouse_id' => $warehouse->id,
-                            'transaction_type' => 'opening_stock',
-                            'direction' => 'in',
-                            'quantity' => $openingQty,
-                            'unit_cost' => $unitCost,
-                            'total_value' => $openingQty * $unitCost,
-                            'remarks' => 'Opening stock set during bulk import.',
-                        ]);
+                        try {
+                            $stockService->move([
+                                'item_id' => $item->id,
+                                'warehouse_id' => $warehouse->id,
+                                'transaction_type' => 'opening_balance',
+                                'direction' => 'in',
+                                'quantity' => $openingQty,
+                                'unit_cost' => $unitCost,
+                                'total_value' => $openingQty * $unitCost,
+                                'remarks' => 'Opening stock set during bulk import.',
+                            ]);
+                            \Illuminate\Support\Facades\Log::info(
+                                "Import: opening stock set for item {$item->id}, qty={$openingQty}"
+                            );
+                        } catch (\Throwable $e) {
+                            // Opening stock failure is non-fatal —
+                            // the item is already created; stock can
+                            // be adjusted manually afterwards.
+                            \Illuminate\Support\Facades\Log::warning(
+                                "Import: opening stock failed for item {$item->id}: {$e->getMessage()}"
+                            );
+                        }
                     }
                 }
+
+                // Verify item still exists in DB before marking success
+                $exists = \App\Models\Item::withTrashed()->where('id', $item->id)->first();
+                \Illuminate\Support\Facades\Log::info(
+                    "Import: before increment successful_rows",
+                    [
+                        'item_id'    => $item->id,
+                        'db_exists'  => $exists ? 'yes' : 'no',
+                        'db_deleted' => $exists?->deleted_at ? (string) $exists->deleted_at : 'null',
+                        'db_status'  => $exists?->status,
+                    ]
+                );
 
                 $this->import->increment('successful_rows');
             } catch (\Throwable $e) {
