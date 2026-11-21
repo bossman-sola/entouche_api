@@ -43,7 +43,7 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                 /*
                  * ITEM NAME
                  */
-                $name = $row['name'] ?? $row['item_name'] ?? null;
+                $name = $row['name'] ?? $row['item_name'] ?? $row['item_description'] ?? null;
 
                 if (blank($name)) {
                     throw new \InvalidArgumentException(
