@@ -13,6 +13,10 @@ class ItemService extends BaseService
     {
         $totalItems = Item::count();
 
+        // Count including soft-deleted rows — useful for diagnosing
+        // imports that appear successful but items are not visible.
+        $totalItemsWithTrashed = Item::withTrashed()->count();
+
         $totalSkus = Item::query()
             ->whereNotNull('sku')
             ->where('sku', '!=', '')
@@ -31,6 +35,7 @@ class ItemService extends BaseService
 
         return [
             'total_items' => $totalItems,
+            'total_items_including_deleted' => $totalItemsWithTrashed,
             'total_skus' => $totalSkus,
             'total_categories' => $totalCategories,
             'items_with_barcode' => $itemsWithBarcode,
