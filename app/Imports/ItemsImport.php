@@ -42,8 +42,13 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 
                 /*
                  * ITEM NAME
+                 * Supports: name | item_name | item_description | item_desc
                  */
-                $name = $row['name'] ?? $row['item_name'] ?? $row['item_description'] ?? null;
+                $name = $row['name']
+                    ?? $row['item_name']
+                    ?? $row['item_description']
+                    ?? $row['item_desc']
+                    ?? null;
 
                 if (blank($name)) {
                     throw new \InvalidArgumentException(
@@ -53,8 +58,12 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 
                 /*
                  * CATEGORY
+                 * Supports: category | item_group | item_category
                  */
-                $categoryName = $row['category'] ?? 'Uncategorized';
+                $categoryName = $row['category']
+                    ?? $row['item_group']
+                    ?? $row['item_category']
+                    ?? 'Uncategorized';
 
                 $category = Category::firstOrCreate(
                     [
@@ -70,8 +79,13 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 
                 /*
                  * UNIT OF MEASURE
+                 * Supports: unit | unit_of_measure | uom | u_o_m
                  */
-                $unitValue = $row['unit'] ?? $row['unit_of_measure'] ?? null;
+                $unitValue = $row['unit']
+                    ?? $row['unit_of_measure']
+                    ?? $row['uom']
+                    ?? $row['u_o_m']
+                    ?? null;
 
                 if (blank($unitValue)) {
                     throw new \InvalidArgumentException(
@@ -134,7 +148,8 @@ class ItemsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                  * A duplicate barcode is skipped instead of treated
                  * as an import failure.
                  */
-                $barcode = $row['barcode'] ?? null;
+                // 'item_code' is the customer's unique identifier column (maps to barcode)
+                $barcode = $row['barcode'] ?? $row['item_code'] ?? null;
 
                 if (
                     filled($barcode) &&
